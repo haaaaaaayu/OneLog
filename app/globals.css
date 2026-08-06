@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+  --paper: #fbfaf5;
+  --ink: #172018;
+  --muted: #657166;
+  --line: #dfe6dc;
+  --leaf: #356b43;
+  --leaf-soft: #e8f0e5;
+  --tomato: #c75c3b;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-width: 320px;
+  background: var(--paper);
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at 9% 5%, rgba(220, 232, 213, 0.55), transparent 25rem),
+    var(--paper);
+  color: var(--ink);
+  font-family: Arial, "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid rgba(199, 92, 59, 0.45);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .shell {
+    @apply mx-auto min-h-screen w-full max-w-7xl px-4 pb-16 sm:px-6 lg:px-8;
+  }
+
+  .panel {
+    @apply rounded-3xl border border-[#dfe6dc] bg-white/80 shadow-soft;
+  }
+
+  .eyebrow {
+    @apply text-xs font-bold uppercase tracking-[0.16em] text-[#6b786b];
+  }
+
+  .primary-button {
+    @apply inline-flex min-h-10 items-center justify-center rounded-xl bg-[#356b43] px-4 py-2 text-sm font-bold text-white transition hover:bg-[#285736] disabled:cursor-not-allowed disabled:bg-[#aebbb0];
+  }
+
+  .secondary-button {
+    @apply inline-flex min-h-10 items-center justify-center rounded-xl border border-[#cbd8c9] bg-[#f8fbf6] px-4 py-2 text-sm font-bold text-[#356b43] transition hover:border-[#356b43] hover:bg-[#e8f0e5] disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .quiet-button {
+    @apply inline-flex min-h-9 items-center justify-center rounded-lg px-3 py-1.5 text-sm font-semibold text-[#657166] transition hover:bg-[#edf3eb] hover:text-[#172018];
+  }
+
+  .field {
+    @apply min-h-10 rounded-xl border border-[#ccd8cb] bg-white px-3 text-sm text-[#172018] shadow-sm outline-none transition placeholder:text-[#9aa69b] focus:border-[#356b43];
+  }
+
+  .tab-button {
+    @apply relative min-h-11 rounded-xl px-3 text-sm font-bold text-[#657166] transition hover:bg-[#eef4ec] hover:text-[#172018] sm:px-4;
+  }
+
+  .tab-button-active {
+    @apply bg-[#e8f0e5] text-[#285736];
+  }
+
+  .tag {
+    @apply inline-flex items-center rounded-full bg-[#eef4ec] px-2.5 py-1 text-xs font-bold text-[#4c6951];
+  }
+
+  .number-input {
+    @apply field w-24 text-right;
+  }
+}
