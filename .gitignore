@@ -6,3 +6,16 @@ out/
 *.log
 .DS_Store
 tsconfig.tsbuildinfo
+
+# 식약처 OpenAPI 인증키. 절대 커밋하지 않는다.
+ios/tools/.api_key
+ios/tools/.cache/
+__pycache__/
+*.pyc
+
+# Xcode
+xcuserdata/
+*.xcuserstate
+DerivedData/
+
+.obsidian/

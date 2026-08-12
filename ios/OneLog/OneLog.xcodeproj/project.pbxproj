@@ -1,0 +1,533 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 71;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A001 /* OneLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = S004 /* OneLogApp.swift */; };
+		A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = S003 /* Models.swift */; };
+		A003 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = S006 /* SeedData.swift */; };
+		A004 /* PlannerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = S005 /* PlannerEngine.swift */; };
+		A005 /* AppStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S001 /* AppStore.swift */; };
+		A006 /* DesignSystem.swift in Sources */ = {isa = PBXBuildFile; fileRef = S002 /* DesignSystem.swift */; };
+		A007 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V001 /* RootView.swift */; };
+		A008 /* RecipeHomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V002 /* RecipeHomeView.swift */; };
+		A009 /* PlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V003 /* PlanView.swift */; };
+		A010 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V004 /* PreferencesView.swift */; };
+		A011 /* MealsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V005 /* MealsView.swift */; };
+		A012 /* ShoppingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V006 /* ShoppingView.swift */; };
+		A013 /* FridgeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V007 /* FridgeView.swift */; };
+		A014 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V008 /* OnboardingView.swift */; };
+		R001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AS001 /* Assets.xcassets */; };
+		R002 /* imported_recipes.json in Resources */ = {isa = PBXBuildFile; fileRef = J001 /* imported_recipes.json */; };
+		R003 /* imported_ingredients.json in Resources */ = {isa = PBXBuildFile; fileRef = J002 /* imported_ingredients.json */; };
+		T001 /* OneLogDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS001 /* OneLogDomainTests.swift */; };
+		U001 /* OneLogUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = US001 /* OneLogUITests.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		P001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PROJ /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TAPP;
+			remoteInfo = OneLog;
+		};
+		P002 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = PROJ /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = TAPP;
+			remoteInfo = OneLog;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		AS001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		J001 /* imported_recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_recipes.json; sourceTree = "<group>"; };
+		J002 /* imported_ingredients.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_ingredients.json; sourceTree = "<group>"; };
+		F001 /* OneLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F002 /* OneLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F003 /* OneLogUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneLogUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		S001 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
+		S002 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		S003 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		S004 /* OneLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogApp.swift; sourceTree = "<group>"; };
+		S005 /* PlannerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerEngine.swift; sourceTree = "<group>"; };
+		S006 /* SeedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedData.swift; sourceTree = "<group>"; };
+		TS001 /* OneLogDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogDomainTests.swift; sourceTree = "<group>"; };
+		US001 /* OneLogUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogUITests.swift; sourceTree = "<group>"; };
+		V001 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		V002 /* RecipeHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeHomeView.swift; sourceTree = "<group>"; };
+		V003 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
+		V004 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		V005 /* MealsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsView.swift; sourceTree = "<group>"; };
+		V006 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
+		V007 /* FridgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FridgeView.swift; sourceTree = "<group>"; };
+		V008 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		PHASE_FRAMEWORKS /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHASE_TEST_FRAMEWORKS /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHASE_UI_TEST_FRAMEWORKS /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		GRES /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				J001 /* imported_recipes.json */,
+				J002 /* imported_ingredients.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		GAPP /* OneLogApp */ = {
+			isa = PBXGroup;
+			children = (
+				S001 /* AppStore.swift */,
+				S002 /* DesignSystem.swift */,
+				S003 /* Models.swift */,
+				S004 /* OneLogApp.swift */,
+				S005 /* PlannerEngine.swift */,
+				S006 /* SeedData.swift */,
+				AS001 /* Assets.xcassets */,
+				GRES /* Resources */,
+				GVIEWS /* Views */,
+			);
+			path = OneLogApp;
+			sourceTree = "<group>";
+		};
+		GPROD /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F001 /* OneLog.app */,
+				F002 /* OneLogTests.xctest */,
+				F003 /* OneLogUITests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		GROOT = {
+			isa = PBXGroup;
+			children = (
+				GAPP /* OneLogApp */,
+				GTEST /* OneLogTests */,
+				GUITEST /* OneLogUITests */,
+				GPROD /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		GTEST /* OneLogTests */ = {
+			isa = PBXGroup;
+			children = (
+				TS001 /* OneLogDomainTests.swift */,
+			);
+			path = OneLogTests;
+			sourceTree = "<group>";
+		};
+		GUITEST /* OneLogUITests */ = {
+			isa = PBXGroup;
+			children = (
+				US001 /* OneLogUITests.swift */,
+			);
+			path = OneLogUITests;
+			sourceTree = "<group>";
+		};
+		GVIEWS /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				V001 /* RootView.swift */,
+				V002 /* RecipeHomeView.swift */,
+				V003 /* PlanView.swift */,
+				V004 /* PreferencesView.swift */,
+				V005 /* MealsView.swift */,
+				V006 /* ShoppingView.swift */,
+				V007 /* FridgeView.swift */,
+				V008 /* OnboardingView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		TAPP /* OneLog */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CAPP_LIST /* Build configuration list for PBXNativeTarget "OneLog" */;
+			buildPhases = (
+				PHASE_SOURCES /* Sources */,
+				PHASE_FRAMEWORKS /* Frameworks */,
+				PHASE_RESOURCES /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OneLog;
+			productName = OneLog;
+			productReference = F001 /* OneLog.app */;
+			productType = "com.apple.product-type.application";
+		};
+		TTEST /* OneLogTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CTEST_LIST /* Build configuration list for PBXNativeTarget "OneLogTests" */;
+			buildPhases = (
+				PHASE_TEST_SOURCES /* Sources */,
+				PHASE_TEST_FRAMEWORKS /* Frameworks */,
+				PHASE_TEST_RESOURCES /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEP_TEST /* PBXTargetDependency */,
+			);
+			name = OneLogTests;
+			productName = OneLogTests;
+			productReference = F002 /* OneLogTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		TUITEST /* OneLogUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CUITEST_LIST /* Build configuration list for PBXNativeTarget "OneLogUITests" */;
+			buildPhases = (
+				PHASE_UI_TEST_SOURCES /* Sources */,
+				PHASE_UI_TEST_FRAMEWORKS /* Frameworks */,
+				PHASE_UI_TEST_RESOURCES /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				DEP_UITEST /* PBXTargetDependency */,
+			);
+			name = OneLogUITests;
+			productName = OneLogUITests;
+			productReference = F003 /* OneLogUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		PROJ /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 2600;
+				LastUpgradeCheck = 2600;
+				TargetAttributes = {
+					TAPP = {
+						CreatedOnToolsVersion = 26.1;
+					};
+					TTEST = {
+						CreatedOnToolsVersion = 26.1;
+						TestTargetID = TAPP;
+					};
+					TUITEST = {
+						CreatedOnToolsVersion = 26.1;
+						TestTargetID = TAPP;
+					};
+				};
+			};
+			buildConfigurationList = CPROJ_LIST /* Build configuration list for PBXProject "OneLog" */;
+			compatibilityVersion = "Xcode 16.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = GROOT;
+			productRefGroup = GPROD /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				TAPP /* OneLog */,
+				TTEST /* OneLogTests */,
+				TUITEST /* OneLogUITests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		PHASE_RESOURCES /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				R001 /* Assets.xcassets in Resources */,
+				R002 /* imported_recipes.json in Resources */,
+				R003 /* imported_ingredients.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHASE_TEST_RESOURCES /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHASE_UI_TEST_RESOURCES /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		PHASE_SOURCES /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A005 /* AppStore.swift in Sources */,
+				A006 /* DesignSystem.swift in Sources */,
+				A002 /* Models.swift in Sources */,
+				A001 /* OneLogApp.swift in Sources */,
+				A004 /* PlannerEngine.swift in Sources */,
+				A003 /* SeedData.swift in Sources */,
+				A007 /* RootView.swift in Sources */,
+				A008 /* RecipeHomeView.swift in Sources */,
+				A009 /* PlanView.swift in Sources */,
+				A010 /* PreferencesView.swift in Sources */,
+				A011 /* MealsView.swift in Sources */,
+				A012 /* ShoppingView.swift in Sources */,
+				A013 /* FridgeView.swift in Sources */,
+				A014 /* OnboardingView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHASE_TEST_SOURCES /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				T001 /* OneLogDomainTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		PHASE_UI_TEST_SOURCES /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				U001 /* OneLogUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		DEP_TEST /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TAPP /* OneLog */;
+			targetProxy = P001 /* PBXContainerItemProxy */;
+		};
+		DEP_UITEST /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = TAPP /* OneLog */;
+			targetProxy = P002 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		CAPP_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6PTCQH47A6;
+				ENABLE_PREVIEWS = YES;
+				ENABLE_TESTABILITY = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "한끼로그";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		CAPP_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6PTCQH47A6;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "한끼로그";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+		CPROJ_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CPROJ_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		CTEST_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OneLog.app/OneLog";
+			};
+			name = Debug;
+		};
+		CTEST_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native.tests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OneLog.app/OneLog";
+			};
+			name = Release;
+		};
+		CUITEST_DEBUG /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = OneLog;
+			};
+			name = Debug;
+		};
+		CUITEST_RELEASE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGNING_ALLOWED = NO;
+				CODE_SIGNING_REQUIRED = NO;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native.uitests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_STRICT_CONCURRENCY = minimal;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_TARGET_NAME = OneLog;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		CAPP_LIST /* Build configuration list for PBXNativeTarget "OneLog" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CAPP_DEBUG /* Debug */,
+				CAPP_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CPROJ_LIST /* Build configuration list for PBXProject "OneLog" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CPROJ_DEBUG /* Debug */,
+				CPROJ_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CTEST_LIST /* Build configuration list for PBXNativeTarget "OneLogTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CTEST_DEBUG /* Debug */,
+				CTEST_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CUITEST_LIST /* Build configuration list for PBXNativeTarget "OneLogUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CUITEST_DEBUG /* Debug */,
+				CUITEST_RELEASE /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = PROJ /* Project object */;
+}
