@@ -1,0 +1,64 @@
+rules_version = '2';
+
+// F26 공동구매·소분, F27 채팅의 서버 측 경계.
+// 배포: firebase deploy --only firestore:rules
+// 앱 쪽 검증(ShareStore.swift)과 같은 조건을 서버에서 한 번 더 막는다. 앱만 믿지 않는다.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /sharePosts/{postID} {
+      allow read: if request.auth != null;
+
+      allow create: if request.auth != null
+        && request.resource.data.authorID == request.auth.uid
+        && request.resource.data.participantIDs.size() == 0
+        && request.resource.data.status == 'open'
+        && request.resource.data.capacity is int
+        && request.resource.data.capacity >= 2
+        && request.resource.data.capacity <= 8
+        && request.resource.data.neighborhood is string
+        && request.resource.data.neighborhood.size() > 0
+        && request.resource.data.neighborhood.size() <= 30
+        && request.resource.data.authorNickname.size() > 0
+        && request.resource.data.authorNickname.size() <= 20
+        && request.resource.data.meetupNote.size() <= 200
+        && request.resource.data.amount is number
+        && request.resource.data.amount > 0;
+
+      // 작성자는 자기 글 전체를 고칠 수 있다.
+      // 그 외 로그인 사용자는 참여 목록과 상태만, 정원 안에서, 자기 자신만 넣고 뺄 수 있다.
+      allow update: if request.auth != null && (
+        resource.data.authorID == request.auth.uid
+        || (
+          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantIDs', 'status'])
+          && request.resource.data.participantIDs.size() <= resource.data.capacity - 1
+          && request.resource.data.participantIDs.hasOnly(resource.data.participantIDs.concat([request.auth.uid]))
+          && resource.data.participantIDs.hasOnly(request.resource.data.participantIDs.concat([request.auth.uid]))
+        )
+      );
+
+      allow delete: if request.auth != null && resource.data.authorID == request.auth.uid;
+
+      // 채팅은 그 글의 작성자와 참여자만 읽고 쓴다.
+      match /messages/{messageID} {
+        function post() {
+          return get(/databases/$(database)/documents/sharePosts/$(postID)).data;
+        }
+        function isMember() {
+          return request.auth != null
+            && (post().authorID == request.auth.uid || request.auth.uid in post().participantIDs);
+        }
+
+        allow read: if isMember();
+        allow create: if isMember()
+          && request.resource.data.senderID == request.auth.uid
+          && request.resource.data.text is string
+          && request.resource.data.text.size() > 0
+          && request.resource.data.text.size() <= 500;
+        // 보낸 메시지는 고치거나 지우지 않는다. 분쟁 시 기록이 남아야 한다.
+        allow update, delete: if false;
+      }
+    }
+  }
+}
