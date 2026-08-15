@@ -69,9 +69,6 @@ private struct MainTabView: View {
             FridgeView()
                 .tabItem { Label("냉장고", systemImage: "refrigerator") }
                 .tag(4)
-            ShareView()
-                .tabItem { Label("동네 나눔", systemImage: "person.2") }
-                .tag(5)
         }
         .tint(.oneLogGreen)
     }

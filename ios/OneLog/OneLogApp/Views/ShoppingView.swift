@@ -3,6 +3,7 @@ import UIKit
 
 struct ShoppingView: View {
     @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var shareStore: ShareStore
     @State private var isSharing = false
 
     private var items: [ShoppingPlanItem] { store.currentShoppingItems }
@@ -45,6 +46,16 @@ struct ShoppingView: View {
                                 .environmentObject(store)
                         } label: {
                             Label("보유 재료 수량 수정하기", systemImage: "refrigerator")
+                        }
+                        .buttonStyle(SecondaryButtonStyle())
+
+                        // 탭을 6개로 늘리면 iOS가 마지막 탭들을 More로 접어버린다. 남는 재료를 보는 이 자리에서 들어간다.
+                        NavigationLink {
+                            ShareView()
+                                .environmentObject(store)
+                                .environmentObject(shareStore)
+                        } label: {
+                            Label("동네에서 같이 사기 · 나눠 쓰기", systemImage: "person.2")
                         }
                         .buttonStyle(SecondaryButtonStyle())
 
