@@ -114,6 +114,14 @@ final class AppStore: ObservableObject {
         notice = "프로필을 저장했어요."
     }
 
+    /// 동네 나눔(F26)에서만 쓰는 자기입력 값이다. 위치 권한을 요청하지 않고 좌표도 저장하지 않는다.
+    func setNeighborhood(_ value: String) {
+        let trimmed = String(value.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
+        guard trimmed != state.profile.neighborhood else { return }
+        update { $0.profile.neighborhood = trimmed }
+        notice = trimmed.isEmpty ? "동네를 지웠어요. 동네 나눔 글은 보이지 않아요." : "동네를 \(trimmed)(으)로 저장했어요."
+    }
+
     func toggleFavorite(_ recipeID: String) {
         guard recipe(for: recipeID) != nil else { return }
         update { state in
@@ -354,6 +362,7 @@ final class AppStore: ObservableObject {
         if state.preferences.availableTools.isEmpty { state.preferences.availableTools = Set(CookingTool.allCases) }
         state.profile.nickname = String(state.profile.nickname.trimmingCharacters(in: .whitespacesAndNewlines).prefix(20))
         state.profile.age = state.profile.age.flatMap { (14...120).contains($0) ? $0 : nil }
+        state.profile.neighborhood = String(state.profile.neighborhood.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
         return state
     }
 }
