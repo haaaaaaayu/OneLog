@@ -102,6 +102,8 @@ struct Recipe: Codable, Hashable, Identifiable {
     let tags: [String]
     let isLightBreakfast: Bool
     let requiredTools: Set<CookingTool>
+    /// 원본에 완성 사진이 있는 경우에만 값이 있다. 큐레이션 레시피에는 없다.
+    var imageURL: String? = nil
 
     var cookTimeText: String { cookTime.map { "\($0)분" } ?? "조리시간 미확인" }
     var difficultyText: String? { difficulty.map { "난이도 " + String(repeating: "★", count: max(1, min($0, 5))) } }
@@ -187,9 +189,32 @@ struct UserAccount: Codable, Hashable {
 }
 
 /// 목적에 필요한 최소 범위만 수집한다(AGENTS 11절). 나이는 선택 입력이며 비우면 저장하지 않는다.
+/// 동네는 F26 동네 나눔에서만 쓰는 사용자 자기입력 문자열이다. GPS·위치 인증은 받지 않는다(F25 미확정).
 struct UserProfile: Codable, Hashable {
     var nickname: String = ""
     var age: Int?
+    var neighborhood: String = ""
+
+    private enum CodingKeys: String, CodingKey {
+        case nickname
+        case age
+        case neighborhood
+    }
+
+    // 커스텀 이니셜라이저가 생기면 멤버와이즈 이니셜라이저가 사라지므로 직접 둔다.
+    init(nickname: String = "", age: Int? = nil, neighborhood: String = "") {
+        self.nickname = nickname
+        self.age = age
+        self.neighborhood = neighborhood
+    }
+
+    // 기본값만으로는 예전 저장 데이터가 디코딩되지 않으므로 키 단위로 복구한다.
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        nickname = try container.decodeIfPresent(String.self, forKey: .nickname) ?? ""
+        age = try container.decodeIfPresent(Int.self, forKey: .age)
+        neighborhood = try container.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+    }
 }
 
 struct AppPreferences: Codable, Hashable {
