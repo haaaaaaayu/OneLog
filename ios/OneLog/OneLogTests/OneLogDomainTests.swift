@@ -302,4 +302,75 @@ final class OneLogDomainTests: XCTestCase {
         }
     }
 
+    /// 동네를 추가하기 전에 저장된 프로필도 그대로 열려야 한다.
+    func testProfileDecodesWithoutNeighborhood() throws {
+        let legacy = Data(#"{"profile":{"nickname":"준","age":24}}"#.utf8)
+        let state = try JSONDecoder().decode(AppState.self, from: legacy)
+        XCTAssertEqual(state.profile.nickname, "준")
+        XCTAssertEqual(state.profile.neighborhood, "")
+    }
+
+    // MARK: - F26 공동구매·소분
+
+    private func planItem(_ ingredientID: String, needed: Double, remaining: Double?, precision: ShoppingPlanItem.Precision = .exact) -> ShoppingPlanItem {
+        let requirement = IngredientRequirement(key: "\(ingredientID):개", ingredientID: ingredientID, ingredientName: ingredientID, quantity: needed, unit: .count, recipeIDs: [], unitConflict: false)
+        return ShoppingPlanItem(requirement: requirement, availableQuantity: 0, quantityStatus: .exact, additionalNeeded: needed, packageSize: PackageSize(amount: needed + (remaining ?? 0), unit: .count, label: "봉"), purchaseQuantity: 1, purchaseTotal: needed + (remaining ?? 0), expectedRemaining: remaining, precision: precision, note: nil)
+    }
+
+    private func post(_ id: String, _ ingredientID: String, kind: ShareKind = .split, author: String = "other", capacity: Int = 2, participants: [String] = [], status: ShareStatus = .open, expiresIn: TimeInterval = 7 * 24 * 60 * 60) -> SharePost {
+        SharePost(id: id, kind: kind, ingredientID: ingredientID, ingredientName: ingredientID, amount: 1, unit: .count, neighborhood: "성수동", meetupNote: "", pricePerShare: nil, authorID: author, authorNickname: "이웃", participantIDs: participants, capacity: capacity, status: status, createdAt: Date(), expiresAt: Date().addingTimeInterval(expiresIn))
+    }
+
+    /// 한 포장이 필요량보다 많으면 같이 사기, 조금만 남으면 나눠 쓰기.
+    /// 판매 단위가 확인되지 않은 재료는 남는 양 자체가 미상이라 제안하지 않는다.
+    func testShareDraftsSplitByLeftoverSize() {
+        let drafts = shareDrafts(from: [
+            planItem("onion", needed: 1, remaining: 3),
+            planItem("egg", needed: 10, remaining: 2),
+            planItem("tofu", needed: 1, remaining: 5, precision: .manual),
+            planItem("milk", needed: 1, remaining: 0),
+        ])
+
+        XCTAssertEqual(drafts.map(\.ingredientID), ["egg", "onion"])
+        XCTAssertEqual(drafts.first { $0.ingredientID == "onion" }?.kind, .groupBuy)
+        XCTAssertEqual(drafts.first { $0.ingredientID == "egg" }?.kind, .split)
+    }
+
+    /// 순위 근거는 "이번 장보기에서 살 재료인가" 하나뿐이고, 내 글·불호 재료·마감된 글은 빠진다.
+    func testRankSharePostsPrefersIngredientsIStillNeed() {
+        let posts = [
+            post("p1", "onion"),
+            post("p2", "carrot"),
+            post("p3", "onion", author: "me"),
+            post("p4", "pork"),
+            post("p5", "onion", status: .closed),
+            post("p6", "egg", expiresIn: 60 * 60),
+        ]
+        let matches = rankSharePosts(
+            posts,
+            shoppingItems: [planItem("onion", needed: 1, remaining: 0), planItem("egg", needed: 2, remaining: 0)],
+            dislikedIngredientIDs: ["pork"],
+            myUserID: "me"
+        )
+
+        XCTAssertEqual(matches.map(\.id), ["p6", "p1", "p2"])
+        XCTAssertEqual(matches.first?.score, 60, "마감이 24시간 안이면 가점이 붙는다")
+        XCTAssertFalse(matches.last!.isRelevant)
+    }
+
+    func testCanJoinRejectsFullAndOwnAndDuplicatePosts() {
+        XCTAssertTrue(post("p1", "onion").canJoin(userID: "me"))
+        XCTAssertFalse(post("p1", "onion", author: "me").canJoin(userID: "me"), "내 글에는 참여하지 않는다")
+        XCTAssertFalse(post("p1", "onion", participants: ["me"]).canJoin(userID: "me"), "이미 참여했다")
+        XCTAssertFalse(post("p1", "onion", capacity: 2, participants: ["x"]).canJoin(userID: "me"), "작성자 포함 정원이 찼다")
+        XCTAssertFalse(post("p1", "onion", expiresIn: -60).canJoin(userID: "me"), "기간이 지났다")
+    }
+
+    /// 채팅은 작성자와 참여자만 본다. 서버 규칙(`ios/firestore.rules`)도 같은 조건을 막는다.
+    func testOnlyMembersSeeChat() {
+        let target = post("p1", "onion", author: "author", participants: ["joined"])
+        XCTAssertTrue(target.isMember("author"))
+        XCTAssertTrue(target.isMember("joined"))
+        XCTAssertFalse(target.isMember("stranger"))
+    }
 }
