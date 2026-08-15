@@ -15,7 +15,13 @@ Notion 원문과 이 문서 또는 코드가 충돌하면 다음 순서로 판�
 3. 이 문서의 구현 원칙과 완료 조건
 4. 현재 코드의 기존 동작
 
-Notion의 `기존 시나리오 백업 (이 섹션은 참고하지 말것)` 블록은 요구사항 근거로 사용하지 않는다. 공동구매·소분, 채팅, 위치 인증, 마켓 API는 `부가 기능` 아이디어이며 별도의 확정 요청 없이 핵심 MVP보다 먼저 구현하지 않는다.
+Notion의 `기존 시나리오 백업 (이 섹션은 참고하지 말것)` 블록은 요구사항 근거로 사용하지 않는다. 위치 인증과 마켓 API는 `부가 기능` 아이디어이며 별도의 확정 요청 없이 핵심 MVP보다 먼저 구현하지 않는다.
+
+공동구매·소분(F26)과 채팅(F27)은 **2026-08-16 사용자 확정 요청**으로 구현에 들어갔다. 이때 함께 확정된 경계는 다음과 같다.
+
+- 백엔드 공급자: **Firebase**(Firestore + Anonymous Auth). 다른 공급자로 바꾸려면 다시 확정을 받는다.
+- 위치: GPS·위치 권한·좌표를 쓰지 않는다. 사용자가 직접 적은 동네 문자열로만 묶는다. F25 위치 인증은 여전히 미착수다.
+- 송금: 앱 안에서 결제·송금을 하지 않는다. 금액은 표시만 하고 정산은 사용자끼리 직접 한다.
 
 기획 원문이 모호하거나 서로 충돌하면 조용히 확정하지 않는다. 사용자 데이터, 금액 계산, 인증, 외부 연동, 위치 정보처럼 되돌리기 어려운 결정은 선택지와 영향을 먼저 제시한다.
 
@@ -101,10 +107,10 @@ Notion의 `기존 시나리오 백업 (이 섹션은 참고하지 말것)` 블�
 
 ### P3 — 부가 기능 아이디어
 
-- F26 공동구매·소분 매칭
-- F27 매칭 사용자 간 채팅, 일정 조율, 송금 경계
+- F26 공동구매·소분 매칭 — 2026-08-16 확정 요청으로 착수
+- F27 매칭 사용자 간 채팅, 일정 조율 — 2026-08-16 확정 요청으로 착수. 송금은 범위에서 제외 확정
 
-P2·P3는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요청과 공급자·데이터 경계 검토 전에는 구현하지 않는다. 특히 지도·위치 인증, 가격·마트 API, 결제·송금, AI 제공자는 임의로 선택하지 않는다.
+P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요청과 공급자·데이터 경계 검토 전에는 구현하지 않는다. 특히 지도·위치 인증, 가격·마트 API, 결제·송금, AI 제공자는 임의로 선택하지 않는다.
 
 ### 최종 기획 범위 외 기능
 
@@ -122,11 +128,12 @@ P2·P3는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 �
 
 > 이 절은 실제 저장소 상태와 항상 일치해야 한다. 기능을 구현·수정·삭제한 에이전트는 작업 종료 전에 마지막 갱신일, 기능 상태, 검증, 변경 이력을 갱신한다. 계획이나 기획 문구만으로 완료 처리하지 않는다.
 
-마지막 갱신: **2026-08-15**
+마지막 갱신: **2026-08-16**
 
 ### 전체 상태
 
-- 기술 스택: 웹은 Next.js 15 App Router·React 19·TypeScript·Tailwind CSS 3·Vitest, 네이티브는 SwiftUI·Swift·Xcode 26.1.1
+- 기술 스택: 웹은 Next.js 15 App Router·React 19·TypeScript·Tailwind CSS 3·Vitest, 네이티브는 SwiftUI·Swift·Xcode 26.1.1. F26·F27 전용으로 firebase-ios-sdk 12.17.0(FirebaseAuth, FirebaseFirestore)을 SPM으로 추가했다
+- Firebase 설정 절차: ① Firebase 콘솔에서 iOS 앱을 번들 ID `com.onelog.native`로 등록 ② `GoogleService-Info.plist`를 `ios/OneLog/OneLogApp/`에 넣고 Xcode에서 OneLog 타깃 리소스로 추가 ③ Authentication에서 **익명 로그인** 활성화 ④ `firebase deploy --only firestore:rules`로 `ios/firestore.rules` 배포. plist가 없으면 `OneLogApp.swift`가 `FirebaseApp.configure()`를 건너뛰고 동네 나눔 화면만 미연결 안내를 띄운다. 나머지 흐름은 그대로 동작한다
 - 형태: 웹은 localStorage 영속성을 사용하는 단일 클라이언트 앱. iOS는 `ios/OneLog`의 SwiftUI 앱과 UserDefaults 영속성을 사용
 - 구현 기준선: 웹의 기존 레시피→식사→재료 확인→장보기→조리→남은 재료 흐름과 결정론적 다일 식단, 예산 퍼널은 그대로 유지한다. 웹은 이번 작업의 정리 대상이 아니며 이후 방치한다. iOS 네이티브는 P0 전체 흐름과 P1 F14 장보기 실행 지원을 유지하고, P1 F23은 로컬 온보딩 화면부터 구현한다. 식사·절약 기록, 소진 위험, 인앱 알림은 iOS에서 제거·보류한다.
 - 새 Notion 핵심 흐름의 주요 공백: 예산 입력·계산, 여러 식단안 비교, 1~7일과 날짜별 끼니, 가벼운 아침 기준, 잔여 예산 업그레이드, 불호·조리도구 반영, Google 계정·마이페이지
@@ -134,7 +141,7 @@ P2·P3는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 �
 - 판매 단위 정책: 대표 판매 단위는 `ios/tools/sale_units.json`(마트 소포장 기준 **대표값** 185종)에서 온다. 여기 없는 재료는 `representativeSaleUnit`이 없고, 구매량을 계산하지 않고 `precision == .manual`로 사용자 확인을 요청하며 예산도 `확정 잔여 예산`으로 표시하지 않는다. 사용자는 장보기 화면에서 대표 판매 단위를 언제든 덮어쓸 수 있다(`packageOverrides`).
 - 단위 환산: `CanonicalIngredient.unitGrams`에 **명시된 단위끼리만** 환산한다(예: 양파 `["개": 200, "g": 1]`). 근거가 없으면 환산하지 않고 수동 확인으로 보낸다. 식약처 데이터가 g 표기라 큐레이션 재료의 `개`·`큰술` 판매 단위와 맞물리려면 이 표가 필요하다.
 - 계산 완결성: `fullyCalculableRecipeIDs`가 실제 장보기 계산기를 돌려 판정한다. 현재 **956개 중 124개**가 구매량까지 계산되며, 탐색 화면의 `구매량 계산 가능` 필터와 카드 배지로 구분한다.
-- 검증 기준선: 2026-08-15 iOS `xcodebuild test`(iPhone 16e Simulator, iOS 26.1) 도메인 25개·UI 4개 총 29개 통과, `** TEST SUCCEEDED **`. 웹은 2026-08-14 `npm test` 43개 통과, `npm run lint`, `npm run build` 통과. iOS는 Personal Team 자동 서명 설정 후 `generic/platform=iOS` Debug 기기용 빌드와 서명된 `OneLog.app` 생성을 확인했다. iPhone 14 Pro에서 `devicectl` 설치와 `com.onelog.native` 실행까지 성공했다. 2026-08-14에 있었던 CoreSimulator 서비스 장애는 해소되어 Simulator 테스트가 정상 실행된다. 실기기에서의 전체 화면 흐름 확인은 여전히 미완료다.
+- 검증 기준선: 2026-08-16 iOS `xcodebuild test`(iPhone 16e Simulator, iOS 26.1) 도메인 29개·UI 6개 총 35개 통과, `** TEST SUCCEEDED **`. 웹은 2026-08-14 `npm test` 43개 통과, `npm run lint`, `npm run build` 통과. iOS는 Personal Team 자동 서명 설정 후 `generic/platform=iOS` Debug 기기용 빌드와 서명된 `OneLog.app` 생성을 확인했다. iPhone 14 Pro에서 `devicectl` 설치와 `com.onelog.native` 실행까지 성공했다. 2026-08-14에 있었던 CoreSimulator 서비스 장애는 해소되어 Simulator 테스트가 정상 실행된다. 실기기에서의 전체 화면 흐름 확인은 여전히 미완료다.
 
 ### iOS 네이티브 구현 현황
 
@@ -183,8 +190,9 @@ P2·P3는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 �
 | F23 | Google 계정·온보딩 | 부분 구현 | iOS: `Views/OnboardingView.swift`, `Views/PreferencesView.swift`, `Models.swift`, `AppStore.swift` | 시작 화면 → 계정 → 프로필 → 불호·조리도구 4단계 온보딩, 기기 전용 계정, 연결 해제(데이터 유지), 탈퇴(전체 삭제), 실패 안내·재시도 구현. UI 테스트 2개 통과. **Google OAuth 본체는 미구현** — `AppStore.signInWithGoogle()`이 Info.plist `GIDClientID` 부재를 확인해 실패 경로만 태운다. 클라이언트 ID와 GoogleSignIn SDK 도입은 미승인 |
 | F24 | 프로필·선호·조리도구 | 부분 구현 | iOS: `Views/PreferencesView.swift`(`MyPageView`, `PreferenceSections`), `Models.swift`, `PlannerEngine.swift` | 닉네임·나이(선택), 불호 재료, 불호 메뉴, 조리도구 수정과 마이페이지 진입(탐색 탭 툴바) 구현. `isRecommendable()`이 자동 추천 필터를 단일 경로로 판정하고, 직접 고른 메뉴는 삭제하지 않고 경고. 화면 조작은 UI 테스트로만 확인했고 실기기 미검증 |
 | F25 | 거주지·위치 인증 | 미착수 | - | 마이페이지의 미확정 아이디어. P2 후속 검토, 공급자·개인정보 경계 미확정 |
-| F26 | 공동구매·소분 | 미착수 | - | P3 아이디어, 위치·매칭 선행 필요 |
-| F27 | 채팅·일정·송금 | 미착수 | - | P3 아이디어, 안전·거래 정책 선행 필요 |
+| F26 | 공동구매·소분 | 부분 구현 | iOS: `Sharing.swift`, `ShareStore.swift`, `Views/ShareView.swift`, `ios/firestore.rules` | 장보기 잔여량에서 나눔 후보 추출, 동네 글 목록·순위, 참여·정원 마감(트랜잭션), 모집 닫기 구현. 도메인 테스트 4개·UI 테스트 1개 통과. **`GoogleService-Info.plist`가 없어 서버 왕복은 미검증**이고, 화면은 미연결 안내만 표시한다. Firestore 규칙 배포도 미완료 |
+| F27 | 채팅·일정 | 부분 구현 | iOS: `ShareStore.swift`, `Views/ShareView.swift`, `ios/firestore.rules` | 글마다 `messages` 하위 컬렉션 실시간 구독, 작성자·참여자만 읽기·쓰기, 일정은 만남 메모와 대화로 조율. 참여자 판정 도메인 테스트 통과. 실시간 송수신은 서버 연결 후 검증 필요 |
+| F27-1 | 송금 | 범위 외 | - | 2026-08-16 확정으로 앱 내 결제·송금은 만들지 않는다. 금액은 표시만 하고 정산은 사용자끼리 직접 한다 |
 
 상태 값은 `미착수`, `진행 중`, `부분 구현`, `완료`, `보류` 중 하나만 사용한다. `완료`는 요구사항, 관련 테스트, 사용자 흐름 검증이 모두 끝난 경우에만 사용한다.
 
@@ -194,6 +202,7 @@ P2·P3는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 �
 
 | 날짜 | 변경 내용 | 관련 기능 | 검증 | 남은 작업 |
 | --- | --- | --- | --- | --- |
+| 2026-08-16 | F26·F27 착수. firebase-ios-sdk 12.17.0(Auth·Firestore) SPM 추가, `Sharing.swift`(순수 도메인)·`ShareStore.swift`(Firestore)·`Views/ShareView.swift`(목록·작성·상세·채팅) 신설, `ios/firestore.rules` 추가. `UserProfile.neighborhood`(자기입력, GPS 없음) 추가. 진입점은 탭이 아니라 장보기 화면의 링크 | F26, F27 | `xcodebuild test`(iPhone 16e, iOS 26.1) 도메인 29개·UI 6개 총 35개 통과, `** TEST SUCCEEDED **`. 나눔 후보 추출·글 순위·참여 가능 판정·채팅 접근 권한·프로필 하위호환 도메인 테스트 5개와 진입점 UI 테스트 1개 추가 | `GoogleService-Info.plist` 투입 후 실제 서버 왕복 검증, Firestore 규칙 배포, 익명 계정이라 신고·차단 수단 없음(안전 정책 필요), 만료 글 서버측 정리 없음 |
 | 2026-08-15 | 구매량 계산을 실제로 되게 마무리. `CanonicalIngredient.unitGrams` 단위 환산(명시된 단위끼리만) 추가, 보유 재고도 환산해 차감. `ios/tools/build_sale_units.py`로 대표 판매 단위 185종 생성해 임포터에 연결. `fullyCalculableRecipeIDs`와 탐색 화면 필터·배지 추가 | F06, F07, F20 | `xcodebuild test` 29개 통과. 완전 계산 레시피 6건 → **124건**. 환산·재고 환산·계산 완결성 테스트 3개와 UI 테스트 1개 추가 | 나머지 1,272종 재료의 판매 단위(사용자 확인 또는 추가 대표값), 가격 입력 UX |
 | 2026-08-15 | 식약처 `COOKRCP01` 1,156건을 변환해 iOS에 950건 추가. 미등록 재료는 판매 단위 없는 canonical로 자동 등록하고 구매량·예산 계산에서 제외(사용자 확인 품목). `Recipe.difficulty`·`cookTime`과 `CanonicalIngredient.representativeSaleUnit`·`storageNote`를 옵셔널로 전환 | F01, F13, F20 | `xcodebuild test` 25개 통과. 재료 참조 무결성·판매 단위 미확인 시 예산 미확정 테스트 추가 | 자동 등록 재료의 판매 단위·가격 확정, 별칭 정규화(`마늘다진것`↔`다진 마늘`), 반찬 단독 끼니 처리 |
 | 2026-08-15 | 예산 계산 버그 수정: `precision == .manual` 품목이 `unknownCostIngredientIDs`에 잡히지 않아 잔여 예산이 `확정`으로 표시되던 문제 | F20, F21 | 도메인 테스트로 재현·검증 | 없음 |
