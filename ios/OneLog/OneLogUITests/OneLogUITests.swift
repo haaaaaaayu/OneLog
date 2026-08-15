@@ -58,7 +58,8 @@ final class OneLogUITests: XCTestCase {
     }
 
     func testCalculableFilterLeadsToShoppingListWithRealQuantities() {
-        let app = launchApp()
+        // 앞선 실행이 남긴 식단이 쌓이면 "확인 필요" 품목이 섞여 들어와 단정이 깨진다.
+        let app = launchApp(resetState: true)
 
         app.buttons["home.calculableFilter"].tap()
         let addButton = app.buttons.matching(NSPredicate(format: "label CONTAINS '에 담기'")).firstMatch
@@ -69,6 +70,25 @@ final class OneLogUITests: XCTestCase {
         XCTAssertTrue(app.navigationBars["장보기"].waitForExistence(timeout: 5))
         // 계산이 되는 레시피만 담았으므로 "확인 필요" 문구가 뜨면 안 된다.
         XCTAssertFalse(app.staticTexts["판매 단위 확인 필요"].exists)
+    }
+
+    /// F26 진입점. 탭을 6개로 늘리면 iOS가 마지막 탭을 More로 접으므로 장보기에서 들어간다.
+    func testShareEntryPointIsReachableFromShopping() {
+        let app = launchApp()
+
+        app.buttons["home.calculableFilter"].tap()
+        let addButton = app.buttons.matching(NSPredicate(format: "label CONTAINS '에 담기'")).firstMatch
+        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
+        addButton.tap()
+
+        app.tabBars.buttons["장보기"].tap()
+        let shareLink = app.buttons["동네에서 같이 사기 · 나눠 쓰기"]
+        XCTAssertTrue(shareLink.waitForExistence(timeout: 5))
+        shareLink.tap()
+
+        XCTAssertTrue(app.textFields["neighborhoodField"].waitForExistence(timeout: 5))
+        // 서버 설정 파일이 없는 빌드에서도 화면은 열리고 이유를 알려줘야 한다.
+        XCTAssertTrue(app.staticTexts["앱 안에서 송금하지 않아요"].exists)
     }
 
     func testGoogleSignInFailureKeepsUserOnAccountStepWithRetry() {
