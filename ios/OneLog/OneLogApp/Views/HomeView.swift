@@ -43,8 +43,9 @@ struct HomeView: View {
             .background(Color.oneLogCream)
             .ignoresSafeArea(edges: .top)
         }
-        .sheet(isPresented: $showingPlan) {
-            NavigationStack { PlanView().environmentObject(store) }
+        // 시안 `식단 만들기`는 자체 헤더와 ‹를 가진 전체 화면이다. 시트로 띄우면 위가 잘린다.
+        .fullScreenCover(isPresented: $showingPlan) {
+            PlanView().environmentObject(store)
         }
         .fullScreenCover(isPresented: $showingMyPage) {
             MyPageView().environmentObject(store)
@@ -121,6 +122,7 @@ struct HomeView: View {
                     .frame(width: 199, height: 48)
                     .background(Color.oneLogInk, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
             }
+            .accessibilityIdentifier("home.createPlan")
             .offset(x: 16, y: y(195))
         }
         .frame(height: topInset + 238) // 시안 272 = 상태바 34 + 내용 238

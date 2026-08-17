@@ -128,7 +128,7 @@ P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요�
 
 > 이 절은 실제 저장소 상태와 항상 일치해야 한다. 기능을 구현·수정·삭제한 에이전트는 작업 종료 전에 마지막 갱신일, 기능 상태, 검증, 변경 이력을 갱신한다. 계획이나 기획 문구만으로 완료 처리하지 않는다.
 
-마지막 갱신: **2026-08-17**
+마지막 갱신: **2026-08-18**
 
 ### 전체 상태
 
@@ -153,7 +153,7 @@ P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요�
 | F01~F09 P0 기본 흐름 | 부분 구현 | `ios/OneLog/OneLogApp/Views`, `PlannerEngine.swift`, `AppStore.swift`, `OneLogUITests.swift` | 2026-08-15 iPhone 16e Simulator에서 도메인 22개·UI 3개 실행 통과. 실기기 화면 흐름 확인은 미완료 |
 | F14 장보기 실행 지원 | 부분 구현 | `Views/ShoppingView.swift`, `Models.swift`, `AppStore.swift`, `PlannerEngine.swift` | 품목 체크, 실제 구매 포장 수 수정, 복사·공유, 구매·실행 이벤트 UserDefaults 저장과 구매 멱등 시그니처 구현. 도메인 테스트 통과. 실제 화면 조작 미검증 |
 | F23 로컬 온보딩 | 부분 구현 | `Views/OnboardingView.swift`, `Models.swift`, `AppStore.swift`, `Assets.xcassets` | 제공된 온보딩 화면을 첫 실행 화면으로 표시하고 탭 후 완료 상태를 UserDefaults에 저장. Personal Team 자동 서명, iPhone 14 Pro 설치·실행까지 확인. Google 계정 연동과 온보딩 화면 상호작용 검증은 미완료 |
-| F13 다일 식단 제안 | 부분 구현 | `Views/PlanView.swift`, `PlannerEngine.swift` | 1~7일, 날짜별 끼니, 3개 옵션, 찜·재사용·난이도(선택적 보조 기준)·가벼운 아침·불호·조리도구 반영 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
+| F13 다일 식단 제안 | 부분 구현 | `Views/PlanView.swift`, `PlannerEngine.swift` | 피그마 `식단 만들기 1~8` 8단계 화면. 1~7일, 날짜별 끼니, 3개 옵션, 찜·재사용·난이도(선택적 보조 기준)·가벼운 아침·불호·조리도구 반영 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
 | F20 예산 기반 계획 | 부분 구현 | `Views/PlanView.swift`, `PlannerEngine.swift`, `Models.swift` | 사용자 확인 가격·미확인 범위·보유 재료 절감·잔여 예산 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
 | F21 잔여 예산 업그레이드 | 부분 구현 | `PlannerEngine.swift`, `Views/PlanView.swift` | 확인된 가격 범위에서만 업그레이드 후보와 전체 재계산 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
 | F22 미취식 처리 | 부분 구현 | `Views/MealsView.swift`, `AppStore.swift` | 명시적 삭제·날짜/끼니 이동·메뉴 교체와 재계산·보관 주의 연결 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
@@ -203,6 +203,7 @@ P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요�
 
 | 날짜 | 변경 내용 | 관련 기능 | 검증 | 남은 작업 |
 | --- | --- | --- | --- | --- |
+| 2026-08-18 | 식단 만들기를 피그마 `식단 만들기 1~8`(350:1551·1586·1645·1690·1729·1779·1832, 438:23) 좌표대로 다시 만들었다. 헤더(42)·프로그레스(94)·본문(116)·푸터(772) 골격을 `PlanFlowScaffold`로 두고 기간 → 끼니 → 예산 → 분석 → 식단안 → 확인·수정 → 최종 확인 → 재료 목록 8단계로 나눴다. 시안이 없는 9·10단계 자리에는 기존 가격·예산 확인 화면을 `9 / 11`로 이어 붙였다. 마스코트 4종과 후광 SVG는 피그마 원본을 그대로 받아 asset catalog에 넣었다(`PlanMascot*`, `PlanAiHalo`). 홈의 진입은 시트에서 전체 화면으로 바꿨다(시안은 자체 헤더를 가진 전체 화면) | F13, F20, F21, F22 | `xcodebuild test -only-testing:OneLogTests/OneLogDomainTests` **TEST SUCCEEDED**(31개). UI 테스트 `testPlanFlowFollowsFigmaSteps`(1→9단계 통과 후 식단이 `내 식사`에 담기는지)와 `testP0ExecutionTabsAreReachable` 통과. 시뮬레이터 캡처로 8개 화면을 시안과 대조(`ScreenshotTests/testCapturePlanFlow`) | 시안의 9·10단계(보유 재료 확인·장보기 리스트)와 `식단 만들기 11 / 계란 구매 단위 선택`(430:23)은 아직 안 만들었다. Material Symbols 아이콘은 SF Symbols로 대체했다. 8단계 재료 분류(채소/단백질·유제품/곡물·양념)는 이름 휴리스틱이라 분류 데이터가 생기면 교체해야 한다. UI 테스트 4개(`testCalculableFilter…`, `testShareEntryPoint…`, `testOnboardingCollects…`, `testGoogleSignInFailure…`)는 피그마 홈·레시피 재작업 때 사라진 식별자를 그대로 참조해 여전히 실패한다 |
 | 2026-08-17 | 판매 단위 공백과 가격 입력 UX를 메웠다. ① 임포터가 재료 이름을 **뒤에서부터** 맞춰(`빨강 파프리카`→`파프리카`, `다진것`·`마른것` 등 손질 표기 제거, `재료`·`양념`·`육수` 같은 소제목 접두 제거) 표기 변형을 흡수한다. 같은 매칭을 상비 조미료 판정에도 써서 `고운 고춧가루`·`양념 후춧가루`가 상비로 잡힌다. ② `build_sale_units.py`에 대표 판매 단위 185종 → **658종**(육류·수산·채소·과일·곡류·면·가루·소스·주류와 `버섯`·`고기`·`나물` 같은 마지막 그물), `개`·`장`·`봉` 환산 대표값도 추가. ③ 예산 화면 `PriceEditorRow`를 판매 단위 확인 → 그 포장 가격 순서로 바꿔, 판매 단위 미확인 품목도 화면에서 바로 확정할 수 있게 하고 포장 크기와 가격이 어긋나 조용히 예산에 안 잡히던 문제를 없앴다 | F06, F07, F20, F21 | `xcodebuild test -only-testing:OneLogTests/OneLogDomainTests` **TEST SUCCEEDED**(31개). 완전 계산 레시피 **124건 → 719건**/956. `python3 ios/tools/import_recipes.py --self-check` 통과. 판매 단위 확인→가격 저장이 예산을 확정시키는 도메인 테스트 1개 추가 | UI 테스트는 이 환경에서 러너가 시뮬레이터에 뜨지 않아(`FBSOpenApplicationServiceErrorDomain`) 미실행. 남은 256종 재료 판매 단위, `큰술`·`ml` 같은 단위 환산 근거, 별칭 정규화(`다진 애호박`을 `애호박` canonical로 합치기)는 여전히 미착수 |
 | 2026-08-17 | F27 약속 기능을 자유 메모에서 멤버 전용 구조화 정보로 확장. `ShareMeetup`에 날짜·시간·장소 메모·수정자·수정 시각을 저장하고, `meetup/details` 하위 문서와 SwiftUI 약속 잡기·수정·삭제 화면을 추가 | F27 | `xcodebuild build-for-testing` 성공, `xcodebuild test -only-testing:OneLogTests/OneLogDomainTests` **TEST SUCCEEDED**. Firestore 규칙 배포 후 `check_firestore_rules.py` 약속 권한 포함 **17개 모두 PASS**. Personal Team 서명 기기용 빌드와 iPhone 14 Pro 설치 성공 | 실기기 실행은 아이폰 잠금 상태로 `devicectl`이 거부해 미확인. 잠금 해제 후 약속 저장·수정·삭제와 채팅 실시간 송수신 확인. 신고·차단 수단과 만료 글 서버측 정리는 여전히 없음 |
 | 2026-08-17 | Firebase 콘솔에서 익명·Google 로그인 제공업체를 활성화하고 Firestore 규칙을 배포한 뒤 서버 왕복 검증을 완료 | F23, F26, F27 | `python3 ios/tools/check_firestore_rules.py` 실행. 비로그인 읽기 차단, 작성·참여, 정원 제한, 수정·삭제 차단, 채팅 멤버 경계·발신자 사칭 차단 등 **11개 항목 모두 PASS** | 실기기 Google 로그인 1회, F26·F27 실제 화면·실시간 송수신 확인. 신고·차단 수단과 만료 글 서버측 정리는 여전히 없음 |

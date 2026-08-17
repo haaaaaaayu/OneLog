@@ -19,6 +19,8 @@ final class ScreenshotTests: XCTestCase {
     }
 
     private func shot(_ name: String) {
+        // 버튼 라벨이 크로스페이드 중에 찍히면 두 글자가 겹쳐 보인다.
+        Thread.sleep(forTimeInterval: 0.6)
         step += 1
         let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = String(format: "%02d-%@", step, name)
@@ -124,6 +126,31 @@ final class ScreenshotTests: XCTestCase {
         // 395:23 내 정보 수정
         if tap(app.buttons["mypage.editProfile"]) {
             shot("profile-edit")
+        }
+    }
+
+    /// 식단 만들기 1~8 (350:1551, 350:1586, 350:1645, 350:1690, 350:1729, 350:1779, 350:1832, 438:23).
+    func testCapturePlanFlow() {
+        // 온보딩을 기기 전용으로 지나 홈까지 간다.
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        tap(app.buttons["onboarding.google"])
+        tap(app.buttons["onboarding.deviceOnly"])
+        tap(app.buttons["다음"])
+        tap(app.buttons["다음"])
+        tap(app.buttons["한끼로그 시작하기"]) || tap(app.buttons["onboarding.later"])
+        _ = app.buttons["tab.home"].waitForExistence(timeout: 5)
+        Thread.sleep(forTimeInterval: 5)
+
+        // 홈 카드 → 식단 만들기 시트
+        guard tap(app.buttons["home.createPlan"]) || tap(app.staticTexts["새 식단 만들기"]) else {
+            return XCTFail("식단 만들기 진입점을 찾지 못했습니다")
+        }
+        _ = app.buttons["plan.next"].waitForExistence(timeout: 5)
+
+        for name in ["plan-1-duration", "plan-2-meals", "plan-3-budget", "plan-4-analyzing",
+                     "plan-5-options", "plan-6-review", "plan-7-final", "plan-8-ingredients", "plan-9-price"] {
+            shot(name)
+            tap(app.buttons["plan.next"])
         }
     }
 }
