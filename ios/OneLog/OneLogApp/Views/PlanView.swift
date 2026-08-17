@@ -779,7 +779,7 @@ struct PlanView: View {
 
     private func confirmPlan() {
         guard let option = selectedOption else { return }
-        store.applyPlan(option)
+        store.applyPlan(option, targetBudget: budgetValue)
         step = 8
     }
 

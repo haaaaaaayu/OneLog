@@ -161,5 +161,14 @@ final class ScreenshotTests: XCTestCase {
             shot(name)
             tap(app.buttons["plan.next"])
         }
+
+        // 식단 관리 1 / 메인 (454:29)
+        tap(app.buttons["tab.plan"])
+        shot("care-1-main")
+
+        // 식단 관리 2 / 장보기 리스트 (467:29)
+        if tap(app.buttons["meals.shopping"]) {
+            shot("care-2-shopping")
+        }
     }
 }

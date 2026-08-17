@@ -325,6 +325,8 @@ struct AppState: Codable {
     var appliedPurchaseSignatures: [String] = []
     var preferences = AppPreferences()
     var shoppingEvents: [ShoppingEvent] = []
+    /// 확정한 식단의 목표 예산. 식단관리 화면이 남은 예산을 보여줄 때 쓴다. 0이면 아직 정하지 않은 상태다.
+    var targetBudget = 0
 
     private enum CodingKeys: String, CodingKey {
         case hasCompletedOnboarding
@@ -341,6 +343,7 @@ struct AppState: Codable {
         case appliedPurchaseSignatures
         case preferences
         case shoppingEvents
+        case targetBudget
     }
 
     init() {}
@@ -361,6 +364,7 @@ struct AppState: Codable {
         appliedPurchaseSignatures = try container.decodeIfPresent([String].self, forKey: .appliedPurchaseSignatures) ?? []
         preferences = try container.decodeIfPresent(AppPreferences.self, forKey: .preferences) ?? AppPreferences()
         shoppingEvents = try container.decodeIfPresent([ShoppingEvent].self, forKey: .shoppingEvents) ?? []
+        targetBudget = try container.decodeIfPresent(Int.self, forKey: .targetBudget) ?? 0
     }
 
     func encode(to encoder: Encoder) throws {
@@ -379,6 +383,7 @@ struct AppState: Codable {
         try container.encode(appliedPurchaseSignatures, forKey: .appliedPurchaseSignatures)
         try container.encode(preferences, forKey: .preferences)
         try container.encode(shoppingEvents, forKey: .shoppingEvents)
+        try container.encode(targetBudget, forKey: .targetBudget)
     }
 }
 

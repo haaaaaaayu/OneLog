@@ -110,10 +110,10 @@ final class OneLogUITests: XCTestCase {
 
         app.buttons["tab.plan"].tap()
         app.buttons["meals.shopping"].tap()
-        XCTAssertTrue(app.navigationBars["장보기"].waitForExistence(timeout: 5))
-        // 확정한 식단의 재료가 실제 수량과 함께 올라와야 한다.
-        let quantityRow = app.staticTexts.matching(NSPredicate(format: "label CONTAINS '필요'")).firstMatch
-        XCTAssertTrue(quantityRow.waitForExistence(timeout: 5), "장보기 목록에 필요량이 없습니다")
+        XCTAssertTrue(app.staticTexts["이번 식단에 필요한 재료"].waitForExistence(timeout: 5))
+        // 확정한 식단의 재료가 판매 단위와 함께 올라와야 한다.
+        let itemRow = app.buttons.matching(NSPredicate(format: "label CONTAINS '개' OR label CONTAINS '판매 단위 확인 필요'")).firstMatch
+        XCTAssertTrue(itemRow.waitForExistence(timeout: 5), "장보기 목록에 품목이 없습니다")
     }
 
     /// F26 진입점. 피그마 탭에는 나눔이 따로 있지만 장보기에서도 이어갈 수 있어야 한다.
@@ -188,21 +188,24 @@ final class OneLogUITests: XCTestCase {
 
         XCTAssertTrue(app.buttons["tab.plan"].waitForExistence(timeout: 5))
         app.buttons["tab.plan"].tap()
-        XCTAssertTrue(app.navigationBars["내 식사"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["식단관리"].waitForExistence(timeout: 5))
         // 확정한 식단이 실제로 담겼는지 본다.
-        XCTAssertFalse(app.staticTexts["아직 계획한 식사가 없어요"].exists)
+        XCTAssertFalse(app.staticTexts["아직 계획한 식단이 없어요"].exists)
+        XCTAssertTrue(app.staticTexts["오늘 먹을 식단"].exists || app.staticTexts["다음 식단"].exists)
     }
 
     func testP0ExecutionTabsAreReachable() {
-        let app = launchApp()
+        // 장보기·냉장고는 확정한 식단에서 이어지는 화면이라 식단부터 만든다.
+        let app = launchApp(resetState: true)
+        createPlan(app)
 
         app.buttons["tab.plan"].tap()
         app.buttons["meals.shopping"].tap()
-        XCTAssertTrue(app.navigationBars["장보기"].waitForExistence(timeout: 5))
-        app.navigationBars["장보기"].buttons.firstMatch.tap()
+        XCTAssertTrue(app.staticTexts["장보기 리스트"].waitForExistence(timeout: 5))
 
-        XCTAssertTrue(app.buttons["meals.fridge"].waitForExistence(timeout: 5))
-        app.buttons["meals.fridge"].tap()
+        // 냉장고는 장보기에서 이어간다(시안 `식단 관리 2`에 별도 진입점이 없다).
+        XCTAssertTrue(app.buttons["shopping.fridge"].waitForExistence(timeout: 5))
+        app.buttons["shopping.fridge"].tap()
         XCTAssertTrue(app.navigationBars["냉장고"].waitForExistence(timeout: 5))
 
         // 레시피 탭은 피그마 헤더를 쓰므로 내비게이션 바 대신 화면 요소로 확인한다.

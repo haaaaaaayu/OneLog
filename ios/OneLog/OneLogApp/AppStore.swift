@@ -329,9 +329,11 @@ final class AppStore: ObservableObject {
     }
 
     @discardableResult
-    func applyPlan(_ option: MealPlanOption) -> Int {
+    func applyPlan(_ option: MealPlanOption, targetBudget: Int = 0) -> Int {
         var added = 0
         update { state in
+            // 식단관리 화면이 남은 예산을 보여주려면 확정 시점의 목표 예산이 필요하다.
+            if targetBudget > 0 { state.targetBudget = targetBudget }
             for draft in option.drafts {
                 let duplicate = state.plannedMeals.contains { $0.recipeID == draft.recipeID && $0.date == draft.date && $0.mealSlot == draft.mealSlot && $0.status == .planned }
                 guard !duplicate else { continue }
