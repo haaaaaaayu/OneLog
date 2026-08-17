@@ -37,6 +37,13 @@ extension View {
     func oneLogCardShadow() -> some View {
         shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 4)
     }
+
+    /// 피그마 line-height를 그대로 재현한다. 시스템 폰트 기본 행간과의 차이를 행간과 위아래 여백에 절반씩 나눠 넣어
+    /// 한 줄이든 여러 줄이든 블록 높이가 `줄 수 × lineHeight`가 되게 한다.
+    func figmaLineHeight(_ lineHeight: CGFloat, size: CGFloat, weight: UIFont.Weight = .regular) -> some View {
+        let delta = lineHeight - FigmaFont.uiFont(size: size, weight: weight).lineHeight
+        return lineSpacing(delta).padding(.vertical, delta / 2)
+    }
 }
 
 struct OneLogCardModifier: ViewModifier {
@@ -67,7 +74,7 @@ struct FigmaPrimaryButton: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 16, weight: .bold))
+                .figmaText(16, .bold)
                 .foregroundStyle(Color.oneLogInk)
                 .frame(maxWidth: .infinity)
                 .frame(height: 50)
@@ -92,19 +99,21 @@ struct FigmaChip: View {
     let isSelected: Bool
     var accent: Accent = .yellow
     var idleBorder: Color = Color(hex: 0xDFD3B6)
+    /// 피그마 chip 높이. 온보딩은 36(368:25), 마이페이지 시트는 38.
+    var height: CGFloat = 36
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 13, weight: isSelected ? .bold : .medium))
+                .figmaText(13, isSelected ? .bold : .medium)
                 .foregroundStyle(isSelected ? accent.foreground : Color.oneLogBody)
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, 6)
-                .padding(.vertical, 9)
+                .frame(height: height)
                 .background(isSelected ? accent.background : .white, in: Capsule())
                 .overlay {
-                    Capsule().stroke(isSelected ? accent.border : idleBorder, lineWidth: isSelected ? 1.5 : 1)
+                    Capsule().strokeBorder(isSelected ? accent.border : idleBorder, lineWidth: isSelected ? 1.5 : 1)
                 }
         }
         .buttonStyle(.plain)
@@ -119,7 +128,7 @@ struct FigmaField<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text(label)
-                .font(.system(size: 13, weight: .bold))
+                .figmaText(13, .bold, lineHeight: 20)
                 .foregroundStyle(Color.oneLogInk)
             content
         }
@@ -133,7 +142,7 @@ struct FigmaTextInput: View {
 
     var body: some View {
         TextField("", text: $text, prompt: Text(placeholder).foregroundColor(Color.oneLogFaint))
-            .font(.system(size: 14))
+            .font(.figma(14))
             .foregroundStyle(Color.oneLogInk)
             .keyboardType(keyboard)
             .padding(.horizontal, 16)
@@ -141,8 +150,66 @@ struct FigmaTextInput: View {
             .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color(hex: 0xDFD3B6), lineWidth: 1)
+                    .strokeBorder(Color(hex: 0xDFD3B6), lineWidth: 1)
             }
+    }
+}
+
+/// 피그마 `Input / 거주지`(445:49 미인증 / 442:46 인증완료). 탭하면 동네를 다시 인증한다.
+struct FigmaNeighborhoodField: View {
+    let neighborhood: String
+    let action: () -> Void
+
+    private var isVerified: Bool { !neighborhood.isEmpty }
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button(action: action) {
+                HStack(spacing: 8) {
+                    Image("IconPin")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+
+                    Text(isVerified ? neighborhood : "동네 인증하기")
+                        .figmaText(15, isVerified ? .medium : .bold)
+                        .foregroundStyle(Color.oneLogInk)
+                        .lineLimit(1)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if isVerified {
+                        HStack(spacing: 4) {
+                            Text("✓")
+                            Text("인증 완료")
+                        }
+                        .font(.figma(11, .bold))
+                        .foregroundStyle(Color.oneLogSuccess)
+                        .padding(.leading, 9)
+                        .padding(.trailing, 10)
+                        .padding(.vertical, 5)
+                        .background(Color.oneLogSuccessBackground, in: Capsule())
+                    } else {
+                        Text("›")
+                            .figmaText(18, .bold)
+                            .foregroundStyle(Color.oneLogFaint)
+                    }
+                }
+                .padding(.leading, 14)
+                .padding(.trailing, isVerified ? 10 : 14)
+                .frame(height: 52)
+                .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Color(hex: 0xE5DECC), lineWidth: 1)
+                }
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("profile.neighborhood")
+
+            Text(isVerified ? "현재 위치로 인증된 동네예요 · 탭해서 다시 인증" : "주소 검색 후, 현재 위치로 동네를 인증해요")
+                .figmaText(12, .medium)
+                .foregroundStyle(Color.oneLogFaint)
+        }
     }
 }
 
@@ -174,23 +241,25 @@ struct FigmaStepHeader: View {
                 HStack {
                     Button(action: onBack) {
                         Text("‹")
-                            .font(.system(size: 30))
+                            .figmaText(30)
                             .foregroundStyle(Color.oneLogInk)
                             .frame(width: 30, height: 36, alignment: .leading)
                     }
                     .accessibilityLabel("뒤로")
                     Spacer()
                     Text("\(step) / \(total)")
-                        .font(.system(size: 12, weight: .medium))
+                        .figmaText(12, .medium, lineHeight: 18)
                         .foregroundStyle(Color(hex: 0x574F40))
                 }
             }
             .frame(height: 36)
-            .padding(.top, 11)
+            .padding(.top, 1)
 
             FigmaProgressSegments(step: step, total: total)
                 .padding(.top, 10)
         }
+        // 피그마는 헤더/프로그레스만 오른쪽 34pt를 비운다(본문은 24pt). 바깥에서 준 24pt에 10pt를 더한다.
+        .padding(.trailing, 10)
     }
 }
 
@@ -236,7 +305,7 @@ struct EmptyState: View {
     var body: some View {
         VStack(spacing: 10) {
             Image(systemName: symbol)
-                .font(.system(size: 32, weight: .semibold))
+                .font(.figma(32, .semibold))
                 .foregroundStyle(Color.oneLogGreen)
             Text(title)
                 .font(.headline.weight(.bold))

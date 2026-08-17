@@ -13,6 +13,7 @@ struct OnboardingView: View {
     @State private var availableTools: Set<CookingTool> = Set(CookingTool.selectable)
     @State private var dislikedNames: Set<String> = []
     @State private var allergyNames: Set<String> = []
+    @State private var isVerifyingNeighborhood = false
 
     var body: some View {
         switch step {
@@ -47,8 +48,9 @@ struct OnboardingView: View {
     // MARK: - Google 로그인 (350:1905)
 
     private var loginStep: some View {
+        // 피그마 350:1905는 마스코트를 위, 버튼·약관을 아래에 고정한다. 사이 여백(219pt)만 화면 높이에 따라 줄인다.
         VStack(spacing: 0) {
-            Spacer(minLength: 0)
+            Color.clear.frame(height: 186)
 
             Image("LoginMascot")
                 .resizable()
@@ -58,14 +60,13 @@ struct OnboardingView: View {
                 .clipShape(Circle())
 
             Text("한끼로그를 시작해볼까요?")
-                .font(.system(size: 22, weight: .bold))
+                .figmaText(22, .bold, lineHeight: 31)
                 .foregroundStyle(Color.oneLogBody)
                 .multilineTextAlignment(.center)
-                .padding(.top, 42)
+                .padding(.top, 12.74)
 
             Text("예산에 맞춰 식단부터 장보기,\n남은 재료 활용까지 계획해드려요.")
-                .font(.system(size: 13))
-                .lineSpacing(8)
+                .figmaText(13, lineHeight: 21)
                 .foregroundStyle(Color(hex: 0x6C5F48))
                 .multilineTextAlignment(.center)
                 .padding(.top, 12)
@@ -75,13 +76,13 @@ struct OnboardingView: View {
             if let error = store.accountError {
                 VStack(alignment: .leading, spacing: 10) {
                     Text(error)
-                        .font(.system(size: 12))
+                        .figmaText(12)
                         .foregroundStyle(Color(hex: 0x9E2626))
                     Button("이 기기에만 저장하고 시작하기") {
                         store.useDeviceOnlyAccount()
                         step = 2
                     }
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.figma(13, .bold))
                     .foregroundStyle(Color.oneLogInk)
                     .accessibilityIdentifier("onboarding.deviceOnly")
                 }
@@ -93,7 +94,7 @@ struct OnboardingView: View {
 
             googleButton
             Text("계속하면 이용약관 및 개인정보처리방침에 동의하게 됩니다.")
-                .font(.system(size: 10))
+                .figmaText(10, lineHeight: 16)
                 .foregroundStyle(Color(hex: 0x61594A))
                 .multilineTextAlignment(.center)
                 .padding(.top, 17)
@@ -109,7 +110,7 @@ struct OnboardingView: View {
 
     private var googleButton: some View {
         Button {
-            store.signInWithGoogle()
+            Task { await store.signInWithGoogle() }
         } label: {
             HStack(spacing: 10) {
                 Image("IconGoogle")
@@ -117,7 +118,7 @@ struct OnboardingView: View {
                     .scaledToFit()
                     .frame(width: 20, height: 20)
                 Text("Google 계정으로 시작하기")
-                    .font(.system(size: 15, weight: .medium))
+                    .figmaText(15, .medium, lineHeight: 22)
                     .foregroundStyle(Color.oneLogInk)
             }
             .frame(maxWidth: .infinity)
@@ -125,7 +126,7 @@ struct OnboardingView: View {
             .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color(hex: 0xE0C785), lineWidth: 1)
+                    .strokeBorder(Color(hex: 0xE0C785), lineWidth: 1)
             }
             .shadow(color: Color(red: 41 / 255, green: 31 / 255, blue: 10 / 255).opacity(0.1), radius: 4, y: 3)
         }
@@ -158,8 +159,7 @@ struct OnboardingView: View {
                         .accessibilityIdentifier("profile.birthDate")
                 }
                 FigmaField(label: "거주지") {
-                    FigmaTextInput(placeholder: "동네를 검색해 주세요", text: $neighborhood)
-                        .accessibilityIdentifier("profile.neighborhood")
+                    FigmaNeighborhoodField(neighborhood: neighborhood) { isVerifyingNeighborhood = true }
                 }
                 FigmaField(label: "요리 숙련도") {
                     HStack(spacing: 8) {
@@ -181,6 +181,9 @@ struct OnboardingView: View {
                 }
             }
         }
+        .sheet(isPresented: $isVerifyingNeighborhood) {
+            NeighborhoodSheet(neighborhood: $neighborhood)
+        }
     }
 
     // MARK: - 2. 조리도구 (350:2304)
@@ -199,16 +202,16 @@ struct OnboardingView: View {
         ) {
             VStack(alignment: .leading, spacing: 0) {
                 Text("어떤 조리도구가 있나요?")
-                    .font(.system(size: 24, weight: .bold))
+                    .figmaText(24, .bold, lineHeight: 34)
                     .foregroundStyle(Color.oneLogInk)
                 Text("선택한 도구로 만들 수 있는 레시피만 추천해요.")
-                    .font(.system(size: 13))
+                    .figmaText(13, lineHeight: 21)
                     .foregroundStyle(Color(hex: 0x574F40))
                     .padding(.top, 8)
 
                 HStack(spacing: 0) {
                     Text("\(availableTools.intersection(CookingTool.selectable).count)개 선택됨")
-                        .font(.system(size: 12, weight: .medium))
+                        .figmaText(12, .medium, lineHeight: 18)
                         .foregroundStyle(Color(hex: 0x574F40))
                     Spacer(minLength: 8)
                     Button {
@@ -216,11 +219,11 @@ struct OnboardingView: View {
                         availableTools = availableTools.isSuperset(of: all) ? [] : all
                     } label: {
                         Text("전체 선택")
-                            .font(.system(size: 12, weight: .bold))
+                            .figmaText(12, .bold, lineHeight: 18)
                             .foregroundStyle(Color.oneLogInk)
                     }
                 }
-                .padding(.top, 26)
+                .padding(.top, 23)
 
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                     ForEach(CookingTool.selectable) { tool in
@@ -244,6 +247,7 @@ struct OnboardingView: View {
         stepScaffold(
             step: 3,
             primaryTitle: "한끼로그 시작하기",
+            contentTop: 25, // 366:86 본문은 y=120 (기본정보 123보다 3pt 위)
             onBack: { step = 3 },
             onPrimary: {
                 store.setDislikedIngredientNames(dislikedNames, notify: false)
@@ -262,10 +266,10 @@ struct OnboardingView: View {
     private func header(title: String, subtitle: String) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(title)
-                .font(.system(size: 24, weight: .bold))
+                .figmaText(24, .bold, lineHeight: 34)
                 .foregroundStyle(Color.oneLogInk)
             Text(subtitle)
-                .font(.system(size: 13))
+                .figmaText(13, lineHeight: 21)
                 .foregroundStyle(Color(hex: 0x574F40))
         }
     }
@@ -273,6 +277,7 @@ struct OnboardingView: View {
     private func stepScaffold<Content: View>(
         step current: Int,
         primaryTitle: String,
+        contentTop: CGFloat = 28,
         onBack: @escaping () -> Void,
         onPrimary: @escaping () -> Void,
         skipIdentifier: String,
@@ -285,14 +290,14 @@ struct OnboardingView: View {
             ScrollView(showsIndicators: false) {
                 content()
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 28)
+                    .padding(.top, contentTop)
                     .padding(.bottom, 24)
             }
 
             VStack(spacing: 19) {
                 FigmaPrimaryButton(title: primaryTitle, action: onPrimary)
                 Button("나중에 설정할게요", action: onSkip)
-                    .font(.system(size: 12))
+                    .font(.figma(12))
                     .foregroundStyle(Color(hex: 0x6C5F48))
                     .accessibilityIdentifier(skipIdentifier)
             }
@@ -301,6 +306,33 @@ struct OnboardingView: View {
         .padding(.horizontal, 24)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
+    }
+}
+
+/// 거주지 행(445:49)을 탭하면 뜨는 동네 입력 시트. 입력값이 채워지면 `인증 완료` 상태가 된다.
+/// ponytail: 실제 GPS 인증 없이 입력만 받는다. CoreLocation 붙일 때 여기만 갈아끼우면 된다.
+private struct NeighborhoodSheet: View {
+    @Binding var neighborhood: String
+    @Environment(\.dismiss) private var dismiss
+    @State private var draft = ""
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text("동네 인증")
+                .figmaText(18, .bold)
+                .foregroundStyle(Color.oneLogInk)
+            FigmaTextInput(placeholder: "동네를 검색해 주세요", text: $draft)
+                .accessibilityIdentifier("profile.neighborhoodInput")
+            Spacer(minLength: 0)
+            FigmaPrimaryButton(title: "인증하기", isEnabled: !draft.trimmingCharacters(in: .whitespaces).isEmpty) {
+                neighborhood = draft.trimmingCharacters(in: .whitespaces)
+                dismiss()
+            }
+        }
+        .padding(24)
+        .background(.white)
+        .presentationDetents([.height(260)])
+        .onAppear { draft = neighborhood }
     }
 }
 
@@ -329,31 +361,31 @@ private struct ToolCard: View {
                 .foregroundStyle(Color.oneLogBody)
                 .frame(width: 42, height: 42)
                 .background(Color.oneLogPaleGreen, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .offset(x: 12, y: 12)
+                .offset(x: 14, y: 14)
 
                 Text(tool.rawValue)
-                    .font(.system(size: 12, weight: .medium))
+                    .figmaText(12, .medium)
                     .foregroundStyle(Color.oneLogBody)
-                    .offset(x: 12, y: 60)
+                    .offset(x: 14, y: 62)
 
                 if isSelected {
                     ZStack {
                         Circle().fill(Color.oneLogBrandDeep)
                         Text("✓")
-                            .font(.system(size: 12, weight: .bold))
+                            .figmaText(12, .bold)
                             .foregroundStyle(Color.oneLogBody)
                     }
                     .frame(width: 22, height: 22)
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing, 16)
-                    .offset(y: 12)
+                    .padding(.trailing, 14)
+                    .offset(y: 14)
                 }
             }
             .frame(height: 92)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(isSelected ? Color.oneLogBrandDeep : Color(hex: 0xECEBEB), lineWidth: isSelected ? 2 : 1)
+                    .strokeBorder(isSelected ? Color.oneLogBrandDeep : Color(hex: 0xECEBEB), lineWidth: isSelected ? 2 : 1)
             }
         }
         .buttonStyle(.plain)
@@ -381,10 +413,10 @@ struct TastePicker: View {
         VStack(alignment: .leading, spacing: 16) {
             VStack(alignment: .leading, spacing: 8) {
                 Text("빼고 싶은 재료가 있나요?")
-                    .font(.system(size: 24, weight: .bold))
+                    .figmaText(24, .bold, lineHeight: 34)
                     .foregroundStyle(Color.oneLogInk)
                 Text(isAllergyTab ? "알레르기·못 먹는 재료는 레시피에서 완전히 제외됩니다." : "고른 재료가 들어간 레시피는 추천에서 빼드릴게요.")
-                    .font(.system(size: 13))
+                    .figmaText(13, lineHeight: 21)
                     .foregroundStyle(Color(hex: 0x574F40))
             }
 
@@ -396,14 +428,13 @@ struct TastePicker: View {
                         FigmaChip(title: name, isSelected: isSelected(name), accent: accent, idleBorder: Color(hex: 0xE8E0D1)) {
                             toggle(name)
                         }
-                        .frame(height: 36)
                     }
                 }
 
                 customInputRow
 
                 Text(isAllergyTab ? "안 좋아하는 재료는 위 탭에서 따로 골라주세요." : "알레르기·못 먹는 재료는 위 탭에서 따로 골라주세요.")
-                    .font(.system(size: 12))
+                    .figmaText(12, lineHeight: 18)
                     .foregroundStyle(Color.oneLogFaint)
             }
         }
@@ -427,7 +458,7 @@ struct TastePicker: View {
                         .frame(width: 7, height: 7)
                 }
                 Text(title)
-                    .font(.system(size: 13, weight: isActive ? .bold : .medium))
+                    .figmaText(13, isActive ? .bold : .medium)
                     .foregroundStyle(isActive ? Color.oneLogInk : Color.oneLogFaint)
             }
             .frame(maxWidth: .infinity)
@@ -446,10 +477,10 @@ struct TastePicker: View {
     private var customInputRow: some View {
         HStack(spacing: 8) {
             Text("＋")
-                .font(.system(size: 16))
+                .figmaText(16)
                 .foregroundStyle(Color.oneLogFaint)
             TextField("", text: $customInput, prompt: Text("직접 입력하기").foregroundColor(Color.oneLogFaint))
-                .font(.system(size: 14))
+                .font(.figma(14))
                 .foregroundStyle(Color.oneLogInk)
                 .accessibilityIdentifier("taste.customInput")
             Button {
@@ -459,7 +490,7 @@ struct TastePicker: View {
                 customInput = ""
             } label: {
                 Text("추가")
-                    .font(.system(size: 13, weight: .bold))
+                    .figmaText(13, .bold)
                     .foregroundStyle(isAllergyTab ? Color(hex: 0x9E2626) : Color.oneLogBody)
                     .padding(.horizontal, 14)
                     .padding(.vertical, 7)
@@ -473,7 +504,7 @@ struct TastePicker: View {
         .background(.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                .stroke(Color(hex: 0xE8E0D1), lineWidth: 1)
+                .strokeBorder(Color(hex: 0xE8E0D1), lineWidth: 1)
         }
     }
 

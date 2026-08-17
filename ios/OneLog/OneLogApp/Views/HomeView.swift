@@ -20,25 +20,29 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                hero
-                statsCard
-                    .padding(.horizontal, 20)
-                    .padding(.top, -6)
-                todayHeader
-                    .padding(.horizontal, 20)
-                    .padding(.top, 20)
-                mealBand
-                    .padding(.top, 5)
-                leftoverCard
-                    .padding(.horizontal, 20)
-                    .padding(.top, 7)
-                Color.clear.frame(height: 24)
+        // 히어로는 상태바 뒤까지 노란색을 깔되, 내용은 실제 safe area 아래로 내린다.
+        // 시안은 상태바를 34pt로 그렸는데 iPhone 16/17은 59pt라, 그대로 두면 워드마크가 상태바에 물린다.
+        GeometryReader { proxy in
+            ScrollView {
+                VStack(spacing: 0) {
+                    hero(topInset: proxy.safeAreaInsets.top)
+                    statsCard
+                        .padding(.horizontal, 20)
+                        .padding(.top, -6)
+                    todayHeader
+                        .padding(.horizontal, 20)
+                        .padding(.top, 20)
+                    mealBand
+                        .padding(.top, 5)
+                    leftoverCard
+                        .padding(.horizontal, 20)
+                        .padding(.top, 7)
+                    Color.clear.frame(height: 24)
+                }
             }
+            .background(Color.oneLogCream)
+            .ignoresSafeArea(edges: .top)
         }
-        .background(Color.oneLogCream)
-        .ignoresSafeArea(edges: .top)
         .sheet(isPresented: $showingPlan) {
             NavigationStack { PlanView().environmentObject(store) }
         }
@@ -52,28 +56,32 @@ struct HomeView: View {
 
     // MARK: - 히어로 (383:239)
 
-    private var hero: some View {
-        ZStack(alignment: .topLeading) {
+    /// 시안 383:239. 좌표는 상태바(34pt) 아래 기준으로 다시 잡고, `topInset`으로 실기기 safe area에 맞춘다.
+    private func hero(topInset: CGFloat) -> some View {
+        let y: (CGFloat) -> CGFloat = { topInset + $0 - 34 }
+        return ZStack(alignment: .topLeading) {
             Color.oneLogBrand
 
+            // 시안은 폭 215에 맞춰 늘린 뒤 위에서 168만 보여준다(h 135.12%).
             Image("HomeMascot")
                 .resizable()
-                .scaledToFill()
-                .frame(width: 215, height: 168)
+                .scaledToFit()
+                .frame(width: 215)
+                .frame(width: 215, height: 168, alignment: .top)
                 .clipped()
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .offset(x: 23, y: 100)
+                .offset(x: 23, y: y(100))
 
             Image("BrandWordmark")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 93, height: 33)
-                .offset(x: 16, y: 47)
+                .offset(x: 16, y: y(47))
 
             Text("내 취향 한끼부터, 남은 재료까지")
-                .font(.system(size: 7))
+                .figmaText(7)
                 .foregroundStyle(Color.oneLogMuted)
-                .offset(x: 20, y: 76)
+                .offset(x: 20, y: y(76))
 
             Button {
                 showingMyPage = true
@@ -87,35 +95,35 @@ struct HomeView: View {
             }
             .frame(maxWidth: .infinity, alignment: .trailing)
             .padding(.trailing, 19)
-            .offset(y: 47)
+            .offset(y: y(47))
             .accessibilityLabel("마이페이지")
 
-            (Text(nickname + "님").font(.system(size: 24, weight: .bold))
-                + Text(", ").font(.system(size: 20, weight: .bold))
-                + Text("안녕하세요.").font(.system(size: 20, weight: .medium)))
+            (Text(nickname + "님").font(.figma(24, .bold))
+                + Text(", ").font(.figma(20, .bold))
+                + Text("안녕하세요.").font(.figma(20, .medium)))
                 .foregroundStyle(Color.oneLogInk)
-                .lineSpacing(4)
+                .figmaLineHeight(30, size: 24, weight: .bold) // 383:248
                 .frame(width: 222, alignment: .leading)
-                .offset(x: 20, y: 122)
+                .offset(x: 20, y: y(122))
 
             Text(heroSubtitle)
-                .font(.system(size: 10))
+                .figmaText(10)
                 .foregroundStyle(Color(hex: 0x403B2E))
                 .frame(width: 220, alignment: .leading)
-                .offset(x: 20, y: 162)
+                .offset(x: 20, y: y(162))
 
             Button {
                 if todaysMeals.isEmpty { showingPlan = true } else { selectedTab = 2 }
             } label: {
                 Text(todaysMeals.isEmpty ? "새 식단 만들기" : "요리하러 가기")
-                    .font(.system(size: 15, weight: .bold))
+                    .figmaText(15, .bold)
                     .foregroundStyle(.white)
                     .frame(width: 199, height: 48)
                     .background(Color.oneLogInk, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
             }
-            .offset(x: 16, y: 195)
+            .offset(x: 16, y: y(195))
         }
-        .frame(height: 272)
+        .frame(height: topInset + 238) // 시안 272 = 상태바 34 + 내용 238
         .clipped()
     }
 
@@ -146,13 +154,13 @@ struct HomeView: View {
 
     private var statsCard: some View {
         HStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text("이번 달 한끼로그로")
-                    .font(.system(size: 13, weight: .medium))
+                    .figmaText(13, .medium, lineHeight: 16)
                     .foregroundStyle(Color.oneLogMuted)
-                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                HStack(alignment: .firstTextBaseline, spacing: 14) {
                     Text(won(store.monthlyConfirmedSavings))
-                        .font(.system(size: 29, weight: .bold))
+                        .figmaText(29, .bold)
                         .foregroundStyle(Color.oneLogInk)
                         .background(alignment: .bottom) {
                             Capsule()
@@ -162,7 +170,7 @@ struct HomeView: View {
                                 .offset(y: -2)
                         }
                     Text("절약했어요")
-                        .font(.system(size: 16, weight: .bold))
+                        .figmaText(16, .bold)
                         .foregroundStyle(Color.oneLogInk)
                 }
             }
@@ -172,10 +180,10 @@ struct HomeView: View {
                 .frame(width: 1, height: 34)
             VStack(spacing: 5) {
                 Text("\(store.cookedMealsThisMonth)끼")
-                    .font(.system(size: 17, weight: .bold))
+                    .figmaText(17, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 Text("요리 완료")
-                    .font(.system(size: 11, weight: .medium))
+                    .figmaText(11, .medium)
                     .foregroundStyle(Color.oneLogFaint)
             }
             .frame(width: 84)
@@ -190,15 +198,15 @@ struct HomeView: View {
 
     private var todayHeader: some View {
         HStack(spacing: 0) {
-            (Text(nickname + "님").font(.system(size: 16, weight: .bold))
-                + Text("의 오늘 식단").font(.system(size: 16, weight: .medium)))
+            (Text(nickname + "님").font(.figma(16, .bold))
+                + Text("의 오늘 식단").font(.figma(16, .medium)))
                 .foregroundStyle(Color.oneLogInk)
             Spacer(minLength: 8)
             Button {
                 selectedTab = 2
             } label: {
                 Text("전체 보기 ›")
-                    .font(.system(size: 13, weight: .medium))
+                    .figmaText(13, .medium)
                     .foregroundStyle(Color.oneLogFaint)
             }
         }
@@ -210,8 +218,8 @@ struct HomeView: View {
             Color.oneLogBand
             if todaysMeals.isEmpty {
                 Text("아직 식단을 계획하지 않았어요!")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(Color.oneLogFaint)
+                    .figmaText(15, .medium) // 384:14
+                    .foregroundStyle(Color(hex: 0xB3B3B3))
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
@@ -232,21 +240,21 @@ struct HomeView: View {
         VStack(alignment: .leading, spacing: 8) {
             HStack(spacing: 0) {
                 Text("남은 재료")
-                    .font(.system(size: 15, weight: .bold))
+                    .figmaText(15, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 Spacer(minLength: 8)
                 Button {
                     showingFridge = true
                 } label: {
                     Text("전체 보기 ›")
-                        .font(.system(size: 12, weight: .medium))
+                        .figmaText(12, .medium)
                         .foregroundStyle(Color.oneLogFaint)
                 }
             }
 
             if store.state.inventory.isEmpty {
                 Text("아직 기록한 재료가 없어요. 냉장고에서 남은 재료를 적어 주세요.")
-                    .font(.system(size: 13, weight: .medium))
+                    .figmaText(13, .medium)
                     .foregroundStyle(Color.oneLogFaint)
                     .padding(.vertical, 5)
             } else {
@@ -257,11 +265,11 @@ struct HomeView: View {
                         }
                         HStack(spacing: 10) {
                             Text(ingredient(for: item.ingredientID)?.name ?? "재료")
-                                .font(.system(size: 14, weight: .medium))
+                                .figmaText(14, .medium)
                                 .foregroundStyle(Color.oneLogBody)
                             Spacer(minLength: 10)
                             Text(item.quantityStatus == .unknown ? "수량 미상" : formatQuantity(item.quantity, unit: item.unit))
-                                .font(.system(size: 13, weight: .medium))
+                                .figmaText(13, .medium)
                                 .foregroundStyle(Color.oneLogFaint)
                         }
                         .padding(.vertical, 5)
@@ -276,7 +284,7 @@ struct HomeView: View {
                     Text("레시피 보러가기")
                     Text("→")
                 }
-                .font(.system(size: 14, weight: .bold))
+                .font(.figma(14, .bold))
                 .foregroundStyle(Color.oneLogInk)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 10)
@@ -313,7 +321,7 @@ private struct MealCard: View {
                     } else {
                         // 레시피 대표 이미지가 없으면 시드 데이터의 이모지를 쓴다.
                         Text(recipeValue?.symbolName ?? "🍚")
-                            .font(.system(size: 40))
+                            .figmaText(40)
                     }
                 }
 
@@ -340,16 +348,17 @@ private struct MealCard: View {
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(recipeValue?.title ?? "메뉴")
-                    .font(.system(size: 13, weight: .bold))
+                    .figmaText(13, .bold, lineHeight: 18) // 383:348
                     .foregroundStyle(.white)
                     .lineLimit(2)
+                    .frame(width: 130, alignment: .leading)
                 Text("재료 \(recipeValue?.ingredients.count ?? 0)개 · \(recipeValue?.cookTimeText ?? "조리시간 미확인")")
-                    .font(.system(size: 11))
+                    .figmaText(11)
                     .foregroundStyle(.white.opacity(0.85))
                     .lineLimit(1)
             }
             .padding(.horizontal, 12)
-            .padding(.bottom, 13)
+            .padding(.bottom, 12)
             .frame(width: 150, height: 153, alignment: .bottomLeading)
         }
         .frame(width: 150, height: 153)
@@ -359,7 +368,7 @@ private struct MealCard: View {
 
     private func pill(_ text: String, foreground: Color, background: Color, border: Color?) -> some View {
         Text(text)
-            .font(.system(size: 10, weight: .bold))
+            .figmaText(10, .bold)
             .foregroundStyle(foreground)
             .padding(.horizontal, 8)
             .padding(.vertical, 4)

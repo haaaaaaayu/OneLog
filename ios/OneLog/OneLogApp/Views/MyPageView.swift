@@ -33,7 +33,7 @@ struct MyPageView: View {
                 savingsGauge
                     .padding(.top, 31)
                 Text("나의 요리 설정")
-                    .font(.system(size: 15, weight: .bold))
+                    .figmaText(15, .bold, lineHeight: 18) // 391:26
                     .foregroundStyle(Color.oneLogInk)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.top, 49)
@@ -57,14 +57,14 @@ struct MyPageView: View {
     private var header: some View {
         ZStack {
             Text("마이페이지")
-                .font(.system(size: 18, weight: .bold))
+                .figmaText(18, .bold)
                 .foregroundStyle(Color(hex: 0x141411))
             HStack {
                 Button {
                     dismiss()
                 } label: {
                     Text("‹")
-                        .font(.system(size: 28, weight: .medium))
+                        .figmaText(28, .medium)
                         .foregroundStyle(Color(hex: 0x141411))
                         .frame(width: 38, height: 38)
                         .background(Color(hex: 0xFFF8DC), in: Circle())
@@ -87,14 +87,14 @@ struct MyPageView: View {
                 .clipShape(Circle())
 
             Text("\(nickname)님")
-                .font(.system(size: 21, weight: .bold))
+                .figmaText(21, .bold, lineHeight: 25) // 386:76
                 .foregroundStyle(Color.oneLogInk)
 
             Button {
                 editingProfile = true
             } label: {
                 Text("내 정보 수정")
-                    .font(.system(size: 13, weight: .bold))
+                    .figmaText(13, .bold, lineHeight: 16) // 386:79 h34 = 9+16+9
                     .foregroundStyle(Color.oneLogInk)
                     .padding(.horizontal, 18)
                     .padding(.vertical, 9)
@@ -112,19 +112,21 @@ struct MyPageView: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 Text("이번 달 아낀 금액")
-                    .font(.system(size: 13, weight: .medium))
+                    .figmaText(13, .medium, lineHeight: 16) // 384:35
                     .foregroundStyle(Color(hex: 0x2F2105))
                 HStack(spacing: 7) {
                     Text("밖에서 사먹는 거 보다")
-                        .font(.system(size: 12, weight: .medium))
+                        .figmaText(12, .medium)
                         .foregroundStyle(Color(hex: 0x574F40))
                         .frame(width: 108, alignment: .leading)
-                    (Text(decimal(store.monthlyConfirmedSavings)).font(.system(size: 26, weight: .bold))
-                        + Text("원").font(.system(size: 18, weight: .bold)))
+                    (Text(decimal(store.monthlyConfirmedSavings)).font(.figma(26, .bold))
+                        + Text("원").font(.figma(18, .bold)))
+                        .figmaLineHeight(31, size: 26, weight: .bold) // 384:37
                         .foregroundStyle(Color.oneLogInk)
                     Text("아꼈어요!")
-                        .font(.system(size: 12, weight: .medium))
+                        .figmaText(12, .medium)
                         .foregroundStyle(Color(hex: 0x574F40))
+                        .frame(width: 49, alignment: .leading) // 391:23
                 }
             }
 
@@ -148,7 +150,7 @@ struct MyPageView: View {
                 }
                 .frame(height: 20)
                 Text("0원")
-                    .font(.system(size: 11, weight: .medium))
+                    .figmaText(11, .medium, lineHeight: 13) // 384:45
                     .foregroundStyle(Color.oneLogFaint)
             }
         }
@@ -221,22 +223,22 @@ struct MyPageView: View {
         Button(action: action) {
             HStack(spacing: 14) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
+                    .font(.figma(20))
                     .foregroundStyle(iconColor)
                     .frame(width: 42, height: 42)
                     .background(iconBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     Text(title)
-                        .font(.system(size: 15, weight: .bold))
+                        .figmaText(15, .bold, lineHeight: 18)
                         .foregroundStyle(Color(hex: 0x141411))
                     Text(value)
-                        .font(.system(size: 11))
+                        .figmaText(11, lineHeight: 13)
                         .foregroundStyle(Color(hex: 0x7A7468))
                         .lineLimit(1)
                 }
                 Spacer(minLength: 8)
                 Text("›")
-                    .font(.system(size: 23, weight: .medium))
+                    .figmaText(23, .medium)
                     .foregroundStyle(Color(hex: 0x9B9488))
             }
             .padding(.horizontal, 17)
@@ -301,14 +303,14 @@ struct ProfileEditView: View {
         VStack(spacing: 0) {
             ZStack {
                 Text("내 정보 수정")
-                    .font(.system(size: 18, weight: .bold))
+                    .figmaText(18, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 HStack {
                     Button {
                         dismiss()
                     } label: {
                         Text("‹")
-                            .font(.system(size: 24))
+                            .figmaText(24)
                             .foregroundStyle(Color.oneLogInk)
                             .frame(width: 38, height: 38)
                             .background(Color(hex: 0xFFF8DC), in: Circle())
@@ -318,7 +320,7 @@ struct ProfileEditView: View {
                 }
             }
             .frame(height: 38)
-            .padding(.top, 6)
+            .padding(.top, 2) // 395:24 뒤로 y46
 
             ScrollView(showsIndicators: false) {
                 VStack(spacing: 20) {
@@ -330,7 +332,7 @@ struct ProfileEditView: View {
                             .background(Color.oneLogPaleGreen, in: Circle())
                             .clipShape(Circle())
                         Text("사진 변경")
-                            .font(.system(size: 12, weight: .bold))
+                            .figmaText(12, .bold)
                             .foregroundStyle(Color.oneLogInk)
                             .padding(.horizontal, 14)
                             .padding(.vertical, 7)
@@ -340,33 +342,39 @@ struct ProfileEditView: View {
 
                     field(label: "닉네임") {
                         TextField("", text: $nickname, prompt: Text("닉네임을 입력해 주세요").foregroundColor(Color.oneLogFaint))
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.figma(15, .medium))
                             .foregroundStyle(Color.oneLogInk)
                             .accessibilityIdentifier("mypage.nickname")
                     }
                     field(label: "생년월일") {
                         TextField("", text: $birthDate, prompt: Text("YYYY . MM . DD").foregroundColor(Color.oneLogFaint))
-                            .font(.system(size: 15, weight: .medium))
+                            .font(.figma(15, .medium))
                             .foregroundStyle(Color.oneLogInk)
                             .keyboardType(.numbersAndPunctuation)
                             .accessibilityIdentifier("mypage.birthDate")
                     }
                     field(label: "거주지") {
-                        TextField("", text: $neighborhood, prompt: Text("동네를 입력해 주세요").foregroundColor(Color.oneLogFaint))
-                            .font(.system(size: 15, weight: .medium))
-                            .foregroundStyle(Color.oneLogInk)
-                            .accessibilityIdentifier("mypage.neighborhood")
+                        // 395:42 — 값 + 오른쪽 `변경 ›`.
+                        HStack(spacing: 8) {
+                            TextField("", text: $neighborhood, prompt: Text("동네를 입력해 주세요").foregroundColor(Color.oneLogFaint))
+                                .font(.figma(15, .medium))
+                                .foregroundStyle(Color.oneLogInk)
+                                .accessibilityIdentifier("mypage.neighborhood")
+                            Text("변경 ›")
+                                .figmaText(13, .medium)
+                                .foregroundStyle(Color.oneLogFaint)
+                        }
                     }
                     field(label: "계정") {
                         HStack(spacing: 8) {
                             Text("G")
-                                .font(.system(size: 12, weight: .bold))
+                                .figmaText(12, .bold)
                                 .foregroundStyle(Color(hex: 0x4285F5))
                                 .frame(width: 22, height: 22)
                                 .background(Color(hex: 0xFAFAFA), in: Circle())
                                 .overlay { Circle().stroke(Color(hex: 0xE5DECC), lineWidth: 1) }
                             Text(accountLabel)
-                                .font(.system(size: 15, weight: .medium))
+                                .figmaText(15, .medium)
                                 .foregroundStyle(Color.oneLogInk)
                                 .lineLimit(1)
                             Spacer(minLength: 8)
@@ -374,14 +382,14 @@ struct ProfileEditView: View {
                                 showingAccount = true
                             } label: {
                                 Text("관리 ›")
-                                    .font(.system(size: 13, weight: .medium))
+                                    .figmaText(13, .medium)
                                     .foregroundStyle(Color.oneLogFaint)
                             }
                             .accessibilityIdentifier("mypage.manageAccount")
                         }
                     }
                 }
-                .padding(.top, 24)
+                .padding(.top, 26) // 395:27 콘텐츠 y110
                 .padding(.bottom, 24)
             }
 
@@ -396,7 +404,7 @@ struct ProfileEditView: View {
                 dismiss()
             } label: {
                 Text("저장하기")
-                    .font(.system(size: 15, weight: .bold))
+                    .figmaText(15, .bold)
                     .foregroundStyle(Color(hex: 0xF5F5F5))
                     .frame(maxWidth: .infinity)
                     .frame(height: 52)
@@ -414,7 +422,7 @@ struct ProfileEditView: View {
         }
         .confirmationDialog("계정", isPresented: $showingAccount, titleVisibility: .visible) {
             if store.state.account == nil || store.state.account?.provider == .deviceOnly {
-                Button("Google 계정 연결하기") { store.signInWithGoogle() }
+                Button("Google 계정 연결하기") { Task { await store.signInWithGoogle() } }
             }
             if store.state.account != nil {
                 Button("계정 연결 해제", role: .destructive) { showingUnlinkConfirm = true }
@@ -448,7 +456,7 @@ struct ProfileEditView: View {
     private func field<Content: View>(label: String, @ViewBuilder content: () -> Content) -> some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(label)
-                .font(.system(size: 13, weight: .bold))
+                .figmaText(13, .bold)
                 .foregroundStyle(Color.oneLogInk)
             content()
                 .padding(.horizontal, 16)
@@ -467,12 +475,14 @@ struct ProfileEditView: View {
 /// 피그마 시트 공통 뼈대: 핸들 + 제목 + ✕ + 내용 + 저장하기.
 private struct SheetScaffold<Content: View>: View {
     let title: String
+    /// 시트 루트 간격. 396:23·38·55는 16, 396:77(불호·알레르기)만 14.
+    var spacing: CGFloat = 16
     let onSave: () -> Void
     @ViewBuilder let content: Content
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: spacing) {
             Capsule()
                 .fill(Color(hex: 0xD9D1C2))
                 .frame(width: 40, height: 4)
@@ -481,14 +491,14 @@ private struct SheetScaffold<Content: View>: View {
 
             HStack {
                 Text(title)
-                    .font(.system(size: 18, weight: .bold))
+                    .figmaText(18, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 Spacer(minLength: 8)
                 Button {
                     dismiss()
                 } label: {
                     Text("✕")
-                        .font(.system(size: 16))
+                        .figmaText(16)
                         .foregroundStyle(Color.oneLogFaint)
                 }
                 .accessibilityLabel("닫기")
@@ -501,7 +511,7 @@ private struct SheetScaffold<Content: View>: View {
                 dismiss()
             } label: {
                 Text("저장하기")
-                    .font(.system(size: 15, weight: .bold))
+                    .figmaText(15, .bold)
                     .foregroundStyle(Color(hex: 0xF5F5F5))
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 15)
@@ -528,10 +538,9 @@ private struct SheetChips<Value: Hashable>: View {
     var body: some View {
         LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
             ForEach(values, id: \.self) { value in
-                FigmaChip(title: title(value), isSelected: isSelected(value), accent: accent, idleBorder: Color(hex: 0xE5DECC)) {
+                FigmaChip(title: title(value), isSelected: isSelected(value), accent: accent, idleBorder: Color(hex: 0xE5DECC), height: 38) {
                     onTap(value)
                 }
-                .frame(height: 38)
             }
         }
     }
@@ -593,7 +602,7 @@ private struct ToolSheet: View {
         } content: {
             VStack(alignment: .leading, spacing: 16) {
                 Text("여러 개 선택할 수 있어요")
-                    .font(.system(size: 12))
+                    .figmaText(12, .medium)
                     .foregroundStyle(Color.oneLogFaint)
                 SheetChips(values: CookingTool.selectable, title: \.rawValue, isSelected: { selection.contains($0) }) { tool in
                     if selection.contains(tool) { selection.remove(tool) } else { selection.insert(tool) }
@@ -618,25 +627,29 @@ private struct TasteSheet: View {
     }
 
     var body: some View {
-        SheetScaffold(title: "불호 음식·알레르기") {
+        SheetScaffold(title: "불호 음식·알레르기", spacing: 14) {
             store.setDislikedIngredientNames(disliked, notify: false)
             store.setAllergyIngredientNames(allergy, notify: false)
         } content: {
             VStack(alignment: .leading, spacing: 14) {
                 Text("안 좋아하는 재료")
-                    .font(.system(size: 13, weight: .bold))
+                    .figmaText(14, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 SheetChips(values: dislikedChips, title: { $0 }, isSelected: { disliked.contains($0) }) { name in
                     if disliked.contains(name) { disliked.remove(name) } else { disliked.insert(name) }
                 }
-                HStack(spacing: 6) {
-                    Image(systemName: "exclamationmark.circle.fill")
-                        .font(.system(size: 13))
-                        .foregroundStyle(Color(hex: 0xCC4242))
+                // 408:42 — 18pt 빨간 원 안에 흰 `!`, 라벨과 8pt 간격, 위 4pt 여백.
+                HStack(spacing: 8) {
+                    Text("!")
+                        .figmaText(12, .bold)
+                        .foregroundStyle(.white)
+                        .frame(width: 18, height: 18)
+                        .background(Color(hex: 0xCC4242), in: Circle())
                     Text("알레르기")
-                        .font(.system(size: 13, weight: .bold))
+                        .figmaText(14, .bold)
                         .foregroundStyle(Color.oneLogInk)
                 }
+                .padding(.top, 4)
                 SheetChips(values: allergyChips, title: { $0 }, isSelected: { allergy.contains($0) }, accent: .red) { name in
                     if allergy.contains(name) { allergy.remove(name) } else { allergy.insert(name) }
                 }

@@ -65,30 +65,34 @@ struct RecipeHomeView: View {
                     .padding(.horizontal, 20)
                     .padding(.top, 14)
 
+                // 391:232 — 제목은 한 줄(h29)이고 채소 그림(109x55)은 오른쪽으로 살짝 잘려나간다.
                 HStack(spacing: 7) {
                     Text("오늘은 어떤 요리를 할까요?")
-                        .font(.system(size: 24, weight: .bold))
+                        .figmaText(24, .bold)
                         .foregroundStyle(Color.oneLogInk)
-                        .frame(width: 273, alignment: .leading)
+                        .fixedSize(horizontal: true, vertical: false)
+                    // 391:230 — 폭 109에 맞춰 늘린 뒤 위에서 55만 보여준다(h 198.18%).
                     Image("HeroVeggies")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 109, height: 55)
+                        .frame(width: 109)
+                        .frame(width: 109, height: 55, alignment: .top)
+                        .clipped()
                 }
+                .frame(height: 55)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 8)
+                .padding(.leading, 7.25)
                 .padding(.top, 2)
 
                 searchBar
                     .padding(.top, 24)
 
                 categories
-                    .padding(.horizontal, 20)
                     .padding(.top, 13)
 
                 resultsHeading
                     .padding(.horizontal, 20)
-                    .padding(.top, 14)
+                    .padding(.top, 11)
 
                 LazyVGrid(columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)], spacing: 12) {
                     ForEach(results.prefix(40)) { recipe in
@@ -100,11 +104,11 @@ struct RecipeHomeView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.top, 13)
+                .padding(.top, 12)
 
                 if results.isEmpty {
                     Text("조건에 맞는 레시피가 없어요. 필터를 바꿔 보세요.")
-                        .font(.system(size: 12))
+                        .figmaText(12)
                         .foregroundStyle(Color.oneLogMuted)
                         .padding(.top, 40)
                 }
@@ -123,7 +127,7 @@ struct RecipeHomeView: View {
                     .scaledToFit()
                     .frame(width: 93, height: 33)
                 Text("내 취향 한끼부터, 남은 재료까지")
-                    .font(.system(size: 7))
+                    .figmaText(7)
                     .foregroundStyle(Color.oneLogMuted)
                     .offset(x: 5, y: 31)
             }
@@ -156,7 +160,7 @@ struct RecipeHomeView: View {
                     .frame(width: 18, height: 18)
                     .foregroundStyle(Color(hex: 0x726D63))
                 TextField("", text: $search, prompt: Text("레시피나 재료를 검색해보세요").foregroundColor(Color(hex: 0x736E63)))
-                    .font(.system(size: 12))
+                    .font(.figma(12))
                     .foregroundStyle(Color.oneLogInk)
                     .accessibilityIdentifier("recipe.search")
             }
@@ -185,43 +189,46 @@ struct RecipeHomeView: View {
         .background(Color.oneLogBrand)
     }
 
+    /// 391:233. 라벨은 좌측 20pt에 맞추고, 칩 줄은 시안(w372)처럼 오른쪽 화면 끝까지 흘려보낸다.
     private var categories: some View {
         VStack(alignment: .leading, spacing: 8) {
-            VStack(alignment: .leading, spacing: 7) {
-                Text("빠르게 찾기")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(Color.oneLogMuted)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(QuickFilter.allCases) { filter in
-                            filterChip(filter.rawValue, isOn: quickFilter == filter, horizontalPadding: 9) {
-                                quickFilter = filter
-                            }
-                        }
+            categoryRow(title: "빠르게 찾기") {
+                ForEach(QuickFilter.allCases) { filter in
+                    filterChip(filter.rawValue, isOn: quickFilter == filter, horizontalPadding: 9) {
+                        quickFilter = filter
                     }
                 }
             }
-            VStack(alignment: .leading, spacing: 7) {
-                Text("종류와 끼니")
-                    .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(Color.oneLogMuted)
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(TypeFilter.allCases) { filter in
-                            filterChip(filter.rawValue, isOn: typeFilter == filter, horizontalPadding: 11) {
-                                typeFilter = typeFilter == filter ? nil : filter
-                            }
-                        }
+            categoryRow(title: "종류와 끼니") {
+                ForEach(TypeFilter.allCases) { filter in
+                    filterChip(filter.rawValue, isOn: typeFilter == filter, horizontalPadding: 11) {
+                        typeFilter = typeFilter == filter ? nil : filter
                     }
                 }
             }
         }
     }
 
+    private func categoryRow<Chips: View>(title: String, @ViewBuilder chips: () -> Chips) -> some View {
+        VStack(alignment: .leading, spacing: 7) {
+            Text(title)
+                .figmaText(10, .medium)
+                .foregroundStyle(Color.oneLogMuted)
+                .padding(.leading, 20)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 6) {
+                    chips()
+                }
+                .padding(.horizontal, 20)
+            }
+        }
+        .frame(height: 48, alignment: .top)
+    }
+
     private func filterChip(_ title: String, isOn: Bool, horizontalPadding: CGFloat, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
-                .font(.system(size: 10, weight: .medium))
+                .figmaText(10, .medium)
                 .foregroundStyle(Color.oneLogInk)
                 .padding(.horizontal, horizontalPadding)
                 .padding(.vertical, 6)
@@ -240,15 +247,15 @@ struct RecipeHomeView: View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 1) {
                 Text("취향을 더 알아볼게요")
-                    .font(.system(size: 17, weight: .bold))
+                    .figmaText(17, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 Text("먹고 싶은 레시피에 하트를 눌러주세요")
-                    .font(.system(size: 10))
+                    .figmaText(10)
                     .foregroundStyle(Color.oneLogMuted)
             }
             Spacer(minLength: 8)
             Text("추천 \(results.count)개")
-                .font(.system(size: 11))
+                .figmaText(11)
                 .foregroundStyle(Color.oneLogMuted)
         }
         .frame(height: 42)
@@ -340,7 +347,7 @@ struct RecipePhoto: View {
                 }
             } else {
                 Text("사진")
-                    .font(.system(size: 11, weight: .bold))
+                    .figmaText(11, .bold)
                     .foregroundStyle(Color(hex: 0xB3B3B3))
             }
         }
@@ -388,10 +395,10 @@ private struct RecipeGridCard: View {
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("\(recipe.mealSlots.first?.rawValue ?? "한 끼") · \(recipeCuisine(recipe))")
-                        .font(.system(size: 10, weight: .bold))
+                        .figmaText(10, .bold)
                         .foregroundStyle(.white.opacity(0.9))
                     Text(recipe.title)
-                        .font(.system(size: 14, weight: .bold))
+                        .figmaText(14, .bold)
                         .foregroundStyle(.white)
                         .lineLimit(1)
                     HStack(spacing: 6) {
@@ -400,12 +407,13 @@ private struct RecipeGridCard: View {
                             .scaledToFit()
                             .frame(width: 7, height: 7)
                         Text("\(recipe.cookTimeText) · 상세 보기 ›")
-                            .font(.system(size: 11))
+                            .figmaText(11)
                             .foregroundStyle(.white.opacity(0.9))
                     }
                 }
                 .padding(.horizontal, 12)
-                .padding(.vertical, 11)
+                .padding(.top, 11)
+                .padding(.bottom, 10)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             }
             .frame(height: 220)
@@ -444,10 +452,10 @@ private struct FavoritesView: View {
                     .accessibilityLabel("뒤로")
                     VStack(alignment: .leading, spacing: 1) {
                         Text("찜한 레시피")
-                            .font(.system(size: 20, weight: .bold))
+                            .figmaText(20, .bold)
                             .foregroundStyle(Color.oneLogInk)
                         Text("내 취향과 나중에 만들고 싶은 한 끼를 모아뒀어요")
-                            .font(.system(size: 11))
+                            .figmaText(11)
                             .foregroundStyle(Color.oneLogMuted)
                     }
                 }
@@ -459,11 +467,11 @@ private struct FavoritesView: View {
 
                 HStack {
                     Text("찜한 레시피")
-                        .font(.system(size: 17, weight: .bold))
+                        .figmaText(17, .bold)
                         .foregroundStyle(Color.oneLogInk)
                     Spacer()
                     Text("\(favorites.count)개")
-                        .font(.system(size: 11))
+                        .figmaText(11)
                         .foregroundStyle(Color.oneLogMuted)
                 }
                 .frame(height: 38)
@@ -471,7 +479,7 @@ private struct FavoritesView: View {
 
                 if favorites.isEmpty {
                     Text("아직 찜한 레시피가 없어요. 레시피 카드의 하트를 눌러보세요.")
-                        .font(.system(size: 12))
+                        .figmaText(12)
                         .foregroundStyle(Color.oneLogMuted)
                         .padding(.vertical, 24)
                 } else {
@@ -497,11 +505,11 @@ private struct FavoritesView: View {
         VStack(spacing: 0) {
             HStack {
                 Text("✦ AI 취향 노트")
-                    .font(.system(size: 12, weight: .bold))
+                    .figmaText(12, .bold)
                     .foregroundStyle(Color(hex: 0x292414))
                 Spacer()
                 Text("찜 \(favorites.count)개 분석 · \(todayLabel)")
-                    .font(.system(size: 10))
+                    .figmaText(10)
                     .foregroundStyle(Color(hex: 0x544A2B).opacity(0.82))
             }
             .padding(.horizontal, 15)
@@ -527,11 +535,11 @@ private struct FavoritesView: View {
 
                 VStack(alignment: .leading, spacing: 10) {
                     Text(noteHeadline)
-                        .font(.system(size: 18, weight: .bold))
+                        .figmaText(18, .bold, lineHeight: 20)
                         .foregroundStyle(Color(hex: 0x14120D))
                         .frame(width: 250, alignment: .leading)
                     Text("다음 식단 추천에 이 취향을 반영할게요")
-                        .font(.system(size: 10))
+                        .figmaText(10)
                         .foregroundStyle(Color(hex: 0x574D36))
                         .frame(width: 250, alignment: .leading)
                 }
@@ -541,7 +549,7 @@ private struct FavoritesView: View {
                 HStack(spacing: 6) {
                     ForEach(noteTags, id: \.self) { tag in
                         Text("# \(tag)")
-                            .font(.system(size: 9))
+                            .figmaText(9)
                             .foregroundStyle(Color(hex: 0x5C4A1F))
                             .padding(.horizontal, 9)
                             .padding(.vertical, 4)
@@ -602,22 +610,23 @@ private struct FavoritesView: View {
                     .frame(width: 78, height: 79)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                VStack(alignment: .leading, spacing: 9) {
+                // 391:615 제목 y27(h23), 391:621 난이도 y52 → 사이 간격 2. 배지 끝 164.8 → 메타 174 → 9.
+                VStack(alignment: .leading, spacing: 2) {
                     Text(item.title)
-                        .font(.system(size: 16, weight: .bold))
+                        .figmaText(16, .bold)
                         .foregroundStyle(Color.oneLogInk)
                         .lineLimit(1)
-                    HStack(spacing: 8) {
+                    HStack(spacing: 9) {
                         if let label = recipeDifficultyLabel(item) {
                             Text(label)
-                                .font(.system(size: 10))
+                                .figmaText(10)
                                 .foregroundStyle(recipeDifficultyColors(item).foreground)
                                 .padding(.horizontal, 8)
                                 .padding(.vertical, 4)
                                 .background(recipeDifficultyColors(item).background, in: Capsule())
                         }
                         Text("\(recipeCuisine(item)) · \(recipeCategory(item)) · \(item.cookTimeText)")
-                            .font(.system(size: 10))
+                            .figmaText(10)
                             .foregroundStyle(Color.oneLogMuted)
                             .lineLimit(1)
                     }
@@ -626,7 +635,7 @@ private struct FavoritesView: View {
                 Spacer(minLength: 4)
 
                 Text("♥")
-                    .font(.system(size: 11, weight: .bold))
+                    .figmaText(11, .bold)
                     .foregroundStyle(Color(hex: 0xE37A1F))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 5)
@@ -656,8 +665,10 @@ struct RecipeDetailView: View {
             if let item = recipeValue {
                 VStack(alignment: .leading, spacing: 0) {
                     header
+                    // 391:824 — 카드는 x23..367(w344), 좌우 여백이 3/6으로 다르다.
                     photoCard(item)
-                        .padding(.horizontal, 3)
+                        .padding(.leading, 3)
+                        .padding(.trailing, 6)
                         .padding(.top, 7)
                     ingredientSection(item)
                         .padding(.top, 13)
@@ -666,11 +677,11 @@ struct RecipeDetailView: View {
                         .frame(height: 1)
                         .padding(.top, 22)
                     Text("조리 순서")
-                        .font(.system(size: 16, weight: .bold))
+                        .figmaText(16, .bold)
                         .foregroundStyle(Color.oneLogInk)
-                        .padding(.top, 10)
+                        .padding(.top, 9)
                     stepSection(item)
-                        .padding(.top, 12)
+                        .padding(.top, 5)
                     Color.clear.frame(height: 24)
                 }
                 .padding(.horizontal, 20)
@@ -701,7 +712,7 @@ struct RecipeDetailView: View {
             }
             .accessibilityLabel("뒤로")
             Text("레시피 상세")
-                .font(.system(size: 20, weight: .bold))
+                .figmaText(20, .bold)
                 .foregroundStyle(Color.oneLogInk)
             Spacer()
         }
@@ -747,23 +758,24 @@ struct RecipeDetailView: View {
             VStack(alignment: .leading, spacing: 5) {
                 if let label = recipeDifficultyLabel(item) {
                     Text(label)
-                        .font(.system(size: 10))
+                        .figmaText(10)
                         .foregroundStyle(recipeDifficultyColors(item).foreground)
                         .padding(.horizontal, 8)
                         .padding(.vertical, 4)
                         .background(recipeDifficultyColors(item).background, in: Capsule())
                 }
                 Text(item.title)
-                    .font(.system(size: 29, weight: .bold))
+                    .figmaText(29, .bold)
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
                 Text("\(item.mealSlots.first?.rawValue ?? "한 끼") · \(recipeCuisine(item)) · \(item.cookTimeText) · \(item.servings)인분")
-                    .font(.system(size: 11))
+                    .figmaText(11)
                     .foregroundStyle(.white.opacity(0.9))
             }
-            .padding(.horizontal, 19)
-            .padding(.bottom, 32)
+            .frame(width: 252, alignment: .leading) // 391:831
+            .padding(.leading, 19)
+            .padding(.bottom, 31)
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
         }
         .frame(height: 293)
@@ -775,34 +787,35 @@ struct RecipeDetailView: View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .firstTextBaseline) {
                 Text("필요한 재료")
-                    .font(.system(size: 16, weight: .bold))
+                    .figmaText(16, .bold)
                     .foregroundStyle(Color.oneLogInk)
                 Spacer()
                 Text("\(item.servings)인분 기준")
-                    .font(.system(size: 10))
+                    .figmaText(10)
                     .foregroundStyle(Color.oneLogMuted)
             }
 
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 14) {
+            // 350:1140~ — 행 간격은 텍스트 top 435/470/505(피치 35)에서 역산한 17.6.
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 17.6) {
                 ForEach(item.ingredients) { line in
                     HStack(spacing: 0) {
                         Circle()
                             .fill(Color.oneLogBrandDeep)
                             .frame(width: 6, height: 6)
                         Text(ingredient(for: line.ingredientID)?.name ?? line.rawName)
-                            .font(.system(size: 12, weight: .medium))
+                            .figmaText(12, .medium)
                             .foregroundStyle(Color.oneLogInk)
                             .padding(.leading, 7)
                             .lineLimit(1)
                         Spacer(minLength: 6)
                         Text(formatQuantity(line.quantity, unit: line.unit))
-                            .font(.system(size: 11))
+                            .figmaText(11)
                             .foregroundStyle(Color.oneLogMuted)
                             .lineLimit(1)
                     }
                 }
             }
-            .padding(.top, 24)
+            .padding(.top, 15)
         }
     }
 
@@ -811,7 +824,7 @@ struct RecipeDetailView: View {
             ForEach(Array(item.steps.enumerated()), id: \.offset) { index, step in
                 HStack(alignment: .top, spacing: 12) {
                     Text("\(index + 1)")
-                        .font(.system(size: 11, weight: .bold))
+                        .figmaText(11, .bold)
                         .foregroundStyle(Color.oneLogInk)
                         .frame(width: 26, height: 26)
                         .background(index == 0 ? Color.oneLogBrandDeep : .white, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
@@ -822,8 +835,7 @@ struct RecipeDetailView: View {
                             }
                         }
                     Text(step)
-                        .font(.system(size: 10))
-                        .lineSpacing(5)
+                        .figmaText(10, lineHeight: 15)
                         .foregroundStyle(Color.oneLogInk)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 6)

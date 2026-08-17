@@ -108,7 +108,7 @@ private struct BottomNavigation: View {
                             .frame(width: 30, height: 30)
                             .background(isActive ? Color.oneLogBrandDeep : .clear, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
                         Text(tab.title)
-                            .font(.system(size: 14, weight: .medium))
+                            .figmaText(14, .medium)
                             .foregroundStyle(isActive ? Color.oneLogInk : Color.oneLogMuted)
                     }
                     .frame(width: 56)
