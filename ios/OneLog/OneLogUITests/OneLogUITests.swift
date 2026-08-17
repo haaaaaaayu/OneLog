@@ -94,6 +94,8 @@ final class OneLogUITests: XCTestCase {
     func testGoogleSignInFailureKeepsUserOnAccountStepWithRetry() {
         let app = XCUIApplication()
         app.launchArguments.append("-uiTestResetState")
+        // 실제 Google 웹 로그인 창은 테스트에서 띄울 수 없다. 실패 경로만 확인한다.
+        app.launchArguments.append("-uiTestGoogleSignInFails")
         app.launch()
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 

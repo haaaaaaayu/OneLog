@@ -56,7 +56,8 @@ struct SharePost: Codable, Identifiable, Hashable {
     var unit: Unit
     /// 사용자가 직접 적은 동네 이름. GPS·위치 인증을 쓰지 않는다(F25 미확정, AGENTS 3절 10항).
     var neighborhood: String
-    /// 만날 시간·장소 메모. F27의 일정 조율은 이 메모와 채팅으로만 한다.
+    /// 예전 버전에서 글에 저장하던 만남 메모. 새 약속은 `meetup/details` 하위 문서에 저장한다.
+    /// 기존 Firestore 문서와의 하위 호환을 위해 남겨 둔다.
     var meetupNote: String
     /// 1인당 나눠 낼 금액. 표시용이며 앱 안에서 송금하지 않는다.
     var pricePerShare: Int?
@@ -85,6 +86,15 @@ struct SharePost: Codable, Identifiable, Hashable {
     func isMember(_ userID: String) -> Bool { userID == authorID || participantIDs.contains(userID) }
 
     var amountText: String { formatQuantity(amount, unit: unit) }
+}
+
+/// 작성자·참여자만 읽고 수정할 수 있는 약속 정보.
+/// 글 목록 문서와 분리해 동네의 다른 사용자는 날짜·장소를 볼 수 없다.
+struct ShareMeetup: Codable, Hashable {
+    var scheduledAt: Date
+    var placeNote: String
+    var updatedBy: String
+    var updatedAt: Date
 }
 
 struct ShareMessage: Codable, Identifiable, Hashable {

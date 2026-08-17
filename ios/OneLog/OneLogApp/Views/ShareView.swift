@@ -257,7 +257,6 @@ private struct SharePostComposer: View {
     @Environment(\.dismiss) private var dismiss
     let draft: ShareDraft
 
-    @State private var meetupNote = ""
     @State private var priceText = ""
     @State private var capacity = 2
     @State private var isSaving = false
@@ -279,9 +278,12 @@ private struct SharePostComposer: View {
                         .font(.caption)
                         .foregroundStyle(Color.oneLogMuted)
                 }
-                Section("만날 시간·장소") {
-                    TextField("예: 평일 저녁 7시 이후, 성수역 2번 출구", text: $meetupNote, axis: .vertical)
-                        .lineLimit(2...4)
+                Section("약속") {
+                    Label("참여자끼리 약속 잡기", systemImage: "calendar.badge.clock")
+                        .font(.subheadline.weight(.bold))
+                    Text("글을 올린 뒤 참여한 사람만 볼 수 있는 약속 카드에서 날짜·시간과 장소를 정해요.")
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
                 }
                 Section("1인당 금액 (선택)") {
                     TextField("예: 1500", text: $priceText)
@@ -304,7 +306,6 @@ private struct SharePostComposer: View {
                             let ok = await shareStore.createPost(
                                 draft: draft,
                                 neighborhood: store.state.profile.neighborhood,
-                                meetupNote: meetupNote,
                                 pricePerShare: Int(priceText.trimmingCharacters(in: .whitespaces)),
                                 capacity: capacity,
                                 nickname: store.state.profile.nickname
@@ -328,9 +329,14 @@ private struct SharePostDetailView: View {
     let postID: String
 
     @State private var messageText = ""
+    @State private var isMeetupEditorPresented = false
 
     private var post: SharePost? { shareStore.posts.first { $0.id == postID } }
     private var userID: String { shareStore.userID ?? "" }
+    private var membershipKey: String {
+        let participantKey = post?.participantIDs.sorted().joined(separator: ",") ?? ""
+        return "\(postID)|\(userID)|\(participantKey)"
+    }
 
     var body: some View {
         Group {
@@ -343,8 +349,16 @@ private struct SharePostDetailView: View {
         .background(Color.oneLogCream)
         .navigationTitle("나눔 글")
         .navigationBarTitleDisplayMode(.inline)
-        .task(id: postID) { shareStore.startChat(postID: postID) }
+        .task(id: membershipKey) { shareStore.startMemberDetails(postID: postID) }
         .onDisappear { shareStore.stopChat() }
+        .sheet(isPresented: $isMeetupEditorPresented) {
+            MeetupEditor(
+                postID: postID,
+                existing: shareStore.meetup,
+                legacyPlaceNote: post?.meetupNote ?? ""
+            )
+            .environmentObject(shareStore)
+        }
     }
 
     private func content(_ post: SharePost) -> some View {
@@ -394,15 +408,56 @@ private struct SharePostDetailView: View {
             if let price = post.pricePerShare {
                 IngredientLine(name: "1인당", value: won(price), note: "송금은 직접")
             }
-            if !post.meetupNote.isEmpty {
-                Text(post.meetupNote)
-                    .font(.subheadline)
-                    .foregroundStyle(Color.oneLogInk)
-                    .padding(.top, 4)
-            }
+            meetupCard(post)
             actions(post)
         }
         .oneLogCard()
+    }
+
+    @ViewBuilder
+    private func meetupCard(_ post: SharePost) -> some View {
+        Divider().overlay(Color.oneLogLine)
+        if post.isMember(userID) {
+            VStack(alignment: .leading, spacing: 8) {
+                SectionHeading("약속", subtitle: "작성자와 참여자만 볼 수 있어요.")
+                if let meetup = shareStore.meetup {
+                    Label {
+                        Text(meetup.scheduledAt.formatted(date: .abbreviated, time: .shortened))
+                            .font(.subheadline.weight(.bold))
+                    } icon: {
+                        Image(systemName: "calendar.badge.clock")
+                            .foregroundStyle(Color.oneLogGreen)
+                    }
+                    Label(meetup.placeNote, systemImage: "mappin.and.ellipse")
+                        .font(.subheadline)
+                        .foregroundStyle(Color.oneLogInk)
+                } else if !post.meetupNote.isEmpty {
+                    Label("기존 만남 메모", systemImage: "note.text")
+                        .font(.caption.weight(.bold))
+                        .foregroundStyle(Color.oneLogMuted)
+                    Text(post.meetupNote)
+                        .font(.subheadline)
+                        .foregroundStyle(Color.oneLogInk)
+                } else {
+                    Text("아직 약속을 정하지 않았어요.")
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
+                }
+                Button {
+                    isMeetupEditorPresented = true
+                } label: {
+                    Label(shareStore.meetup == nil ? "약속 잡기" : "약속 수정", systemImage: "calendar")
+                }
+                .buttonStyle(SecondaryButtonStyle())
+                .accessibilityIdentifier("meetupEditorButton")
+            }
+            .padding(.top, 2)
+        } else {
+            Label("참여하면 약속 날짜·시간과 장소를 볼 수 있어요.", systemImage: "lock")
+                .font(.caption)
+                .foregroundStyle(Color.oneLogMuted)
+                .padding(.top, 2)
+        }
     }
 
     @ViewBuilder
@@ -476,6 +531,80 @@ private struct SharePostDetailView: View {
         }
         .padding(12)
         .background(.ultraThinMaterial)
+    }
+}
+
+private struct MeetupEditor: View {
+    @EnvironmentObject private var shareStore: ShareStore
+    @Environment(\.dismiss) private var dismiss
+
+    let postID: String
+    let existing: ShareMeetup?
+    let legacyPlaceNote: String
+
+    @State private var scheduledAt: Date
+    @State private var placeNote: String
+    @State private var isSaving = false
+
+    init(postID: String, existing: ShareMeetup?, legacyPlaceNote: String) {
+        self.postID = postID
+        self.existing = existing
+        self.legacyPlaceNote = legacyPlaceNote
+        _scheduledAt = State(initialValue: existing?.scheduledAt ?? Calendar.current.date(byAdding: .day, value: 1, to: Date()) ?? Date().addingTimeInterval(24 * 60 * 60))
+        _placeNote = State(initialValue: existing?.placeNote ?? legacyPlaceNote)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("약속 날짜·시간") {
+                    DatePicker(
+                        "만날 날짜·시간",
+                        selection: $scheduledAt,
+                        in: Date()...,
+                        displayedComponents: [.date, .hourAndMinute]
+                    )
+                }
+                Section("장소") {
+                    TextField("예: 성수역 2번 출구 앞", text: $placeNote, axis: .vertical)
+                        .lineLimit(2...4)
+                    Text("사람이 많은 공개된 장소를 이용하세요.")
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
+                }
+                if existing != nil {
+                    Section {
+                        Button("약속 지우기", role: .destructive) {
+                            isSaving = true
+                            Task {
+                                let ok = await shareStore.clearMeetup(postID: postID)
+                                isSaving = false
+                                if ok { dismiss() }
+                            }
+                        }
+                        .disabled(isSaving)
+                    }
+                }
+            }
+            .navigationTitle(existing == nil ? "약속 잡기" : "약속 수정")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("취소") { dismiss() }
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("저장") {
+                        isSaving = true
+                        Task {
+                            let ok = await shareStore.saveMeetup(postID: postID, scheduledAt: scheduledAt, placeNote: placeNote)
+                            isSaving = false
+                            if ok { dismiss() }
+                        }
+                    }
+                    .disabled(isSaving || placeNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+                }
+            }
+        }
     }
 }
 

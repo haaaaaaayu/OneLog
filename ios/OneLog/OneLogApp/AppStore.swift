@@ -1,4 +1,6 @@
 import Combine
+import FirebaseAuth
+import FirebaseCore
 import Foundation
 
 private struct PersistedEnvelope: Codable {
@@ -77,20 +79,69 @@ final class AppStore: ObservableObject {
 
     // MARK: - 계정 (F23)
 
-    /// Info.plist의 `GIDClientID`가 있어야 Google 로그인을 시도한다.
-    /// ponytail: 클라이언트 ID와 GoogleSignIn SDK가 정해지면 이 함수 본문의 TODO 지점만 교체한다.
-    var isGoogleSignInConfigured: Bool {
-        let value = Bundle.main.object(forInfoDictionaryKey: "GIDClientID") as? String
-        return (value?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false)
+    /// FirebaseAuth의 웹 OAuth 흐름이 돌아올 때 쓰는 URL 스킴. `OAuthProvider`가 고르는 규칙과 같다.
+    /// `GoogleService-Info.plist`에 `CLIENT_ID`가 있으면 역순 클라이언트 ID, 없으면 인코딩한 앱 ID다.
+    /// ponytail: GoogleSignIn SDK를 새로 붙이지 않는다. 이미 넣은 FirebaseAuth의 웹 흐름으로 같은 결과를 얻는다.
+    private var googleCallbackScheme: String? {
+        guard let options = FirebaseApp.app()?.options else { return nil }
+        if let clientID = options.clientID {
+            let reversed = clientID.components(separatedBy: ".").reversed().joined(separator: ".")
+            if Self.registeredURLSchemes.contains(reversed) { return reversed }
+        }
+        return "app-" + options.googleAppID.replacingOccurrences(of: ":", with: "-")
     }
 
-    func signInWithGoogle() {
+    private static var registeredURLSchemes: [String] {
+        let types = Bundle.main.object(forInfoDictionaryKey: "CFBundleURLTypes") as? [[String: Any]] ?? []
+        return types.flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
+    }
+
+    /// 스킴이 등록되어 있지 않으면 FirebaseAuth가 `fatalError`로 앱을 죽인다. 그 전에 여기서 막는다.
+    var isGoogleSignInConfigured: Bool {
+        guard let scheme = googleCallbackScheme else { return false }
+        return Self.registeredURLSchemes.contains(scheme)
+    }
+
+    func signInWithGoogle() async {
+        // UI 테스트는 실제 웹 로그인 창을 띄울 수 없다. 실패 화면만 결정론적으로 확인한다.
+        guard !ProcessInfo.processInfo.arguments.contains("-uiTestGoogleSignInFails") else {
+            accountError = "Google 로그인 연결을 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
+            return
+        }
         guard isGoogleSignInConfigured else {
             accountError = "아직 Google 로그인을 연결할 수 없어요. 지금은 이 기기에만 저장하고 시작한 뒤, 나중에 마이페이지에서 계정을 연결할 수 있어요."
             return
         }
-        // TODO: GoogleSignIn SDK 인증 결과를 linkAccount(...)로 전달한다.
-        accountError = "Google 로그인 연결을 확인하지 못했어요. 잠시 후 다시 시도해 주세요."
+        let provider = OAuthProvider(providerID: "google.com")
+        provider.scopes = ["email", "profile"]
+        do {
+            let credential = try await provider.credential(with: nil)
+            let user = try await authenticate(with: credential).user
+            linkAccount(UserAccount(
+                provider: .google,
+                userID: user.uid,
+                email: user.email,
+                displayName: user.displayName,
+                linkedAt: ISO8601DateFormatter().string(from: Date())
+            ))
+        } catch let error as NSError where error.code == AuthErrorCode.webContextCancelled.rawValue {
+            accountError = nil
+        } catch {
+            accountError = "Google 로그인을 마치지 못했어요. 잠시 후 다시 시도해 주세요."
+        }
+    }
+
+    /// 이미 익명으로 쓰고 있었다면 그 계정 위에 연결한다. 동네 나눔 글의 작성자·참여자 ID가 그대로 유지된다.
+    /// 그 Google 계정이 이미 다른 사용자에 붙어 있으면 그쪽으로 로그인한다(기기에 저장한 식단은 그대로 남는다).
+    private func authenticate(with credential: AuthCredential) async throws -> AuthDataResult {
+        if let current = Auth.auth().currentUser, current.isAnonymous {
+            do {
+                return try await current.link(with: credential)
+            } catch let error as NSError where error.code == AuthErrorCode.credentialAlreadyInUse.rawValue {
+                return try await Auth.auth().signIn(with: credential)
+            }
+        }
+        return try await Auth.auth().signIn(with: credential)
     }
 
     func linkAccount(_ account: UserAccount) {
@@ -106,6 +157,7 @@ final class AppStore: ObservableObject {
     /// 연결만 해제한다. 기기에 저장한 식단·재고 데이터는 그대로 둔다.
     func unlinkAccount() {
         guard state.account != nil else { return }
+        signOutOfFirebase()
         update { $0.account = nil }
         accountError = nil
         notice = "계정 연결을 해제했어요. 이 기기에 저장한 식단과 재고는 그대로예요."
@@ -113,10 +165,17 @@ final class AppStore: ObservableObject {
 
     /// 탈퇴. 이 기기에 저장한 모든 데이터를 지우고 온보딩부터 다시 시작한다.
     func deleteAllData() {
+        signOutOfFirebase()
         UserDefaults.standard.removeObject(forKey: Self.storageKey)
         state = AppState()
         accountError = nil
         notice = "계정 연결과 저장한 데이터를 모두 지웠어요."
+    }
+
+    /// 계정을 끊으면 서버 세션도 끊는다. 다음에 동네 나눔을 열면 익명으로 새로 로그인한다.
+    private func signOutOfFirebase() {
+        guard FirebaseApp.app() != nil else { return }
+        try? Auth.auth().signOut()
     }
 
     func setProfile(nickname: String, age: Int?) {

@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A001 /* OneLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = S004 /* OneLogApp.swift */; };
+		A030 /* FigmaFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = S010 /* FigmaFont.swift */; };
+		R005 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = FT001 /* Fonts */; };
 		A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = S003 /* Models.swift */; };
 		A003 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = S006 /* SeedData.swift */; };
 		A004 /* PlannerEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = S005 /* PlannerEngine.swift */; };
@@ -34,6 +36,7 @@
 		R004 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = GS001 /* GoogleService-Info.plist */; };
 		T001 /* OneLogDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS001 /* OneLogDomainTests.swift */; };
 		U001 /* OneLogUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = US001 /* OneLogUITests.swift */; };
+		U002 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = US002 /* ScreenshotTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,13 +59,16 @@
 /* Begin PBXFileReference section */
 		AS001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		GS001 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		IP001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		J001 /* imported_recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_recipes.json; sourceTree = "<group>"; };
 		J002 /* imported_ingredients.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_ingredients.json; sourceTree = "<group>"; };
+		FT001 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		F001 /* OneLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F002 /* OneLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F003 /* OneLogUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneLogUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		S001 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
 		S002 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
+		S010 /* FigmaFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FigmaFont.swift; sourceTree = "<group>"; };
 		S003 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		S004 /* OneLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogApp.swift; sourceTree = "<group>"; };
 		S005 /* PlannerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerEngine.swift; sourceTree = "<group>"; };
@@ -72,6 +78,7 @@
 		V009 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		TS001 /* OneLogDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogDomainTests.swift; sourceTree = "<group>"; };
 		US001 /* OneLogUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogUITests.swift; sourceTree = "<group>"; };
+		US002 /* ScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotTests.swift; sourceTree = "<group>"; };
 		V001 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		V002 /* RecipeHomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecipeHomeView.swift; sourceTree = "<group>"; };
 		V003 /* PlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlanView.swift; sourceTree = "<group>"; };
@@ -125,6 +132,7 @@
 			children = (
 				S001 /* AppStore.swift */,
 				S002 /* DesignSystem.swift */,
+				S010 /* FigmaFont.swift */,
 				S003 /* Models.swift */,
 				S004 /* OneLogApp.swift */,
 				S005 /* PlannerEngine.swift */,
@@ -132,7 +140,9 @@
 				S007 /* Sharing.swift */,
 				S008 /* ShareStore.swift */,
 				AS001 /* Assets.xcassets */,
+				FT001 /* Fonts */,
 				GS001 /* GoogleService-Info.plist */,
+				IP001 /* Info.plist */,
 				GRES /* Resources */,
 				GVIEWS /* Views */,
 			);
@@ -171,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				US001 /* OneLogUITests.swift */,
+				US002 /* ScreenshotTests.swift */,
 			);
 			path = OneLogUITests;
 			sourceTree = "<group>";
@@ -305,6 +316,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				R001 /* Assets.xcassets in Resources */,
+				R005 /* Fonts in Resources */,
 				R004 /* GoogleService-Info.plist in Resources */,
 				R002 /* imported_recipes.json in Resources */,
 				R003 /* imported_ingredients.json in Resources */,
@@ -336,6 +348,7 @@
 				A006 /* DesignSystem.swift in Sources */,
 				A002 /* Models.swift in Sources */,
 				A001 /* OneLogApp.swift in Sources */,
+				A030 /* FigmaFont.swift in Sources */,
 				A004 /* PlannerEngine.swift in Sources */,
 				A003 /* SeedData.swift in Sources */,
 				A007 /* RootView.swift in Sources */,
@@ -367,6 +380,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				U001 /* OneLogUITests.swift in Sources */,
+				U002 /* ScreenshotTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -397,6 +411,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OneLogApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "한끼로그";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
@@ -422,6 +437,7 @@
 				DEVELOPMENT_TEAM = 6PTCQH47A6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = OneLogApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "한끼로그";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
