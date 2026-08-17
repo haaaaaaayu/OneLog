@@ -29,6 +29,7 @@
 		R001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AS001 /* Assets.xcassets */; };
 		R002 /* imported_recipes.json in Resources */ = {isa = PBXBuildFile; fileRef = J001 /* imported_recipes.json */; };
 		R003 /* imported_ingredients.json in Resources */ = {isa = PBXBuildFile; fileRef = J002 /* imported_ingredients.json */; };
+		R004 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = GS001 /* GoogleService-Info.plist */; };
 		T001 /* OneLogDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS001 /* OneLogDomainTests.swift */; };
 		U001 /* OneLogUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = US001 /* OneLogUITests.swift */; };
 /* End PBXBuildFile section */
@@ -52,6 +53,7 @@
 
 /* Begin PBXFileReference section */
 		AS001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		GS001 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		J001 /* imported_recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_recipes.json; sourceTree = "<group>"; };
 		J002 /* imported_ingredients.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_ingredients.json; sourceTree = "<group>"; };
 		F001 /* OneLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -126,6 +128,7 @@
 				S007 /* Sharing.swift */,
 				S008 /* ShareStore.swift */,
 				AS001 /* Assets.xcassets */,
+				GS001 /* GoogleService-Info.plist */,
 				GRES /* Resources */,
 				GVIEWS /* Views */,
 			);
@@ -296,6 +299,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				R001 /* Assets.xcassets in Resources */,
+				R004 /* GoogleService-Info.plist in Resources */,
 				R002 /* imported_recipes.json in Resources */,
 				R003 /* imported_ingredients.json in Resources */,
 			);
