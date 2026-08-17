@@ -95,7 +95,8 @@ def parse_ingredients_from_swift(path):
 
 
 def normalize(text):
-    return re.sub(r"\s+", "", text).lower()
+    # 공백과 이음표는 표기 차이일 뿐이다. `다진-파`, `다진 파`, `다진파`를 같은 이름으로 본다.
+    return re.sub(r"[\s\-·]+", "", text).lower()
 
 
 def fetch(key, cache_path):
@@ -152,7 +153,7 @@ def parse_token(token):
     """(원문명, 수량, 앱 단위) 또는 None."""
     # "양념장 : 저염간장"처럼 소제목이 앞에 붙는 줄이 있어 콜론 뒤를 재료명으로 본다.
     def clean(name):
-        return name.split(":")[-1].strip(" ·")
+        return strip_section_prefix(name.split(":")[-1].strip(" ·"))
 
     match = TOKEN.match(token)  # A형
     if match:
@@ -202,6 +203,71 @@ def build_steps(row):
     return steps
 
 
+# 원본 재료명 앞에 "양념장 : 저염간장"의 소제목이 붙거나 "재료 쌀"처럼 섹션 이름이 남는다.
+# 재료가 아니라 문단 제목이므로 이름에서 떼어낸다. 뒤에 남는 말이 없으면 원문을 그대로 둔다.
+SECTION_PREFIXES = ["재료", "양념장", "양념", "육수", "소스", "고기 밑간", "밑간", "반죽", "조림장",
+                    "무침양념", "고명", "드레싱", "볶음", "주먹밥", "김치주머니 소"]
+
+# 판매 단위를 찾을 때만 떼는 상태 표기. 같은 재료의 손질 상태일 뿐 다른 물건이 아니다.
+STATE_SUFFIXES = ["다진것", "다진 것", "마른것", "마른 것", "말린것", "말린 것", "갈은것", "간것",
+                  "썬것", "채썬것", "채친것", "부순것", "삶은것", "불린것", "볶은것", "데친것"]
+
+
+def strip_section_prefix(name):
+    for prefix in SECTION_PREFIXES:
+        if name.startswith(prefix) and len(name) > len(prefix):
+            rest = name[len(prefix):].lstrip(" :·")
+            if rest:
+                return rest
+    return name
+
+
+def tail_index(names):
+    """정규화한 이름 → 원본 키. 긴 이름부터 맞춰야 `청양고추`가 `고추`로 떨어지지 않는다."""
+    index = {normalize(name): name for name in names}
+    return index, sorted(index, key=len, reverse=True)
+
+
+def match_by_tail(name, index, keys):
+    """이름을 앞이 아니라 **뒤**를 기준으로 맞춘다. 없으면 None.
+
+    한국어 재료명은 뒤에 오는 말이 중심 재료다(`빨강 파프리카` → `파프리카`).
+    앞을 기준으로 자르면 `현미유`가 `현미`가 되는 식으로 다른 재료가 되어 버린다.
+    """
+    candidate = normalize(strip_section_prefix(name))
+    if candidate in index:
+        return index[candidate]
+    for suffix in STATE_SUFFIXES:
+        stripped = normalize(suffix)
+        if candidate.endswith(stripped) and len(candidate) > len(stripped):
+            candidate = candidate[: -len(stripped)]
+            break
+    if candidate in index:
+        return index[candidate]
+    for key in keys:
+        # 한 글자 이름(`물`, `무`)은 다른 재료의 꼬리에 너무 쉽게 걸려서 꼬리 매칭에서 뺀다.
+        if len(key) >= 2 and candidate.endswith(key):
+            return index[key]
+    return None
+
+
+def self_check():
+    """이름 매칭 규칙의 최소 검증. 인증키도 네트워크도 필요 없다."""
+    index, keys = tail_index(["파프리카", "소고기", "현미", "표고버섯", "다진-파", "고춧가루", "물", "버섯"])
+    assert match_by_tail("빨강 파프리카", index, keys) == "파프리카"
+    assert match_by_tail("다진소고기", index, keys) == "소고기"
+    assert match_by_tail("다진 파", index, keys) == "다진-파"          # 이음표 표기 차이
+    assert match_by_tail("표고버섯마른것", index, keys) == "표고버섯"    # 손질 상태만 다름
+    assert match_by_tail("노루궁뎅이버섯", index, keys) == "버섯"       # 종류만 아는 경우의 그물
+    assert match_by_tail("고운 고춧가루", index, keys) == "고춧가루"
+    assert match_by_tail("육수 물", index, keys) == "물"               # 소제목을 뗀 뒤 정확히 일치
+    assert match_by_tail("현미유", index, keys) is None, "앞부분으로 맞추면 기름이 쌀이 된다"
+    assert match_by_tail("쌀뜨물", index, keys) is None, "한 글자 이름은 꼬리로 맞추지 않는다"
+    assert strip_section_prefix("재료 쌀") == "쌀"
+    assert strip_section_prefix("재료") == "재료"
+    print("self-check 통과")
+
+
 def auto_ingredient_id(name):
     """등록되지 않은 재료에 붙일 안정적인 ID. 같은 이름이면 항상 같은 ID가 나온다."""
     slug = re.sub(r"[^0-9A-Za-z가-힣]+", "-", name).strip("-")
@@ -230,7 +296,7 @@ def convert(row, aliases, pantry, auto_register=False, auto_sink=None):
     blocked, pantry_used, ingredients = set(), [], []
     for name, quantity, unit in parsed:
         key = normalize(name)
-        if key in pantry:
+        if match_by_tail(name, *pantry):
             pantry_used.append(name)
             continue
         if quantity <= 0:
@@ -257,7 +323,7 @@ def convert(row, aliases, pantry, auto_register=False, auto_sink=None):
     for token in without_quantity:
         # "소금 약간"처럼 수량이 없는 토큰. 수량을 지어내지 않는다.
         stripped = re.sub(r"(약간|적당량|조금|톡톡).*$", "", token).strip()
-        if normalize(stripped) in pantry:
+        if match_by_tail(stripped, *pantry):
             pantry_used.append(stripped)
         elif auto_register:
             unmeasured.append(token)  # 계산에 넣지 않고 설명에 그대로 보여준다
@@ -326,9 +392,12 @@ def main():
     parser.add_argument("--cache", default=os.path.join(here, ".cache/cookrcp01.json"))
     parser.add_argument("--ingredients-out", default=os.path.join(root, "OneLog/OneLogApp/Resources/imported_ingredients.json"))
     parser.add_argument("--sale-units", default=os.path.join(here, "sale_units.json"))
+    parser.add_argument("--self-check", action="store_true", help="이름 매칭 규칙만 검증하고 끝낸다")
     parser.add_argument("--auto-register", action="store_true",
                         help="미등록 재료를 판매 단위 없는 canonical로 자동 등록해 레시피를 최대한 살린다")
     args = parser.parse_args()
+    if args.self_check:
+        return self_check()
     key_file = os.path.join(here, ".api_key")
     if not args.key and os.path.exists(key_file):
         args.key = open(key_file, encoding="utf-8").read().strip()
@@ -336,10 +405,11 @@ def main():
         sys.exit(f"인증키가 필요합니다. {key_file} 에 키를 저장하거나 --key / FOODSAFETY_API_KEY 를 쓰세요.")
 
     aliases = parse_ingredients_from_swift(args.seed)
-    pantry = set()
+    pantry_names = []
     if os.path.exists(args.pantry):
-        pantry = {normalize(name) for name in json.load(open(args.pantry, encoding="utf-8"))}
-    print(f"canonical 재료 {len(set(aliases.values()))}종 / 별칭 {len(aliases)}개, 상비 조미료 {len(pantry)}종", file=sys.stderr)
+        pantry_names = json.load(open(args.pantry, encoding="utf-8"))
+    pantry = tail_index(pantry_names)
+    print(f"canonical 재료 {len(set(aliases.values()))}종 / 별칭 {len(aliases)}개, 상비 조미료 {len(pantry_names)}종", file=sys.stderr)
 
     rows = fetch(args.key, args.cache)
     print(f"원본 {len(rows)}건 처리", file=sys.stderr)
@@ -368,6 +438,7 @@ def main():
     sale_units = {}
     if os.path.exists(args.sale_units):
         sale_units = json.load(open(args.sale_units, encoding="utf-8")).get("saleUnits", {})
+    sale_index, sale_keys = tail_index(sale_units)
 
     used_ids = {item["ingredientID"] for recipe in recipes for item in recipe["ingredients"]}
     auto_ingredients = []
@@ -376,7 +447,8 @@ def main():
         if entry["id"] not in used_ids:
             continue
         default_unit = entry["units"].most_common(1)[0][0]
-        sale = sale_units.get(entry["name"]) or sale_units.get(entry["id"][len("auto-"):])
+        matched = match_by_tail(entry["name"], sale_index, sale_keys)
+        sale = sale_units.get(matched) if matched else None
         unit_grams = (sale or {}).get("unitGrams")
         # 판매 단위와 레시피 단위가 다르면 환산 근거가 있을 때만 붙인다.
         if sale and sale["unit"] != default_unit and not (unit_grams and sale["unit"] in unit_grams and default_unit in unit_grams):

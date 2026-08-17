@@ -35,8 +35,8 @@ AGENTS.md              기획 해석 순서, 기능 우선순위, 구현 현황
 ## 데이터
 
 - 레시피: 식품안전나라 `COOKRCP01` 1,156건을 빌드 타임에 변환해 950건 + 큐레이션 6건. 앱은 외부 API를 호출하지 않고 번들 JSON만 읽습니다. (공공누리 출처 표시는 마이페이지)
-- 대표 판매 단위: 마트 소포장 기준 185종. 여기 없는 재료는 구매량을 계산하지 않습니다.
-- 현재 956건 중 **124건**이 구매량까지 완전히 계산됩니다.
+- 대표 판매 단위: 마트 소포장 기준 658종. 임포터가 `빨강 파프리카` → `파프리카`처럼 이름 뒤쪽을 기준으로 맞춰 자동 등록 재료 1,300종 중 1,044종에 붙입니다. 여기 없는 재료는 구매량을 계산하지 않고 화면에서 사용자에게 판매 단위를 물어봅니다.
+- 현재 956건 중 **719건**이 구매량까지 완전히 계산됩니다.
 
 ## 실행
 
@@ -51,19 +51,21 @@ xcodebuild test -project ios/OneLog/OneLog.xcodeproj -scheme OneLog \
   -destination 'platform=iOS Simulator,name=iPhone 16e'
 ```
 
-### 동네 나눔(F26·F27)을 쓰려면
+### 동네 나눔(F26·F27)과 Google 로그인(F23)을 쓰려면
 
-Firebase 설정이 필요합니다. 없어도 나머지 기능은 그대로 동작하고, 나눔 화면만 미연결 안내를 띄웁니다.
+`GoogleService-Info.plist`는 저장소에 들어 있습니다. Firebase 콘솔 스위치와 Firestore 규칙 배포를 완료했고, 약속 권한을 포함한 서버 왕복 검증 17개 항목도 통과했습니다. 남은 것은 실기기에서 Google 로그인과 동네 나눔·채팅·약속의 실제 화면 동작을 확인하는 일입니다. 설정이 없어도 나머지 기능은 그대로 동작하고, 나눔 화면과 계정 연결만 미연결 안내를 띄웁니다.
 
-1. Firebase 콘솔에서 iOS 앱 등록 (번들 ID `com.onelog.native`)
-2. `GoogleService-Info.plist`를 `ios/OneLog/OneLogApp/`에 넣고 Xcode 타깃 리소스로 추가
-3. Authentication에서 익명 로그인 활성화
-4. `firebase deploy --only firestore:rules`
+1. ✅ Authentication → 로그인 방법에서 **익명**을 사용 설정 (동네 나눔)
+2. ✅ 같은 화면에서 **Google**을 사용 설정 (계정 연결)
+3. ✅ `npx firebase-tools deploy --only firestore:rules`로 `ios/firestore.rules` 배포
+4. ✅ `python3 ios/tools/check_firestore_rules.py`로 서버가 규칙을 실제로 강제하는지 확인 (약속 권한 포함 17개 PASS)
+
+Google 로그인은 별도 SDK 없이 FirebaseAuth의 웹 OAuth 흐름을 씁니다. 콜백 URL 스킴은 `ios/OneLog/OneLogApp/Info.plist`에 들어 있고, 콘솔에서 `GoogleService-Info.plist`를 새로 받아 `CLIENT_ID`가 생겼다면 `REVERSED_CLIENT_ID`도 같은 목록에 추가해야 합니다.
 
 식약처 레시피를 다시 굽는다면 `ios/tools/.api_key`에 인증키를 넣습니다. 이 파일은 커밋하지 않습니다.
 
 ## 현재 상태
 
-P0 기본 흐름과 F13·F14·F20~F24는 부분 구현, F26 공동구매·소분과 F27 채팅은 화면과 도메인까지 구현하고 서버 연결 검증이 남았습니다. 기능별 상태와 남은 작업은 [AGENTS.md](AGENTS.md)의 `현재 구현 현황`에 정리되어 있습니다.
+P0 기본 흐름과 F13·F14·F20~F24는 부분 구현, F26 공동구매·소분과 F27 채팅·약속은 화면·도메인·서버 규칙 검증까지 구현했습니다. 실기기에서 Google 로그인과 실제 나눔·채팅·약속 흐름 확인이 남아 있습니다. 기능별 상태와 남은 작업은 [AGENTS.md](AGENTS.md)의 `현재 구현 현황`에 정리되어 있습니다.
 
 `완료` 표시는 요구사항·테스트·실제 화면 흐름 확인이 모두 끝난 경우에만 씁니다.

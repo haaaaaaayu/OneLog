@@ -416,6 +416,8 @@ private struct BudgetLineRow: View {
                 Spacer()
                 if let knownCost = line.knownCost {
                     Text(won(knownCost)).font(.subheadline.weight(.bold)).foregroundStyle(Color.oneLogOrange)
+                } else if line.shoppingItem.precision == .manual {
+                    StatusPill(text: "판매 단위 확인 필요", tint: .oneLogOrange)
                 } else if line.shoppingItem.purchaseQuantity == 0 {
                     StatusPill(text: "추가 구매 없음", tint: .oneLogGreen)
                 } else {
@@ -443,43 +445,74 @@ private struct BudgetLineRow: View {
     }
 }
 
+/// 판매 단위가 확인되지 않은 품목은 가격을 받아도 예산에 반영되지 않는다.
+/// 그래서 판매 단위 확인 → 그 포장의 가격 순서로만 입력을 받는다.
 private struct PriceEditorRow: View {
     @EnvironmentObject private var store: AppStore
     let item: ShoppingPlanItem
     let existingPrice: IngredientPrice?
     @State private var priceText = ""
-    @State private var amountText = ""
+    @State private var packageText = ""
+
+    private var needsPackage: Bool { item.precision == .manual }
 
     var body: some View {
-        HStack(spacing: 8) {
-            Text("확인한 포장 가격")
-                .font(.caption)
-                .foregroundStyle(Color.oneLogMuted)
-            TextField("금액", text: $priceText)
-                .keyboardType(.numberPad)
-                .textFieldStyle(.roundedBorder)
-                .frame(width: 84)
-            Text("원 /")
-                .font(.caption)
-                .foregroundStyle(Color.oneLogMuted)
-            TextField(formatQuantity(item.packageSize.amount), text: $amountText)
-                .keyboardType(.decimalPad)
-                .textFieldStyle(.roundedBorder)
-                .frame(width: 62)
-            Text(item.unit.rawValue)
-                .font(.caption)
-                .foregroundStyle(Color.oneLogMuted)
-            Button("저장") {
-                let price = Int(priceText.replacingOccurrences(of: ",", with: "")) ?? 0
-                let amount = Double(amountText) ?? item.packageSize.amount
-                store.setPrice(ingredientID: item.ingredientID, price: price, packageAmount: amount, unit: item.unit)
+        VStack(alignment: .leading, spacing: 6) {
+            if needsPackage {
+                HStack(spacing: 8) {
+                    Text("판매 단위 확인")
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
+                    TextField(formatQuantity(item.packageSize.amount), text: $packageText)
+                        .keyboardType(.decimalPad)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 68)
+                    Text(item.unit.rawValue)
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
+                    Button("단위 적용") {
+                        guard let amount = Double(packageText), amount > 0 else { return }
+                        store.setPackageOverride(ingredientID: item.ingredientID, package: PackageSize(amount: amount, unit: item.unit, label: "\(formatQuantity(amount))\(item.unit.rawValue) 포장"))
+                    }
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.oneLogGreen)
+                    Spacer()
+                }
+                Text("마트에서 파는 한 포장의 양을 적으면 구매량과 예상 지출을 계산해요.")
+                    .font(.caption2)
+                    .foregroundStyle(Color.oneLogMuted)
+            } else {
+                HStack(spacing: 8) {
+                    // 가격은 계산에 쓰는 포장 크기에 그대로 붙인다. 둘이 어긋나면
+                    // 저장은 되는데 예산에 반영되지 않아 사용자가 이유를 알 수 없다.
+                    Text("\(formatQuantity(item.packageSize.amount, unit: item.unit)) 포장 가격")
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
+                    TextField("금액", text: $priceText)
+                        .keyboardType(.numberPad)
+                        .textFieldStyle(.roundedBorder)
+                        .frame(width: 84)
+                    Text("원")
+                        .font(.caption)
+                        .foregroundStyle(Color.oneLogMuted)
+                    Button("저장") {
+                        let price = Int(priceText.replacingOccurrences(of: ",", with: "")) ?? 0
+                        store.setPrice(ingredientID: item.ingredientID, price: price, packageAmount: item.packageSize.amount, unit: item.unit)
+                    }
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.oneLogGreen)
+                    Spacer()
+                }
+                if let price = existingPrice, abs(price.packageAmount - item.packageSize.amount) >= 0.000001 || price.unit != item.unit {
+                    Text("저장된 가격이 \(formatQuantity(price.packageAmount, unit: price.unit)) 기준이라 지금 포장에는 쓰지 않았어요. 다시 저장해 주세요.")
+                        .font(.caption2)
+                        .foregroundStyle(Color.oneLogOrange)
+                }
             }
-            .font(.caption.weight(.bold))
-            .foregroundStyle(Color.oneLogGreen)
         }
         .onAppear {
             priceText = existingPrice.map { String($0.price) } ?? ""
-            amountText = existingPrice.map { formatQuantity($0.packageAmount) } ?? formatQuantity(item.packageSize.amount)
+            packageText = formatQuantity(item.packageSize.amount)
         }
     }
 }

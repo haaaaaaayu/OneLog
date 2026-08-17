@@ -207,7 +207,8 @@ final class OneLogDomainTests: XCTestCase {
 
     func testEnoughImportedRecipesAreFullyCalculable() {
         let calculable = recipes.filter { fullyCalculableRecipeIDs.contains($0.id) }
-        XCTAssertGreaterThanOrEqual(calculable.count, 100, "구매량까지 계산되는 레시피가 \(calculable.count)건뿐입니다")
+        // 2026-08-17 기준 956건 중 719건. 판매 단위 표를 손대다 크게 줄면 잡는 하한선이다.
+        XCTAssertGreaterThanOrEqual(calculable.count, 700, "구매량까지 계산되는 레시피가 \(calculable.count)건뿐입니다")
         // 큐레이션 6건은 전부 계산 가능해야 한다.
         for id in ["chicken-donburi", "tofu-kimchi", "tuna-mayo-rice", "cabbage-egg-stir-fry", "cucumber-tuna-bowl", "kimchi-fried-rice"] {
             XCTAssertTrue(fullyCalculableRecipeIDs.contains(id), "\(id)가 계산 불가로 빠졌습니다")
@@ -233,6 +234,39 @@ final class OneLogDomainTests: XCTestCase {
         let estimate = budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:])
         XCTAssertFalse(estimate.isComplete)
         XCTAssertNil(estimate.remainingBudget)
+    }
+
+    /// 예산 화면의 입력 순서(판매 단위 확인 → 그 포장 가격)가 실제로 예산을 완성시키는지 본다.
+    func testConfirmingSaleUnitThenPriceCompletesBudget() {
+        guard let recipeID = recipes.first(where: { recipe in
+            recipe.ingredients.contains { ingredient(for: $0.ingredientID)?.representativeSaleUnit == nil }
+        })?.id else {
+            return XCTFail("판매 단위 미확인 재료를 쓰는 레시피가 없습니다")
+        }
+        let draft = PlannedMealDraft(recipeID: recipeID, date: "2026-08-17", mealSlot: .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+        XCTAssertFalse(budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:]).isComplete)
+
+        // 1) 사용자가 확인한 판매 단위를 넣는다.
+        var overrides: [String: PackageSize] = [:]
+        for line in budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:]).lineItems
+        where line.shoppingItem.precision == .manual {
+            overrides[line.shoppingItem.ingredientID] = PackageSize(amount: 100, unit: line.shoppingItem.unit, label: "100 포장")
+        }
+
+        // 2) 그 포장 그대로의 가격을 넣는다. 화면이 저장하는 값과 같은 조합이다.
+        var prices: [String: IngredientPrice] = [:]
+        for line in budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:], packageOverrides: overrides).lineItems {
+            let item = line.shoppingItem
+            prices[item.ingredientID] = IngredientPrice(price: 1000, packageAmount: item.packageSize.amount, unit: item.unit, confirmedAt: "2026-08-17T00:00:00Z", source: "user")
+        }
+
+        let completed = budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: prices, packageOverrides: overrides)
+        XCTAssertTrue(completed.isComplete, "판매 단위와 가격을 다 확인했는데 예산이 미확정입니다")
+        XCTAssertNotNil(completed.remainingBudget)
+
+        // 포장 크기가 어긋난 가격은 금액으로 쓰지 않는다. 화면도 그래서 따로 알려 준다.
+        let drifted = prices.mapValues { IngredientPrice(price: $0.price, packageAmount: $0.packageAmount + 7, unit: $0.unit, confirmedAt: $0.confirmedAt, source: $0.source) }
+        XCTAssertFalse(budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: drifted, packageOverrides: overrides).isComplete)
     }
 
     func testDislikedRecipeIsExcludedFromAutoRecommendationOnly() {
@@ -372,5 +406,17 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertTrue(target.isMember("author"))
         XCTAssertTrue(target.isMember("joined"))
         XCTAssertFalse(target.isMember("stranger"))
+    }
+
+    func testMeetupPreservesScheduledDateAndPlaceThroughCodable() throws {
+        let meetup = ShareMeetup(
+            scheduledAt: Date(timeIntervalSince1970: 1_800_000_000),
+            placeNote: "성수역 2번 출구 앞",
+            updatedBy: "member-1",
+            updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
+        )
+
+        let decoded = try JSONDecoder().decode(ShareMeetup.self, from: JSONEncoder().encode(meetup))
+        XCTAssertEqual(decoded, meetup)
     }
 }

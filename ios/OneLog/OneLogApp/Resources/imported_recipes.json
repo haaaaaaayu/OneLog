@@ -5,7 +5,7 @@
   {
    "id": "fsk-1006",
    "title": "감자 주먹밥",
-   "description": "모양 틀을 구매하여 사용하면 더 많은 모양을 이용할 수 있다. 상비 조미료: 소금. 수량 미표기 재료: 흰 후춧가루 적당량.",
+   "description": "모양 틀을 구매하여 사용하면 더 많은 모양을 이용할 수 있다. 상비 조미료: 소금, 흰 후춧가루.",
    "mealSlots": [
     "아침",
     "점심",
@@ -154,7 +154,7 @@
   {
    "id": "fsk-1010",
    "title": "니고랭",
-   "description": "미리 준비하는 경우 면을 삶아 기름을 넣어 섞어두면 덜 붙는다. 상비 조미료: 식용유. 수량 미표기 재료: 버터 적당량.",
+   "description": "미리 준비하는 경우 면을 삶아 기름을 넣어 섞어두면 덜 붙는다. 상비 조미료: 발사믹식초, 식용유. 수량 미표기 재료: 버터 적당량.",
    "mealSlots": [
     "아침",
     "점심",
@@ -237,13 +237,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-굴소스",
      "rawName": "굴소스",
      "quantity": 2.0,
@@ -279,7 +272,7 @@
   {
    "id": "fsk-1012",
    "title": "돼지갈비 볶음",
-   "description": "양념장을 넣어 익힐 때 다양한 야채를 첨가해도 좋다. 상비 조미료: 물, 설탕, 식초, 통깨. 수량 미표기 재료: 굵은소금적당량, 참기름 적당량.",
+   "description": "양념장을 넣어 익힐 때 다양한 야채를 첨가해도 좋다. 상비 조미료: 굵은소금, 물, 설탕, 식초, 통깨. 수량 미표기 재료: 참기름 적당량.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -524,7 +517,7 @@
   {
    "id": "fsk-1015",
    "title": "바지락 볶음면",
-   "description": "바지락을 소금물에 미리 담그어 놓으면 모래를 뱉어 씹히는 질감이 좋다. 상비 조미료: 깨소금, 설탕, 소금, 식용유, 후춧가루.",
+   "description": "바지락을 소금물에 미리 담그어 놓으면 모래를 뱉어 씹히는 질감이 좋다. 상비 조미료: 깨소금, 물전분, 설탕, 소금, 식용유, 후춧가루.",
    "mealSlots": [
     "아침",
     "점심",
@@ -589,13 +582,6 @@
      "ingredientID": "auto-칼국수면",
      "rawName": "칼국수면",
      "quantity": 80.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 4.0,
      "unit": "g",
      "preparation": null
     },
@@ -860,7 +846,7 @@
   {
    "id": "fsk-1019",
    "title": "생선찜 채소말이",
-   "description": "생선을 말 때는 껍질부분이 안으로 들어가게 말아야 보기에도 좋고 잘 풀러지지 않는다. 상비 조미료: 물, 설탕, 소금, 전분. 수량 미표기 재료: 참기름 적당량, 흰후춧가루 적당량.",
+   "description": "생선을 말 때는 껍질부분이 안으로 들어가게 말아야 보기에도 좋고 잘 풀러지지 않는다. 상비 조미료: 물, 설탕, 소금, 전분, 흰후춧가루. 수량 미표기 재료: 참기름 적당량.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -1051,7 +1037,7 @@
   {
    "id": "fsk-1021",
    "title": "스테이크 샐러드",
-   "description": "발사믹 식초가 없는 경우 사과식초나 양조식초로 대용해도 가능하다. 상비 조미료: 소금, 올리브오일. 수량 미표기 재료: 통후추 적당량.",
+   "description": "발사믹 식초가 없는 경우 사과식초나 양조식초로 대용해도 가능하다. 상비 조미료: 발사믹식초, 소금, 올리브오일, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -1101,13 +1087,6 @@
      "ingredientID": "auto-레드어니언",
      "rawName": "레드어니언",
      "quantity": 8.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 4.0,
      "unit": "g",
      "preparation": null
     }
@@ -1874,7 +1853,7 @@
   {
    "id": "fsk-1039",
    "title": "브로콜리 쇠고기 볶음",
-   "description": "기름에 데치는 방법은 차가운 기름부터 넣어 온도를 올리는 것으로 조직감이 부드러워 진다. 상비 조미료: 설탕, 소금.",
+   "description": "기름에 데치는 방법은 차가운 기름부터 넣어 온도를 올리는 것으로 조직감이 부드러워 진다. 상비 조미료: 물전분, 설탕, 소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -1896,13 +1875,6 @@
      "ingredientID": "auto-쇠고기안심",
      "rawName": "쇠고기안심",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 6.0,
      "unit": "g",
      "preparation": null
     },
@@ -2505,7 +2477,7 @@
   {
    "id": "fsk-1047",
    "title": "팽이버섯 야채볶음",
-   "description": "반찬 · 볶기 상비 조미료: 소금, 식용유.",
+   "description": "반찬 · 볶기 상비 조미료: 물전분, 소금, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -2534,13 +2506,6 @@
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 6.0,
      "unit": "g",
      "preparation": null
     }
@@ -4873,7 +4838,7 @@
   {
    "id": "fsk-1084",
    "title": "오! 푸룻한 뿌리채소",
-   "description": "요거트에 머스터드를 섞으면 상큼하고 톡쏘는 맛으로 첨가당 없이 맛있는 소스를 만들 수 있어요. 상비 조미료: 식초.",
+   "description": "요거트에 머스터드를 섞으면 상큼하고 톡쏘는 맛으로 첨가당 없이 맛있는 소스를 만들 수 있어요. 상비 조미료: 식초, 얼음.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -4944,13 +4909,6 @@
      "ingredientID": "auto-머스터드",
      "rawName": "머스터드",
      "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-얼음",
-     "rawName": "얼음",
-     "quantity": 200.0,
      "unit": "g",
      "preparation": null
     }
@@ -5284,7 +5242,7 @@
   {
    "id": "fsk-1089",
    "title": "비트 배추피클",
-   "description": "사과를 갈아 넣어 설탕사용을 줄이고 통후추의 매콤한 맛이 단맛이 적어도 피클을 맛있게 해줘요. 상비 조미료: 물, 설탕, 식초.",
+   "description": "사과를 갈아 넣어 설탕사용을 줄이고 통후추의 매콤한 맛이 단맛이 적어도 피클을 맛있게 해줘요. 상비 조미료: 물, 설탕, 식초, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -5335,13 +5293,6 @@
      "rawName": "월계수잎",
      "quantity": 2.0,
      "unit": "장",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
-     "unit": "g",
      "preparation": null
     }
    ],
@@ -5436,7 +5387,7 @@
   {
    "id": "fsk-111",
    "title": "칠곡석류국수",
-   "description": "견과류에는 불포화 지방산이 풍부하게 함유되어 있어, 고지혈증 등 혈류개선에 효과가 있어 성인병 예방에 좋다. 짠맛을 대신하여 석류의 새콤달콤한 맛을 활용하고, 볶은 견과류로 고소한 맛과 풍미를 더하였다. 상비 조미료: 식초.",
+   "description": "견과류에는 불포화 지방산이 풍부하게 함유되어 있어, 고지혈증 등 혈류개선에 효과가 있어 성인병 예방에 좋다. 짠맛을 대신하여 석류의 새콤달콤한 맛을 활용하고, 볶은 견과류로 고소한 맛과 풍미를 더하였다. 상비 조미료: 식초, 저염소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -5452,13 +5403,6 @@
      "ingredientID": "auto-소면",
      "rawName": "소면",
      "quantity": 160.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-저염소금",
-     "rawName": "저염소금",
-     "quantity": 4.0,
      "unit": "g",
      "preparation": null
     },
@@ -6155,7 +6099,7 @@
   {
    "id": "fsk-137",
    "title": "된장 두부찌개",
-   "description": "김치는 물에 헹구어 염분을 제거하고 고추를 넣어 매운 맛과 향을 더한다. 두부는 콩 단백질이 풍부한 식품으로 두뇌발달에 좋다. 상비 조미료: 고춧가루.",
+   "description": "김치는 물에 헹구어 염분을 제거하고 고추를 넣어 매운 맛과 향을 더한다. 두부는 콩 단백질이 풍부한 식품으로 두뇌발달에 좋다. 상비 조미료: 고춧가루, 쌀뜨물.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -6170,13 +6114,6 @@
      "ingredientID": "tofu",
      "rawName": "두부",
      "quantity": 320.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-쌀뜨물",
-     "rawName": "쌀뜨물",
-     "quantity": 300.0,
      "unit": "g",
      "preparation": null
     },
@@ -6771,7 +6708,7 @@
   {
    "id": "fsk-161",
    "title": "유자 대구조림",
-   "description": "소스에 유자청으로 향을 더하고 발사믹식초로 상큼함을 더한다. 찜은 재료 본연의 맛을 느낄 수 있는 조리법이며 소스를 찍어먹을 수 있도록 곁들여 내면 나트륨 섭취량을 줄일 수 있다. 상비 조미료: 밀가루.",
+   "description": "소스에 유자청으로 향을 더하고 발사믹식초로 상큼함을 더한다. 찜은 재료 본연의 맛을 느낄 수 있는 조리법이며 소스를 찍어먹을 수 있도록 곁들여 내면 나트륨 섭취량을 줄일 수 있다. 상비 조미료: 밀가루, 발사믹식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -6828,13 +6765,6 @@
      "ingredientID": "auto-유자청",
      "rawName": "유자청",
      "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
@@ -7059,7 +6989,7 @@
   {
    "id": "fsk-165",
    "title": "베이컨 가지 말이",
-   "description": "베이컨은 끓는 물에 데쳐 염분을 제거하고 칼륨이 다량 함유된 가지와 함께 섭취하도록 하여 나트륨 배출에 도움을 준다. 소스에 와사비, 식초, 올리고당을 넣어 매운맛과 새콤달콤한 맛을 준다. 상비 조미료: 고춧가루, 올리고당.",
+   "description": "베이컨은 끓는 물에 데쳐 염분을 제거하고 칼륨이 다량 함유된 가지와 함께 섭취하도록 하여 나트륨 배출에 도움을 준다. 소스에 와사비, 식초, 올리고당을 넣어 매운맛과 새콤달콤한 맛을 준다. 상비 조미료: 고춧가루, 사과식초, 올리고당.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -7144,13 +7074,6 @@
      "ingredientID": "garlic",
      "rawName": "마늘",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     }
@@ -7711,8 +7634,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00215_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-단호박",
-     "rawName": "재료 단호박",
+     "ingredientID": "auto-단호박",
+     "rawName": "단호박",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -7767,8 +7690,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -7819,8 +7742,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00216_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-쌀",
-     "rawName": "재료 쌀",
+     "ingredientID": "auto-쌀",
+     "rawName": "쌀",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -7868,8 +7791,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-강황가루",
-     "rawName": "양념 강황가루",
+     "ingredientID": "auto-강황가루",
+     "rawName": "강황가루",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -7906,8 +7829,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00217_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-쌀",
-     "rawName": "재료 쌀",
+     "ingredientID": "auto-쌀",
+     "rawName": "쌀",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -7955,8 +7878,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-강황가루",
-     "rawName": "양념 강황가루",
+     "ingredientID": "auto-강황가루",
+     "rawName": "강황가루",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -7994,8 +7917,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00218_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-쌀",
-     "rawName": "재료 쌀",
+     "ingredientID": "auto-쌀",
+     "rawName": "쌀",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -8092,15 +8015,15 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-다시마",
-     "rawName": "육수 다시마",
+     "ingredientID": "auto-다시마",
+     "rawName": "다시마",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-생청국장",
-     "rawName": "양념 생청국장",
+     "ingredientID": "auto-생청국장",
+     "rawName": "생청국장",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -8152,8 +8075,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00219_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-볶음밥-쌀",
-     "rawName": "볶음밥 쌀",
+     "ingredientID": "auto-밥-쌀",
+     "rawName": "밥 쌀",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -8242,7 +8165,7 @@
   {
    "id": "fsk-220",
    "title": "토마토카레 채소볶음밥",
-   "description": "카레가루를 넣어 향미를 높이고 나트륨 함량을 낮추는 동시에\n토마토를 넣어 상큼한 맛을 살리고 나트륨 배출을 도왔다.",
+   "description": "카레가루를 넣어 향미를 높이고 나트륨 함량을 낮추는 동시에\n토마토를 넣어 상큼한 맛을 살리고 나트륨 배출을 도왔다. 상비 조미료: 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -8254,8 +8177,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00220_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-감자",
-     "rawName": "재료 감자",
+     "ingredientID": "auto-감자",
+     "rawName": "감자",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -8317,13 +8240,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-후춧가루",
-     "rawName": "양념 후춧가루",
-     "quantity": 0.1,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-토마토페이스트",
      "rawName": "토마토페이스트",
      "quantity": 20.0,
@@ -8366,7 +8282,7 @@
   {
    "id": "fsk-221",
    "title": "구운주먹밥",
-   "description": "조미김 대신 생김을 사용해 염분 섭취를 줄였다. 상비 조미료: 식초, 참깨.",
+   "description": "조미김 대신 생김을 사용해 염분 섭취를 줄였다. 상비 조미료: 식초, 참깨, 톳 무침양념 설탕.",
    "mealSlots": [
     "아침",
     "점심",
@@ -8379,8 +8295,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00221_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-현미",
-     "rawName": "재료 현미",
+     "ingredientID": "auto-현미",
+     "rawName": "현미",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -8410,13 +8326,6 @@
      "ingredientID": "auto-밥-밑간-참기름",
      "rawName": "밥 밑간 참기름",
      "quantity": 4.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-톳-무침양념-설탕",
-     "rawName": "톳 무침양념 설탕",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -8452,8 +8361,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00222_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-칵테일새우",
-     "rawName": "재료 칵테일새우",
+     "ingredientID": "auto-칵테일새우",
+     "rawName": "칵테일새우",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -8494,8 +8403,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스-다진-마늘",
-     "rawName": "소스 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 4.0,
      "unit": "g",
      "preparation": null
@@ -8542,7 +8451,7 @@
   {
    "id": "fsk-223",
    "title": "닭봉주먹밥",
-   "description": "소스에 염분이 높은 간장 대신 고소한 참깨와 상큼한 레몬즙,\n달콤한 꿀을 넣어 상큼하고 달콤한 맛으로 짠맛을 대체했다.",
+   "description": "소스에 염분이 높은 간장 대신 고소한 참깨와 상큼한 레몬즙,\n달콤한 꿀을 넣어 상큼하고 달콤한 맛으로 짠맛을 대체했다. 상비 조미료: 부순 참깨, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -8554,8 +8463,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00223_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-닭봉",
-     "rawName": "재료 닭봉",
+     "ingredientID": "auto-닭봉",
+     "rawName": "닭봉",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -8638,13 +8547,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-후춧가루",
-     "rawName": "양념 후춧가루",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 20.0,
@@ -8659,8 +8561,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스-레몬즙",
-     "rawName": "소스 레몬즙",
+     "ingredientID": "auto-레몬즙",
+     "rawName": "레몬즙",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -8676,13 +8578,6 @@
      "ingredientID": "auto-꿀",
      "rawName": "꿀",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-부순-참깨",
-     "rawName": "부순 참깨",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -8720,8 +8615,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00224_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-봄동",
-     "rawName": "재료 봄동",
+     "ingredientID": "auto-봄동",
+     "rawName": "봄동",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -8762,8 +8657,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-주먹밥-데친-꼬막살",
-     "rawName": "주먹밥 데친 꼬막살",
+     "ingredientID": "auto-데친-꼬막살",
+     "rawName": "데친 꼬막살",
      "quantity": 14.0,
      "unit": "g",
      "preparation": null
@@ -8859,7 +8754,7 @@
   {
    "id": "fsk-225",
    "title": "깻잎장아찌롤",
-   "description": "소금간 대신 산뜻한 피클을 다져 넣은 소스를 사용해 나트륨 섭취를 줄였다. 상비 조미료: 물, 참깨.",
+   "description": "소금간 대신 산뜻한 피클을 다져 넣은 소스를 사용해 나트륨 섭취를 줄였다. 상비 조미료: 머스터드소스 설탕, 물, 참깨.",
    "mealSlots": [
     "아침",
     "점심",
@@ -8872,8 +8767,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00225_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-쌀",
-     "rawName": "재료 쌀",
+     "ingredientID": "auto-쌀",
+     "rawName": "쌀",
      "quantity": 200.0,
      "unit": "g",
      "preparation": null
@@ -8935,13 +8830,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-머스터드소스-설탕",
-     "rawName": "머스터드소스 설탕",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-머스터드소스",
      "rawName": "머스터드소스",
      "quantity": 15.0,
@@ -8970,7 +8858,7 @@
   {
    "id": "fsk-226",
    "title": "참치비빔밥롤",
-   "description": "토마토소스와 사과드레싱으로 맛을 내 소금간을 줄이고 나트륨 함량을 낮췄다. 상비 조미료: 올리브유.",
+   "description": "토마토소스와 사과드레싱으로 맛을 내 소금간을 줄이고 나트륨 함량을 낮췄다. 상비 조미료: 사과드레싱 식초, 올리브유, 참치밑간 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -8982,8 +8870,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00226_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-멥쌀",
-     "rawName": "재료 멥쌀",
+     "ingredientID": "auto-멥쌀",
+     "rawName": "멥쌀",
      "quantity": 60.0,
      "unit": "g",
      "preparation": null
@@ -9040,20 +8928,6 @@
     {
      "ingredientID": "auto-케일",
      "rawName": "케일",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-참치밑간-후춧가루",
-     "rawName": "참치밑간 후춧가루",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과드레싱-식초",
-     "rawName": "사과드레싱 식초",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -9127,8 +9001,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00227_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-파프리카",
-     "rawName": "재료 파프리카",
+     "ingredientID": "auto-파프리카",
+     "rawName": "파프리카",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -9176,8 +9050,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스-저염간장",
-     "rawName": "소스 저염간장",
+     "ingredientID": "auto-저염간장",
+     "rawName": "저염간장",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -9209,7 +9083,7 @@
   {
    "id": "fsk-228",
    "title": "연어주먹밥튀김",
-   "description": "연어를 식초물에 데쳐 염분을 최대한 제거해 나트륨 섭취량을 줄였다 상비 조미료: 식초, 올리브유, 참깨. 수량 미표기 재료: 통조림 연어(1캔=130g).",
+   "description": "연어를 식초물에 데쳐 염분을 최대한 제거해 나트륨 섭취량을 줄였다 상비 조미료: 식초, 오리엔탈소스 식초, 올리브유, 참깨. 수량 미표기 재료: 통조림 연어(1캔=130g).",
    "mealSlots": [
     "점심",
     "저녁"
@@ -9221,8 +9095,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00228_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-당근",
-     "rawName": "재료 당근",
+     "ingredientID": "carrot",
+     "rawName": "당근",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -9280,13 +9154,6 @@
      "ingredientID": "auto-어린잎채소",
      "rawName": "어린잎채소",
      "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-오리엔탈소스-식초",
-     "rawName": "오리엔탈소스 식초",
-     "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
@@ -9351,8 +9218,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00229_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-오징어-몸통",
-     "rawName": "재료 오징어 몸통",
+     "ingredientID": "auto-오징어-몸통",
+     "rawName": "오징어 몸통",
      "quantity": 130.0,
      "unit": "g",
      "preparation": null
@@ -9421,8 +9288,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-참기름",
-     "rawName": "양념 참기름",
+     "ingredientID": "sesame-oil",
+     "rawName": "참기름",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -9475,8 +9342,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00230_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-닭가슴살",
-     "rawName": "재료 닭가슴살",
+     "ingredientID": "auto-닭가슴살",
+     "rawName": "닭가슴살",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -9573,7 +9440,7 @@
   {
    "id": "fsk-231",
    "title": "두부달걀덮밥",
-   "description": "담백한 두부를 주재료로, 나트륨 배출을 돕는 칼륨이 많이 함유된 가지와 버섯을 사용하고,\n가다랑어포로 육수를 내 감칠맛을 더해 소금간을 줄여 나트륨 섭취를 줄였다. 상비 조미료: 녹말가루, 설탕, 청주.",
+   "description": "담백한 두부를 주재료로, 나트륨 배출을 돕는 칼륨이 많이 함유된 가지와 버섯을 사용하고,\n가다랑어포로 육수를 내 감칠맛을 더해 소금간을 줄여 나트륨 섭취를 줄였다. 상비 조미료: 녹말가루, 설탕, 재료 물, 청주, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -9585,8 +9452,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00231_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-두부",
-     "rawName": "재료 두부",
+     "ingredientID": "tofu",
+     "rawName": "두부",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -9634,13 +9501,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-재료-물",
-     "rawName": "육수 재료 물",
-     "quantity": 200.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-다시마",
      "rawName": "다시마",
      "quantity": 1.0,
@@ -9651,13 +9511,6 @@
      "ingredientID": "auto-가다랑어포",
      "rawName": "가다랑어포",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념-후춧가루",
-     "rawName": "양념 후춧가루",
-     "quantity": 0.1,
      "unit": "g",
      "preparation": null
     },
@@ -9797,8 +9650,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00233_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-가지",
-     "rawName": "재료 가지",
+     "ingredientID": "auto-가지",
+     "rawName": "가지",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -9832,8 +9685,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스-사과",
-     "rawName": "소스 사과",
+     "ingredientID": "auto-사과",
+     "rawName": "사과",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -9873,7 +9726,7 @@
   {
    "id": "fsk-234",
    "title": "갈릭칩동태구이",
-   "description": "잘 부서지는 동태살을 단단하게 만들기 위해서는 소금에 재워야 하는데,\n소금 대신 저염된장에 재우면 살이 단단해지면서 염도를 낮출 수 있다.",
+   "description": "잘 부서지는 동태살을 단단하게 만들기 위해서는 소금에 재워야 하는데,\n소금 대신 저염된장에 재우면 살이 단단해지면서 염도를 낮출 수 있다. 상비 조미료: 맛술.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -9885,8 +9738,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00234_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-동태포",
-     "rawName": "재료 동태포",
+     "ingredientID": "auto-동태포",
+     "rawName": "동태포",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -9894,13 +9747,6 @@
     {
      "ingredientID": "auto-통마늘",
      "rawName": "통마늘",
-     "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념-맛술",
-     "rawName": "양념 맛술",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -10041,7 +9887,7 @@
   {
    "id": "fsk-236",
    "title": "닭가슴살카나페",
-   "description": "후춧가루로만 간을 해서 염도를 낮췄고, 고구마와 바나나에 들어있는\n칼륨이 몸속 나트륨 배출을 돕는다 상비 조미료: 후춧가루.",
+   "description": "후춧가루로만 간을 해서 염도를 낮췄고, 고구마와 바나나에 들어있는\n칼륨이 몸속 나트륨 배출을 돕는다 상비 조미료: 바나나식초, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10053,8 +9899,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00236_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-고구마",
-     "rawName": "재료 고구마",
+     "ingredientID": "auto-고구마",
+     "rawName": "고구마",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -10093,13 +9939,6 @@
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-바나나식초",
-     "rawName": "바나나식초",
-     "quantity": 80.0,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -10135,8 +9974,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00237_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-돼지고기",
-     "rawName": "재료 돼지고기",
+     "ingredientID": "auto-돼지고기",
+     "rawName": "돼지고기",
      "quantity": 120.0,
      "unit": "g",
      "preparation": null
@@ -10212,7 +10051,7 @@
   {
    "id": "fsk-238",
    "title": "꽁치채소말이",
-   "description": "꽁치에 소금간을 최대한 줄이고, 오렌지소스를 곁들여 비린 맛을 잡으면서 상큼함을 더했다. 상비 조미료: 밀가루, 설탕.",
+   "description": "꽁치에 소금간을 최대한 줄이고, 오렌지소스를 곁들여 비린 맛을 잡으면서 상큼함을 더했다. 상비 조미료: 고운 소금, 밀가루, 설탕.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10224,8 +10063,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00238_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-꽁치살",
-     "rawName": "재료 꽁치살",
+     "ingredientID": "auto-꽁치살",
+     "rawName": "꽁치살",
      "quantity": 200.0,
      "unit": "g",
      "preparation": null
@@ -10285,13 +10124,6 @@
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-고운-소금",
-     "rawName": "고운 소금",
-     "quantity": 0.3,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -10314,7 +10146,7 @@
   {
    "id": "fsk-239",
    "title": "차돌박이구이",
-   "description": "염분이 많은 양념 대신에 오렌지와 홍초를 이용해 상큼한 맛을 살리면서 나트륨 함량을 줄였다 상비 조미료: 물.",
+   "description": "염분이 많은 양념 대신에 오렌지와 홍초를 이용해 상큼한 맛을 살리면서 나트륨 함량을 줄였다 상비 조미료: 물, 홍초물 설탕.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10326,8 +10158,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00239_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-연근",
-     "rawName": "재료 연근",
+     "ingredientID": "auto-연근",
+     "rawName": "연근",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -10368,13 +10200,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-홍초물-설탕",
-     "rawName": "홍초물 설탕",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-홍초",
      "rawName": "홍초",
      "quantity": 20.0,
@@ -10403,7 +10228,7 @@
   {
    "id": "fsk-240",
    "title": "간장아귀찜",
-   "description": "고추장소스를 사용하지 않고 저염간장과 천연 조미료를 우린 물로 맛을 내\n나트륨 섭취를 줄였다. 상비 조미료: 참깨, 청주.",
+   "description": "고추장소스를 사용하지 않고 저염간장과 천연 조미료를 우린 물로 맛을 내\n나트륨 섭취를 줄였다. 상비 조미료: 간장소스 설탕, 참깨, 청주.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10415,8 +10240,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00240_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-아귀",
-     "rawName": "재료 아귀",
+     "ingredientID": "auto-아귀",
+     "rawName": "아귀",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -10460,13 +10285,6 @@
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-간장소스-설탕",
-     "rawName": "간장소스 설탕",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -10526,7 +10344,7 @@
   {
    "id": "fsk-241",
    "title": "견과류통삼겹살찜",
-   "description": "새우젓과 마늘에 소금간을 따로 하지 않고 튀겨 함께 곁들여 맛을 내 나트륨 섭취량을 줄였다 상비 조미료: 고춧가루, 맛술, 후춧가루.",
+   "description": "새우젓과 마늘에 소금간을 따로 하지 않고 튀겨 함께 곁들여 맛을 내 나트륨 섭취량을 줄였다 상비 조미료: 고춧가루, 맛술, 설탕, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10538,8 +10356,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00241_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-돼지고기",
-     "rawName": "재료 돼지고기",
+     "ingredientID": "auto-돼지고기",
+     "rawName": "돼지고기",
      "quantity": 200.0,
      "unit": "g",
      "preparation": null
@@ -10615,16 +10433,9 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-들기름",
-     "rawName": "양념 들기름",
+     "ingredientID": "auto-들기름",
+     "rawName": "들기름",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-소스-설탕",
-     "rawName": "소스 설탕",
-     "quantity": 15.0,
      "unit": "g",
      "preparation": null
     },
@@ -10692,7 +10503,7 @@
   {
    "id": "fsk-242",
    "title": "닭가슴살말이",
-   "description": "재료에 따로 간을 하지 않고\n식초와 겨자를 사용한\n견과류 소스를 곁들여\n나트륨 섭취를 줄였다 상비 조미료: 식초, 참깨.",
+   "description": "재료에 따로 간을 하지 않고\n식초와 겨자를 사용한\n견과류 소스를 곁들여\n나트륨 섭취를 줄였다 상비 조미료: 겨자소스 설탕, 단촛물 설탕, 식초, 참깨.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10704,8 +10515,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00242_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-닭가슴살",
-     "rawName": "재료 닭가슴살",
+     "ingredientID": "auto-닭가슴살",
+     "rawName": "닭가슴살",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -10753,20 +10564,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-단촛물-설탕",
-     "rawName": "단촛물 설탕",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-겨자소스-설탕",
-     "rawName": "겨자소스 설탕",
-     "quantity": 28.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-발효겨자",
      "rawName": "발효겨자",
      "quantity": 28.0,
@@ -10809,7 +10606,7 @@
   {
    "id": "fsk-243",
    "title": "두부말이찜",
-   "description": "소금간 대신 시큼한 레몬소스로 맛을 내 나트륨 함량을 줄였다. 상비 조미료: 식초.",
+   "description": "소금간 대신 시큼한 레몬소스로 맛을 내 나트륨 함량을 줄였다. 상비 조미료: 레몬소스 설탕, 부순 참깨, 식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10821,8 +10618,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00243_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-두부",
-     "rawName": "재료 두부",
+     "ingredientID": "tofu",
+     "rawName": "두부",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -10863,8 +10660,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-반죽양념-다진-파",
-     "rawName": "반죽양념 다진 파",
+     "ingredientID": "auto-양념-다진-파",
+     "rawName": "양념 다진 파",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -10873,20 +10670,6 @@
      "ingredientID": "garlic",
      "rawName": "다진 마늘",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-부순-참깨",
-     "rawName": "부순 참깨",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-레몬소스-설탕",
-     "rawName": "레몬소스 설탕",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -10926,7 +10709,7 @@
   {
    "id": "fsk-244",
    "title": "미나리명태찜",
-   "description": "생선에 양념을 내 익히는 것이 아니라 생선을 찐 다음 소스를 곁들여\n생선살 속에 간이 배지 않아 나트륨 함량은 낮추고 재료 본연의 맛을 느낄 수 있다. 상비 조미료: 식초, 후춧가루.",
+   "description": "생선에 양념을 내 익히는 것이 아니라 생선을 찐 다음 소스를 곁들여\n생선살 속에 간이 배지 않아 나트륨 함량은 낮추고 재료 본연의 맛을 느낄 수 있다. 상비 조미료: 레몬소스 설탕, 식초, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -10938,8 +10721,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00244_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-미나리",
-     "rawName": "재료 미나리",
+     "ingredientID": "auto-미나리",
+     "rawName": "미나리",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -10948,13 +10731,6 @@
      "ingredientID": "auto-명태",
      "rawName": "명태",
      "quantity": 150.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-레몬소스-설탕",
-     "rawName": "레몬소스 설탕",
-     "quantity": 7.0,
      "unit": "g",
      "preparation": null
     },
@@ -11005,8 +10781,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00245_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-배추",
-     "rawName": "재료 배추",
+     "ingredientID": "auto-배추",
+     "rawName": "배추",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -11068,8 +10844,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-참기름",
-     "rawName": "양념 참기름",
+     "ingredientID": "sesame-oil",
+     "rawName": "참기름",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -11143,8 +10919,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00246_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-닭가슴살",
-     "rawName": "재료 닭가슴살",
+     "ingredientID": "auto-닭가슴살",
+     "rawName": "닭가슴살",
      "quantity": 200.0,
      "unit": "g",
      "preparation": null
@@ -11225,8 +11001,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00247_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-표고버섯",
-     "rawName": "재료 표고버섯",
+     "ingredientID": "auto-표고버섯",
+     "rawName": "표고버섯",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -11355,8 +11131,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00248_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-다진-돼지고기",
-     "rawName": "재료 다진 돼지고기",
+     "ingredientID": "auto-다진-돼지고기",
+     "rawName": "다진 돼지고기",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -11404,8 +11180,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-고기-밑간-다진-파",
-     "rawName": "고기 밑간 다진 파",
+     "ingredientID": "auto-다진-파",
+     "rawName": "다진 파",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -11464,8 +11240,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00249_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-두부",
-     "rawName": "재료 두부",
+     "ingredientID": "tofu",
+     "rawName": "두부",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -11547,7 +11323,7 @@
   {
    "id": "fsk-250",
    "title": "단호박제육볶음",
-   "description": "돼지고기를 한 번 데친 후 양념에 재워 나트륨 함량을 낮추고\n육수를 넣고 소금간을 줄여 나트륨 섭취를 줄였다. 상비 조미료: 고춧가루, 물.",
+   "description": "돼지고기를 한 번 데친 후 양념에 재워 나트륨 함량을 낮추고\n육수를 넣고 소금간을 줄여 나트륨 섭취를 줄였다. 상비 조미료: 고춧가루, 물, 부순 참깨.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -11559,8 +11335,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00250_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-돼지고기",
-     "rawName": "재료 돼지고기",
+     "ingredientID": "auto-돼지고기",
+     "rawName": "돼지고기",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -11601,8 +11377,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념장-저염간장",
-     "rawName": "양념장 저염간장",
+     "ingredientID": "auto-저염간장",
+     "rawName": "저염간장",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -11622,16 +11398,9 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-부순-참깨",
-     "rawName": "부순 참깨",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -11663,7 +11432,7 @@
   {
    "id": "fsk-251",
    "title": "버섯콩불고기",
-   "description": "육류에 비해 나트륨 함량이 적은 콩고기를 사용하고, 저염간장과 매실액,\n배즙으로 맛을 낸 소스로 나트륨 섭취량을 줄였다. 상비 조미료: 맛술.",
+   "description": "육류에 비해 나트륨 함량이 적은 콩고기를 사용하고, 저염간장과 매실액,\n배즙으로 맛을 낸 소스로 나트륨 섭취량을 줄였다. 상비 조미료: 맛술, 설탕.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -11675,8 +11444,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00251_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-콩고기",
-     "rawName": "재료 콩고기",
+     "ingredientID": "auto-콩고기",
+     "rawName": "콩고기",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -11752,13 +11521,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념장-설탕",
-     "rawName": "양념장 설탕",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-저염진간장",
      "rawName": "저염진간장",
      "quantity": 10.0,
@@ -11794,8 +11556,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-들기름",
-     "rawName": "양념 들기름",
+     "ingredientID": "auto-들기름",
+     "rawName": "들기름",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -11843,7 +11605,7 @@
   {
    "id": "fsk-252",
    "title": "차돌박이볶음",
-   "description": "저염간장을 사용해 나트륨 섭취를 줄이고,\n해초를 물에 충분히 담가둬 염분이 제거되도록 한다. 상비 조미료: 식초, 올리브유, 후춧가루.",
+   "description": "저염간장을 사용해 나트륨 섭취를 줄이고,\n해초를 물에 충분히 담가둬 염분이 제거되도록 한다. 상비 조미료: 1 발사믹식초, 설탕, 식초, 올리브유, 해초 밑간 설탕, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -11855,8 +11617,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00252_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-차돌박이",
-     "rawName": "재료 차돌박이",
+     "ingredientID": "auto-차돌박이",
+     "rawName": "차돌박이",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -11890,13 +11652,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스1-발사믹식초",
-     "rawName": "소스1 발사믹식초",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-매실청",
      "rawName": "매실청",
      "quantity": 5.0,
@@ -11904,8 +11659,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스2-마요네즈",
-     "rawName": "소스2 마요네즈",
+     "ingredientID": "auto-2-마요네즈",
+     "rawName": "2 마요네즈",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -11918,16 +11673,9 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스3-유자청",
-     "rawName": "소스3 유자청",
+     "ingredientID": "auto-3-유자청",
+     "rawName": "3 유자청",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-고기-밑간-설탕",
-     "rawName": "고기 밑간 설탕",
-     "quantity": 1.5,
      "unit": "g",
      "preparation": null
     },
@@ -11949,13 +11697,6 @@
      "ingredientID": "onion",
      "rawName": "양파",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-해초-밑간-설탕",
-     "rawName": "해초 밑간 설탕",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -12111,7 +11852,7 @@
   {
    "id": "fsk-254",
    "title": "토마토두루치기",
-   "description": "고추장의 양을 절반 이상 줄이고 토마토와 비트를 사용해 맛을 내 나트륨 섭취를 줄였다.\n또한 파프리카와 피망은 칼륨 함량이 높아 나트륨 배출을 돕는다. 상비 조미료: 물엿, 설탕, 식용유, 후춧가루.",
+   "description": "고추장의 양을 절반 이상 줄이고 토마토와 비트를 사용해 맛을 내 나트륨 섭취를 줄였다.\n또한 파프리카와 피망은 칼륨 함량이 높아 나트륨 배출을 돕는다. 상비 조미료: 물엿, 설탕, 소금, 식용유, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -12123,8 +11864,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00254_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-양배추",
-     "rawName": "재료 양배추",
+     "ingredientID": "cabbage",
+     "rawName": "양배추",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -12196,13 +11937,6 @@
      "ingredientID": "auto-돼지고기",
      "rawName": "돼지고기",
      "quantity": 100.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념-소금",
-     "rawName": "양념 소금",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     },
@@ -12295,8 +12029,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-소스-마늘",
-     "rawName": "소스 마늘",
+     "ingredientID": "garlic",
+     "rawName": "마늘",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -12450,8 +12184,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00257_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-돼지고기",
-     "rawName": "재료 돼지고기",
+     "ingredientID": "auto-돼지고기",
+     "rawName": "돼지고기",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -12575,7 +12309,7 @@
   {
    "id": "fsk-258",
    "title": "두부곤약조림",
-   "description": "저염간장을 사용해 나트륨을 줄이면서 유자청으로 간을 맞췄다.\n가지와 애호박은 칼륨을 많이 함유하고 있어 나트륨 배출을 돕는다.\n또한 곤약과 달걀옷을 입힌 두부에는 양념이 적게 스며들어 나트륨 섭취를 줄였다. 상비 조미료: 물.",
+   "description": "저염간장을 사용해 나트륨을 줄이면서 유자청으로 간을 맞췄다.\n가지와 애호박은 칼륨을 많이 함유하고 있어 나트륨 배출을 돕는다.\n또한 곤약과 달걀옷을 입힌 두부에는 양념이 적게 스며들어 나트륨 섭취를 줄였다. 상비 조미료: 감자전분, 물.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -12587,8 +12321,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00258_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-곤약",
-     "rawName": "재료 곤약",
+     "ingredientID": "auto-곤약",
+     "rawName": "곤약",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -12618,13 +12352,6 @@
      "ingredientID": "auto-꽈리고추",
      "rawName": "꽈리고추",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-조림장-감자전분",
-     "rawName": "조림장 감자전분",
-     "quantity": 6.0,
      "unit": "g",
      "preparation": null
     },
@@ -12676,7 +12403,7 @@
   {
    "id": "fsk-259",
    "title": "아귀나가사키조림",
-   "description": "해물육수를 사용해 감칠맛을 내고,\n해산물을 한 번 데쳐 염분을 제거한 후 조리해 염도를 낮췄다.",
+   "description": "해물육수를 사용해 감칠맛을 내고,\n해산물을 한 번 데쳐 염분을 제거한 후 조리해 염도를 낮췄다. 상비 조미료: 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -12688,8 +12415,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00259_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-미나리",
-     "rawName": "재료 미나리",
+     "ingredientID": "auto-미나리",
+     "rawName": "미나리",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -12793,8 +12520,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-마늘",
-     "rawName": "육수 마늘",
+     "ingredientID": "garlic",
+     "rawName": "마늘",
      "quantity": 7.0,
      "unit": "g",
      "preparation": null
@@ -12803,13 +12530,6 @@
      "ingredientID": "green-onion",
      "rawName": "대파",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -12859,8 +12579,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00260_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-고구마",
-     "rawName": "재료 고구마",
+     "ingredientID": "auto-고구마",
+     "rawName": "고구마",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -12950,8 +12670,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -13010,8 +12730,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00261_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-양파",
-     "rawName": "재료 양파",
+     "ingredientID": "onion",
+     "rawName": "양파",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -13108,8 +12828,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -13157,7 +12877,7 @@
   {
    "id": "fsk-262",
    "title": "토마토콩조림",
-   "description": "소금이나 토마토 페이스트를 쓰지 않아 나트륨 함량을 줄였다.\n또한 토마토와 콩, 양송이버섯은 칼륨 함량이 풍부해 나트륨 배출에 도움이 된다 상비 조미료: 후춧가루.",
+   "description": "소금이나 토마토 페이스트를 쓰지 않아 나트륨 함량을 줄였다.\n또한 토마토와 콩, 양송이버섯은 칼륨 함량이 풍부해 나트륨 배출에 도움이 된다 상비 조미료: 설탕, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -13169,8 +12889,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00262_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-콩",
-     "rawName": "재료 콩",
+     "ingredientID": "auto-콩",
+     "rawName": "콩",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -13193,13 +12913,6 @@
      "ingredientID": "auto-토마토",
      "rawName": "토마토",
      "quantity": 200.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념-설탕",
-     "rawName": "양념 설탕",
-     "quantity": 4.0,
      "unit": "g",
      "preparation": null
     },
@@ -13230,7 +12943,7 @@
   {
    "id": "fsk-263",
    "title": "관자해장국",
-   "description": "칼륨을 많이 함유한 토마토를 이용한 소스로 간을 해 나트륨 배출을 돕는다. 상비 조미료: 고춧가루, 물.",
+   "description": "칼륨을 많이 함유한 토마토를 이용한 소스로 간을 해 나트륨 배출을 돕는다. 상비 조미료: 고춧가루, 물, 발 사믹식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -13242,8 +12955,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00263_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-풋고추",
-     "rawName": "재료 풋고추",
+     "ingredientID": "auto-풋고추",
+     "rawName": "풋고추",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
@@ -13291,8 +13004,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-콩나물",
-     "rawName": "육수 콩나물",
+     "ingredientID": "auto-콩나물",
+     "rawName": "콩나물",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -13326,15 +13039,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-발-사믹식초",
-     "rawName": "발 사믹식초",
-     "quantity": 13.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -13372,8 +13078,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00264_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-느타리버섯",
-     "rawName": "재료 느타리버섯",
+     "ingredientID": "auto-느타리버섯",
+     "rawName": "느타리버섯",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -13435,8 +13141,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-들기름",
-     "rawName": "양념 들기름",
+     "ingredientID": "auto-들기름",
+     "rawName": "들기름",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -13479,8 +13185,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00265_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-다시마",
-     "rawName": "재료 다시마",
+     "ingredientID": "auto-다시마",
+     "rawName": "다시마",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
@@ -13514,8 +13220,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-들기름",
-     "rawName": "양념 들기름",
+     "ingredientID": "auto-들기름",
+     "rawName": "들기름",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -13574,8 +13280,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00266_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-대구",
-     "rawName": "재료 대구",
+     "ingredientID": "auto-대구",
+     "rawName": "대구",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -13616,15 +13322,15 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-반죽-쑥가루",
-     "rawName": "반죽 쑥가루",
+     "ingredientID": "auto-쑥가루",
+     "rawName": "쑥가루",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-다시마",
-     "rawName": "육수 다시마",
+     "ingredientID": "auto-다시마",
+     "rawName": "다시마",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -13644,8 +13350,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -13690,8 +13396,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00267_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-쇠고기육수",
-     "rawName": "재료 쇠고기육수",
+     "ingredientID": "auto-쇠고기육수",
+     "rawName": "쇠고기육수",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -13739,8 +13445,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 8.0,
      "unit": "g",
      "preparation": null
@@ -13786,8 +13492,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00268_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-양파",
-     "rawName": "재료 양파",
+     "ingredientID": "onion",
+     "rawName": "양파",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -13821,8 +13527,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-무",
-     "rawName": "육수 무",
+     "ingredientID": "auto-무",
+     "rawName": "무",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -13842,8 +13548,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -13889,8 +13595,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00269_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-배추",
-     "rawName": "재료 배추",
+     "ingredientID": "auto-배추",
+     "rawName": "배추",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -13938,8 +13644,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-저염간장",
-     "rawName": "양념 저염간장",
+     "ingredientID": "auto-저염간장",
+     "rawName": "저염간장",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -13978,8 +13684,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00270_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-김치",
-     "rawName": "재료 김치",
+     "ingredientID": "kimchi",
+     "rawName": "김치",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -14062,8 +13768,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-김치주머니-소-새우",
-     "rawName": "김치주머니 소 새우",
+     "ingredientID": "auto-새우",
+     "rawName": "새우",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -14128,8 +13834,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00271_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-닭가슴살",
-     "rawName": "재료 닭가슴살",
+     "ingredientID": "auto-닭가슴살",
+     "rawName": "닭가슴살",
      "quantity": 60.0,
      "unit": "g",
      "preparation": null
@@ -14191,8 +13897,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-다시마",
-     "rawName": "육수 다시마",
+     "ingredientID": "auto-다시마",
+     "rawName": "다시마",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -14272,8 +13978,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00272_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-콩나물",
-     "rawName": "재료 콩나물",
+     "ingredientID": "auto-콩나물",
+     "rawName": "콩나물",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -14314,8 +14020,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-대파",
-     "rawName": "육수 대파",
+     "ingredientID": "green-onion",
+     "rawName": "대파",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -14368,8 +14074,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00273_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-풋고추",
-     "rawName": "재료 풋고추",
+     "ingredientID": "auto-풋고추",
+     "rawName": "풋고추",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -14389,8 +14095,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-참기름",
-     "rawName": "양념 참기름",
+     "ingredientID": "sesame-oil",
+     "rawName": "참기름",
      "quantity": 8.0,
      "unit": "g",
      "preparation": null
@@ -14441,8 +14147,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00274_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-오징어",
-     "rawName": "재료 오징어",
+     "ingredientID": "auto-오징어",
+     "rawName": "오징어",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -14497,8 +14203,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-무",
-     "rawName": "육수 무",
+     "ingredientID": "auto-무",
+     "rawName": "무",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -14525,8 +14231,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-참기름",
-     "rawName": "양념 참기름",
+     "ingredientID": "sesame-oil",
+     "rawName": "참기름",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -14687,8 +14393,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00276_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-느타리버섯",
-     "rawName": "재료 느타리버섯",
+     "ingredientID": "auto-느타리버섯",
+     "rawName": "느타리버섯",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -14844,8 +14550,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00277_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-통조림-햄",
-     "rawName": "재료 통조림 햄",
+     "ingredientID": "auto-통조림-햄",
+     "rawName": "통조림 햄",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -14977,8 +14683,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-사골육수",
-     "rawName": "육수 사골육수",
+     "ingredientID": "auto-사골육수",
+     "rawName": "사골육수",
      "quantity": 300.0,
      "unit": "g",
      "preparation": null
@@ -14991,8 +14697,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-들깻가루",
-     "rawName": "양념 들깻가루",
+     "ingredientID": "auto-들깻가루",
+     "rawName": "들깻가루",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -15030,8 +14736,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00278_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-닭가슴살",
-     "rawName": "재료 닭가슴살",
+     "ingredientID": "auto-닭가슴살",
+     "rawName": "닭가슴살",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -15121,8 +14827,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-당귀",
-     "rawName": "육수 당귀",
+     "ingredientID": "auto-당귀",
+     "rawName": "당귀",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -15149,8 +14855,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념장-겨자가루",
-     "rawName": "양념장 겨자가루",
+     "ingredientID": "auto-겨자가루",
+     "rawName": "겨자가루",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -15384,8 +15090,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00280_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-굴",
-     "rawName": "재료 굴",
+     "ingredientID": "auto-굴",
+     "rawName": "굴",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -15454,8 +15160,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -15507,8 +15213,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00281_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-콩",
-     "rawName": "재료 콩",
+     "ingredientID": "auto-콩",
+     "rawName": "콩",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -15591,8 +15297,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-마른-다시마",
-     "rawName": "육수 마른 다시마",
+     "ingredientID": "auto-마른-다시마",
+     "rawName": "마른 다시마",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -15781,8 +15487,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00283_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-토란",
-     "rawName": "재료 토란",
+     "ingredientID": "auto-토란",
+     "rawName": "토란",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -15862,8 +15568,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00284_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-마늘",
-     "rawName": "재료 마늘",
+     "ingredientID": "garlic",
+     "rawName": "마늘",
      "quantity": 0.3,
      "unit": "g",
      "preparation": null
@@ -15911,8 +15617,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-무",
-     "rawName": "육수 무",
+     "ingredientID": "auto-무",
+     "rawName": "무",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -15932,8 +15638,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-된장",
-     "rawName": "양념 된장",
+     "ingredientID": "auto-된장",
+     "rawName": "된장",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -15985,8 +15691,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00285_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-검은콩",
-     "rawName": "재료 검은콩",
+     "ingredientID": "auto-검은콩",
+     "rawName": "검은콩",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -16041,8 +15747,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-바지락",
-     "rawName": "육수 바지락",
+     "ingredientID": "auto-바지락",
+     "rawName": "바지락",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -16190,8 +15896,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00287_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-가다랑어포",
-     "rawName": "재료 가다랑어포",
+     "ingredientID": "auto-가다랑어포",
+     "rawName": "가다랑어포",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -16211,8 +15917,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-무",
-     "rawName": "육수 무",
+     "ingredientID": "auto-무",
+     "rawName": "무",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -16300,7 +16006,7 @@
   {
    "id": "fsk-288",
    "title": "들깨된장육개장",
-   "description": "얼갈이배추에는 칼륨이 많이 들어있어 나트륨 배출을 돕는다.\n된장과 들깨로 간을 해 육개장의 자극적인 맛을 줄이고 고소하고 담백한 맛을 냈다. 상비 조미료: 물, 청주.",
+   "description": "얼갈이배추에는 칼륨이 많이 들어있어 나트륨 배출을 돕는다.\n된장과 들깨로 간을 해 육개장의 자극적인 맛을 줄이고 고소하고 담백한 맛을 냈다. 상비 조미료: 고춧가루, 물, 청주.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -16312,8 +16018,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00288_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-숙주",
-     "rawName": "재료 숙주",
+     "ingredientID": "auto-숙주",
+     "rawName": "숙주",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -16354,8 +16060,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-무",
-     "rawName": "육수 무",
+     "ingredientID": "auto-무",
+     "rawName": "무",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -16378,13 +16084,6 @@
      "ingredientID": "auto-보리새우",
      "rawName": "보리새우",
      "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념장-고춧가루",
-     "rawName": "양념장 고춧가루",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -16442,8 +16141,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00289_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-도토리묵",
-     "rawName": "재료 도토리묵",
+     "ingredientID": "auto-도토리묵",
+     "rawName": "도토리묵",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -16554,8 +16253,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-무",
-     "rawName": "육수 무",
+     "ingredientID": "auto-무",
+     "rawName": "무",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -16603,8 +16302,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-미소된장",
-     "rawName": "양념 미소된장",
+     "ingredientID": "auto-미소된장",
+     "rawName": "미소된장",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -16736,8 +16435,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00290_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-우삼겹",
-     "rawName": "재료 우삼겹",
+     "ingredientID": "auto-우삼겹",
+     "rawName": "우삼겹",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -16785,8 +16484,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-닭가슴살",
-     "rawName": "육수 닭가슴살",
+     "ingredientID": "auto-닭가슴살",
+     "rawName": "닭가슴살",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -16806,8 +16505,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-저염된장",
-     "rawName": "양념 저염된장",
+     "ingredientID": "auto-저염된장",
+     "rawName": "저염된장",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -16852,8 +16551,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00291_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-감자",
-     "rawName": "재료 감자",
+     "ingredientID": "auto-감자",
+     "rawName": "감자",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -16943,8 +16642,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -16984,7 +16683,7 @@
   {
    "id": "fsk-292",
    "title": "산나물된장찌개",
-   "description": "소금간을 전혀 하지 않고 콩가루와 표고버섯을 섞은\n된장을 만들어 사용해 나트륨 섭취량을 줄였다 상비 조미료: 고춧가루.",
+   "description": "소금간을 전혀 하지 않고 콩가루와 표고버섯을 섞은\n된장을 만들어 사용해 나트륨 섭취량을 줄였다 상비 조미료: 고춧가루, 물.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -16996,8 +16695,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00292_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-곤드레나물",
-     "rawName": "재료 곤드레나물",
+     "ingredientID": "auto-곤드레나물",
+     "rawName": "곤드레나물",
      "quantity": 25.0,
      "unit": "g",
      "preparation": null
@@ -17080,13 +16779,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-물",
-     "rawName": "육수 물",
-     "quantity": 250.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-멸치",
      "rawName": "멸치",
      "quantity": 2.0,
@@ -17101,8 +16793,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 1.5,
      "unit": "g",
      "preparation": null
@@ -17148,8 +16840,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00293_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-표고버섯",
-     "rawName": "재료 표고버섯",
+     "ingredientID": "auto-표고버섯",
+     "rawName": "표고버섯",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -17225,8 +16917,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-멸치",
-     "rawName": "육수 멸치",
+     "ingredientID": "auto-멸치",
+     "rawName": "멸치",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
@@ -17239,8 +16931,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
@@ -17285,8 +16977,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00294_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-풋고추",
-     "rawName": "재료 풋고추",
+     "ingredientID": "auto-풋고추",
+     "rawName": "풋고추",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -17369,8 +17061,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-돼지고기",
-     "rawName": "육수 돼지고기",
+     "ingredientID": "auto-돼지고기",
+     "rawName": "돼지고기",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -17437,8 +17129,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00295_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-바지락",
-     "rawName": "재료 바지락",
+     "ingredientID": "auto-바지락",
+     "rawName": "바지락",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -17479,15 +17171,15 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-멸치",
-     "rawName": "육수 멸치",
+     "ingredientID": "auto-멸치",
+     "rawName": "멸치",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-된장",
-     "rawName": "양념 된장",
+     "ingredientID": "auto-된장",
+     "rawName": "된장",
      "quantity": 7.0,
      "unit": "g",
      "preparation": null
@@ -17623,7 +17315,7 @@
   {
    "id": "fsk-2953",
    "title": "제주도 빙떡, 귤간장소스",
-   "description": "메밀 자체의 고소한 맛과 무의 시원하고 달면서 매운맛으로 맛이 심심하지 않아요. 상비 조미료: 통깨, 후추.",
+   "description": "메밀 자체의 고소한 맛과 무의 시원하고 달면서 매운맛으로 맛이 심심하지 않아요. 상비 조미료: 메밀가루, 통깨, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -17634,13 +17326,6 @@
    "symbolName": "🥗",
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/20190405/20190405055351_1554454431397.jpg",
    "ingredients": [
-    {
-     "ingredientID": "auto-메밀가루",
-     "rawName": "메밀가루",
-     "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
     {
      "ingredientID": "auto-무",
      "rawName": "무",
@@ -18089,8 +17774,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00296_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-새송이버섯",
-     "rawName": "재료 새송이버섯",
+     "ingredientID": "auto-새송이버섯",
+     "rawName": "새송이버섯",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -19024,8 +18709,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00297_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-양송이버섯",
-     "rawName": "재료 양송이버섯",
+     "ingredientID": "auto-양송이버섯",
+     "rawName": "양송이버섯",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -19087,8 +18772,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-닭뼈",
-     "rawName": "육수 닭뼈",
+     "ingredientID": "auto-닭뼈",
+     "rawName": "닭뼈",
      "quantity": 90.0,
      "unit": "g",
      "preparation": null
@@ -19908,8 +19593,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00298_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-현미",
-     "rawName": "재료 현미",
+     "ingredientID": "auto-현미",
+     "rawName": "현미",
      "quantity": 50.0,
      "unit": "g",
      "preparation": null
@@ -20398,8 +20083,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00299_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-피망",
-     "rawName": "재료 피망",
+     "ingredientID": "auto-피망",
+     "rawName": "피망",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -21244,7 +20929,7 @@
   {
    "id": "fsk-300",
    "title": "콩고기샐러드",
-   "description": "육류에 비해 나트륨 함량이 적은 콩고기를 사용하고, 바나나 등 과일로\n달콤한 맛을 내 소금간을 따로 하지 않아 나트륨 섭취량을 줄였다. 상비 조미료: 물, 설탕, 식초, 올리브유.",
+   "description": "육류에 비해 나트륨 함량이 적은 콩고기를 사용하고, 바나나 등 과일로\n달콤한 맛을 내 소금간을 따로 하지 않아 나트륨 섭취량을 줄였다. 상비 조미료: 물, 설탕, 식초, 올리브유, 통후추, 허브오일드레싱 저염소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -21256,8 +20941,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00300_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-콩고기",
-     "rawName": "재료 콩고기",
+     "ingredientID": "auto-콩고기",
+     "rawName": "콩고기",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -21312,22 +20997,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-허브오일드레싱-저염소금",
-     "rawName": "허브오일드레싱 저염소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-로즈마리",
      "rawName": "로즈마리",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -21558,7 +21229,7 @@
   {
    "id": "fsk-3002",
    "title": "돈수육, 해물냉채",
-   "description": "해물냉채와 곁들여 쌈장이나 새우젓, 소금 없이도 맛있는 수육을 먹을 수 있어요. 상비 조미료: 맛술, 설탕, 식초.",
+   "description": "해물냉채와 곁들여 쌈장이나 새우젓, 소금 없이도 맛있는 수육을 먹을 수 있어요. 상비 조미료: 맛술, 설탕, 식초, 통후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -21671,13 +21342,6 @@
     {
      "ingredientID": "auto-된장",
      "rawName": "된장",
-     "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
@@ -21868,7 +21532,7 @@
   {
    "id": "fsk-3006",
    "title": "저염 겉절이",
-   "description": "•배추를 소금에 절이는 시간이 적은 겉절이는 일반 김치에 비해 나트륨 함량이 적습니다.\n•저염소금을 사용하여 나트륨 함량을 낮췄어요. 상비 조미료: 고춧가루, 설탕, 참깨.",
+   "description": "•배추를 소금에 절이는 시간이 적은 겉절이는 일반 김치에 비해 나트륨 함량이 적습니다.\n•저염소금을 사용하여 나트륨 함량을 낮췄어요. 상비 조미료: 고춧가루, 설탕, 저염소금, 참깨.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -21917,13 +21581,6 @@
     {
      "ingredientID": "auto-다진생강",
      "rawName": "다진생강",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-저염소금",
-     "rawName": "저염소금",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -22215,8 +21872,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00301_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-수박껍질",
-     "rawName": "재료 수박껍질",
+     "ingredientID": "auto-수박껍질",
+     "rawName": "수박껍질",
      "quantity": 17.0,
      "unit": "g",
      "preparation": null
@@ -22461,7 +22118,7 @@
   {
    "id": "fsk-3014",
    "title": "유린기",
-   "description": "•청양고추와 레몬을 사용해 매콤하고 새콤하면서 나트륨이 적은 소스를 만들었어요. 상비 조미료: 물, 설탕, 식용유, 식초.",
+   "description": "•청양고추와 레몬을 사용해 매콤하고 새콤하면서 나트륨이 적은 소스를 만들었어요. 상비 조미료: 물, 설탕, 식용유, 식초, 옥수수전분.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -22553,13 +22210,6 @@
      "ingredientID": "auto-레몬즙",
      "rawName": "레몬즙",
      "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-옥수수전분",
-     "rawName": "옥수수전분",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     }
@@ -22842,8 +22492,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00302_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-바나나",
-     "rawName": "재료 바나나",
+     "ingredientID": "auto-바나나",
+     "rawName": "바나나",
      "quantity": 150.0,
      "unit": "g",
      "preparation": null
@@ -22952,8 +22602,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00303_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-신선초",
-     "rawName": "재료 신선초",
+     "ingredientID": "auto-신선초",
+     "rawName": "신선초",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -23104,8 +22754,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00304_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-감자",
-     "rawName": "재료 감자",
+     "ingredientID": "auto-감자",
+     "rawName": "감자",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -23167,8 +22817,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-멸치",
-     "rawName": "육수 멸치",
+     "ingredientID": "auto-멸치",
+     "rawName": "멸치",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
@@ -23181,8 +22831,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -23227,8 +22877,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00305_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-마늘",
-     "rawName": "재료 마늘",
+     "ingredientID": "garlic",
+     "rawName": "마늘",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -23297,8 +22947,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-카레가루",
-     "rawName": "양념 카레가루",
+     "ingredientID": "auto-카레가루",
+     "rawName": "카레가루",
      "quantity": 2.0,
      "unit": "g",
      "preparation": null
@@ -23467,8 +23117,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00306_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-양파",
-     "rawName": "재료 양파",
+     "ingredientID": "onion",
+     "rawName": "양파",
      "quantity": 40.0,
      "unit": "g",
      "preparation": null
@@ -23502,8 +23152,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-다진-마늘",
-     "rawName": "양념 다진 마늘",
+     "ingredientID": "garlic",
+     "rawName": "다진 마늘",
      "quantity": 7.0,
      "unit": "g",
      "preparation": null
@@ -23550,7 +23200,7 @@
   {
    "id": "fsk-3060",
    "title": "낙지묵은지콩나물국",
-   "description": "묵은지를 물에 씻어 짠맛을 줄이고, 고춧가루와 콩나물을 넣어 칼칼하고 시원한 맛을 더했어요. 상비 조미료: 고춧가루.",
+   "description": "묵은지를 물에 씻어 짠맛을 줄이고, 고춧가루와 콩나물을 넣어 칼칼하고 시원한 맛을 더했어요. 상비 조미료: 고춧가루, 쌀뜨물.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -23622,13 +23272,6 @@
      "rawName": "간장",
      "quantity": 1.5,
      "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-쌀뜨물",
-     "rawName": "쌀뜨물",
-     "quantity": 300.0,
-     "unit": "ml",
      "preparation": null
     }
    ],
@@ -24092,7 +23735,7 @@
   {
    "id": "fsk-3067",
    "title": "배추된장국",
-   "description": "두부는 미리 한번 데쳐 내면 염분을 줄일 수 있어요. 상비 조미료: 물.",
+   "description": "두부는 미리 한번 데쳐 내면 염분을 줄일 수 있어요. 상비 조미료: 물, 쌀뜨물.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -24164,13 +23807,6 @@
      "rawName": "된장",
      "quantity": 2.0,
      "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-쌀뜨물",
-     "rawName": "쌀뜨물",
-     "quantity": 60.0,
-     "unit": "ml",
      "preparation": null
     }
    ],
@@ -24389,8 +24025,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00307_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-새우",
-     "rawName": "재료 새우",
+     "ingredientID": "auto-새우",
+     "rawName": "새우",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -25182,7 +24818,7 @@
   {
    "id": "fsk-3077",
    "title": "된장숙성저수분수육",
-   "description": "채소 자체의 수분으로 익혀 재료 본연의 맛을 살리고 염분 사용을 줄였어요.",
+   "description": "채소 자체의 수분으로 익혀 재료 본연의 맛을 살리고 염분 사용을 줄였어요. 상비 조미료: 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -25218,13 +24854,6 @@
      "ingredientID": "auto-저염된장",
      "rawName": "저염된장",
      "quantity": 4.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -25493,8 +25122,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00308_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-라면",
-     "rawName": "재료 라면",
+     "ingredientID": "auto-라면",
+     "rawName": "라면",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -26065,7 +25694,7 @@
   {
    "id": "fsk-3084",
    "title": "두부튀김&무소스",
-   "description": "가쓰오부시 국물을 이용하여 간장 사용을 줄였어요. 상비 조미료: 설탕, 식용유.",
+   "description": "가쓰오부시 국물을 이용하여 간장 사용을 줄였어요. 상비 조미료: 2배 양조식초, 설탕, 식용유, 옥수수전분.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -26098,13 +25727,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-옥수수전분",
-     "rawName": "옥수수전분",
-     "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-혼다랑어가쓰오부시",
      "rawName": "혼다랑어가쓰오부시",
      "quantity": 1.0,
@@ -26122,13 +25744,6 @@
      "ingredientID": "auto-레몬쥬스",
      "rawName": "레몬쥬스",
      "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-2배-양조식초",
-     "rawName": "2배 양조식초",
-     "quantity": 1.5,
      "unit": "g",
      "preparation": null
     },
@@ -26241,7 +25856,7 @@
   {
    "id": "fsk-3086",
    "title": "오징어튀김&딸기쨈",
-   "description": "초간장 대신 딸기잼으로 소스를 대체했어요. 상비 조미료: 물, 밀가루, 식용유.",
+   "description": "초간장 대신 딸기잼으로 소스를 대체했어요. 상비 조미료: 계란 32.5g 후추, 물, 밀가루, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -26256,13 +25871,6 @@
      "ingredientID": "auto-오징어",
      "rawName": "오징어",
      "quantity": 35.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-계란-32-5g-후추",
-     "rawName": "계란 32.5g 후추",
-     "quantity": 0.1,
      "unit": "g",
      "preparation": null
     },
@@ -26294,7 +25902,7 @@
   {
    "id": "fsk-3087",
    "title": "잎채소튀김",
-   "description": "아이들이 선호하는 튀김 조리법으로 채소 본연의 맛을 느낄 수 있도록 했어요. 상비 조미료: 튀김가루. 수량 미표기 재료: 얼음.",
+   "description": "아이들이 선호하는 튀김 조리법으로 채소 본연의 맛을 느낄 수 있도록 했어요. 상비 조미료: 얼음, 튀김가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -26544,7 +26152,7 @@
   {
    "id": "fsk-309",
    "title": "삼겹살라면",
-   "description": "가다랑어포 육수를 사용해 나트륨 섭취를 줄였다.\n또한 라면을 끓인 뒤 찬물로 헹궈 나트륨 함량을 낮췄다 상비 조미료: 맛술.",
+   "description": "가다랑어포 육수를 사용해 나트륨 섭취를 줄였다.\n또한 라면을 끓인 뒤 찬물로 헹궈 나트륨 함량을 낮췄다 상비 조미료: 맛술, 흑설탕.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -26556,8 +26164,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00309_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-라면",
-     "rawName": "재료 라면",
+     "ingredientID": "auto-라면",
+     "rawName": "라면",
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
@@ -26570,8 +26178,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-돼지고기",
-     "rawName": "육수 돼지고기",
+     "ingredientID": "auto-돼지고기",
+     "rawName": "돼지고기",
      "quantity": 60.0,
      "unit": "g",
      "preparation": null
@@ -26600,13 +26208,6 @@
     {
      "ingredientID": "auto-조림양념-저염간장",
      "rawName": "조림양념 저염간장",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-흑설탕",
-     "rawName": "흑설탕",
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
@@ -26766,7 +26367,7 @@
   {
    "id": "fsk-3092",
    "title": "계란만두&토마토소스",
-   "description": "케찹 대신 칼륨 함량이 높은 토마토로 소스를 만들었어요. 상비 조미료: 식용유, 후추.",
+   "description": "케찹 대신 칼륨 함량이 높은 토마토로 소스를 만들었어요. 상비 조미료: 식용유, 함초소금, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -26837,13 +26438,6 @@
      "ingredientID": "garlic",
      "rawName": "마늘",
      "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     }
@@ -27576,7 +27170,7 @@
   {
    "id": "fsk-310",
    "title": "유자샐러드라면",
-   "description": "면을 데칠 때 많은 양의 물을 끓여 나트륨이 충분히 빠져나가게 했다.\n또한 채소를 많이 넣고 면을 반만 사용해 나트륨의 양도 반으로 낮춰 섭취량을 줄였다. 상비 조미료: 올리브유.",
+   "description": "면을 데칠 때 많은 양의 물을 끓여 나트륨이 충분히 빠져나가게 했다.\n또한 채소를 많이 넣고 면을 반만 사용해 나트륨의 양도 반으로 낮춰 섭취량을 줄였다. 상비 조미료: 올리브유, 유자드레싱 식초.",
    "mealSlots": [
     "아침",
     "점심",
@@ -27589,8 +27183,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00310_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-라면",
-     "rawName": "재료 라면",
+     "ingredientID": "auto-라면",
+     "rawName": "라면",
      "quantity": 55.0,
      "unit": "g",
      "preparation": null
@@ -27620,13 +27214,6 @@
      "ingredientID": "auto-비타민",
      "rawName": "비타민",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-유자드레싱-식초",
-     "rawName": "유자드레싱 식초",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -27676,8 +27263,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00311_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-애호박",
-     "rawName": "재료 애호박",
+     "ingredientID": "auto-애호박",
+     "rawName": "애호박",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -27725,8 +27312,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-육수-다시마",
-     "rawName": "육수 다시마",
+     "ingredientID": "auto-다시마",
+     "rawName": "다시마",
      "quantity": 2.5,
      "unit": "g",
      "preparation": null
@@ -27766,7 +27353,7 @@
   {
    "id": "fsk-312",
    "title": "토마토샐러드라면",
-   "description": "저염간장을 사용해 나트륨 섭취를 줄이고 식초와 레몬 등 상큼한 맛을 보강하여 간을 맞췄다 상비 조미료: 식초, 올리브유.",
+   "description": "저염간장을 사용해 나트륨 섭취를 줄이고 식초와 레몬 등 상큼한 맛을 보강하여 간을 맞췄다 상비 조미료: 설탕, 식초, 올리브유.",
    "mealSlots": [
     "아침",
     "점심",
@@ -27779,8 +27366,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00312_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-양상추",
-     "rawName": "재료 양상추",
+     "ingredientID": "auto-양상추",
+     "rawName": "양상추",
      "quantity": 80.0,
      "unit": "g",
      "preparation": null
@@ -27817,13 +27404,6 @@
      "ingredientID": "auto-파슬리가루",
      "rawName": "파슬리가루",
      "quantity": 0.1,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-소스-설탕",
-     "rawName": "소스 설탕",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -27884,7 +27464,7 @@
   {
    "id": "fsk-314",
    "title": "김말이두부스테이크",
-   "description": "두부의 속을 레드와인과 발사믹식초를 이용해 간을 하여 나트륨을 줄여주고 두부의 냄새도 잡아주었다. 상비 조미료: 밀가루, 올리브유, 흰후추.",
+   "description": "두부의 속을 레드와인과 발사믹식초를 이용해 간을 하여 나트륨을 줄여주고 두부의 냄새도 잡아주었다. 상비 조미료: 밀가루, 발사믹식초, 올리브유, 허브소금, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -27906,13 +27486,6 @@
      "ingredientID": "seaweed",
      "rawName": "김",
      "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-허브소금",
-     "rawName": "허브소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -27997,20 +27570,6 @@
      "ingredientID": "auto-버터",
      "rawName": "버터",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-허브소금",
-     "rawName": "허브소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 15.0,
      "unit": "g",
      "preparation": null
     }
@@ -28269,7 +27828,7 @@
   {
    "id": "fsk-3163",
    "title": "저염보쌈김치",
-   "description": "파프리카 즙으로 양념을 하여 젓갈의 양을 줄였어요. 상비 조미료: 고춧가루. 수량 미표기 재료: 물 50ml\".",
+   "description": "파프리카 즙으로 양념을 하여 젓갈의 양을 줄였어요. 상비 조미료: 고춧가루, 굵은소금, 황설탕. 수량 미표기 재료: 물 50ml\".",
    "mealSlots": [
     "점심",
     "저녁"
@@ -28344,13 +27903,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-황설탕",
-     "rawName": "황설탕",
-     "quantity": 0.1,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-잣",
      "rawName": "잣",
      "quantity": 0.2,
@@ -28375,13 +27927,6 @@
      "ingredientID": "auto-멸치액젓",
      "rawName": "멸치액젓",
      "quantity": 0.1,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-굵은소금",
-     "rawName": "굵은소금",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     },
@@ -28499,7 +28044,7 @@
   {
    "id": "fsk-3165",
    "title": "요거트강화순무김치",
-   "description": "과일무라고 불리는 순무에 플레인 요거트의 상큼한 맛을 곁들여 소금의 사용을 줄였어요. 상비 조미료: 소금.",
+   "description": "과일무라고 불리는 순무에 플레인 요거트의 상큼한 맛을 곁들여 소금의 사용을 줄였어요. 상비 조미료: 고운 고춧가루, 굵은 고춧가루, 소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -28521,20 +28066,6 @@
      "ingredientID": "auto-쪽파",
      "rawName": "쪽파",
      "quantity": 0.2,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-고운-고춧가루",
-     "rawName": "고운 고춧가루",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-굵은-고춧가루",
-     "rawName": "굵은 고춧가루",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -28729,7 +28260,7 @@
   {
    "id": "fsk-3168",
    "title": "성주참외동치미",
-   "description": "천일염 대비 염도가 4배 낮은 누룩소금을 사용했어요. 상비 조미료: 물, 설탕, 식초.",
+   "description": "천일염 대비 염도가 4배 낮은 누룩소금을 사용했어요. 상비 조미료: 누룩소금, 물, 설탕, 식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -28786,13 +28317,6 @@
      "ingredientID": "auto-생강",
      "rawName": "생강",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-누룩소금",
-     "rawName": "누룩소금",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     }
@@ -28894,7 +28418,7 @@
   {
    "id": "fsk-317",
    "title": "한입꼬치구이",
-   "description": "일반 간장과 달리 어간장은 멸치, 젓갈 등 발효 중 감칠맛 성분이 많아 염도를 낮추면서 풍미를 높여준다. 상비 조미료: 올리고당, 후추.",
+   "description": "일반 간장과 달리 어간장은 멸치, 젓갈 등 발효 중 감칠맛 성분이 많아 염도를 낮추면서 풍미를 높여준다. 상비 조미료: 올리고당, 통후추, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -28958,13 +28482,6 @@
      "ingredientID": "auto-어간장",
      "rawName": "어간장",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -29901,7 +29418,7 @@
   {
    "id": "fsk-319",
    "title": "닭가슴살리조또",
-   "description": "표고버섯 불린 물이나 자투리 채소를 이용해 채소국물을 만들어 깊은 맛을 내고\n보리쌀의 씹는 맛이 고소함을 더해 주어 나트륨을 줄일 수가 있다. 상비 조미료: 올리브오일.",
+   "description": "표고버섯 불린 물이나 자투리 채소를 이용해 채소국물을 만들어 깊은 맛을 내고\n보리쌀의 씹는 맛이 고소함을 더해 주어 나트륨을 줄일 수가 있다. 상비 조미료: 올리브오일, 함초소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -29991,13 +29508,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-건조토마토",
      "rawName": "건조토마토",
      "quantity": 10.0,
@@ -30082,7 +29592,7 @@
   {
    "id": "fsk-3206",
    "title": "찹쌀 흰살 생선찜",
-   "description": "생선을 쪄서 재료 본연의 맛을 살렸어요.\n새우젓과 고춧가루를 사용하여 나트륨의 사용을 줄였어요. 상비 조미료: 맛술, 식초.",
+   "description": "생선을 쪄서 재료 본연의 맛을 살렸어요.\n새우젓과 고춧가루를 사용하여 나트륨의 사용을 줄였어요. 상비 조미료: 고운 고춧가루, 맛술, 백후추, 식초.",
    "mealSlots": [
     "아침",
     "점심",
@@ -30154,20 +29664,6 @@
      "ingredientID": "auto-불린-찹쌀",
      "rawName": "불린 찹쌀",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-고운-고춧가루",
-     "rawName": "고운 고춧가루",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-백후추",
-     "rawName": "백후추",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -30477,7 +29973,7 @@
   {
    "id": "fsk-321",
    "title": "계란숙샐러드",
-   "description": "멸치가루, 새우가루, 함초가루를 이용해 만든 천연조미료의 감칠맛으로 짠맛을 대체하였다. 상비 조미료: 물, 식초, 올리브오일, 후추.",
+   "description": "멸치가루, 새우가루, 함초가루를 이용해 만든 천연조미료의 감칠맛으로 짠맛을 대체하였다. 상비 조미료: 물, 발사믹식초, 식초, 올리브오일, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -30555,13 +30051,6 @@
      "ingredientID": "auto-매실청",
      "rawName": "매실청",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 15.0,
      "unit": "g",
      "preparation": null
     }
@@ -30931,7 +30420,7 @@
   {
    "id": "fsk-3215",
    "title": "곤약 가스",
-   "description": "한 번 얼렸다 해동한 곤약을 사용하면 식감이 쫀득해요.\n빵가루 대신 아몬드와 땅콩가루로 고소함을 더했어요. 상비 조미료: 미림, 설탕. 수량 미표기 재료: 식용유(5㎖), 채소 육수(100㎖).",
+   "description": "한 번 얼렸다 해동한 곤약을 사용하면 식감이 쫀득해요.\n빵가루 대신 아몬드와 땅콩가루로 고소함을 더했어요. 상비 조미료: 미림, 발사믹식초, 설탕, 통밀가루. 수량 미표기 재료: 식용유(5㎖), 채소 육수(100㎖).",
    "mealSlots": [
     "점심",
     "저녁"
@@ -30978,13 +30467,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-통밀가루",
-     "rawName": "통밀가루",
-     "quantity": 45.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "soy-sauce",
      "rawName": "간장",
      "quantity": 5.0,
@@ -31009,13 +30491,6 @@
      "ingredientID": "soy-sauce",
      "rawName": "간장",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     }
@@ -31199,7 +30674,7 @@
   {
    "id": "fsk-3219",
    "title": "들깨 삼계면",
-   "description": "들깻가루의 고소함과 식초의 새콤함으로 짠맛을 보완했어요. 상비 조미료: 소금. 수량 미표기 재료: 사과(½개), 삼계탕 육수(100㎖), 삼계탕 육수(30㎖), 우유(500㎖).",
+   "description": "들깻가루의 고소함과 식초의 새콤함으로 짠맛을 보완했어요. 상비 조미료: 사과식초, 소금. 수량 미표기 재료: 사과(½개), 삼계탕 육수(100㎖), 삼계탕 육수(30㎖), 우유(500㎖).",
    "mealSlots": [
     "점심",
     "저녁"
@@ -31243,13 +30718,6 @@
      "rawName": "바질",
      "quantity": 5.0,
      "unit": "장",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 30.0,
-     "unit": "g",
      "preparation": null
     },
     {
@@ -31956,7 +31424,7 @@
   {
    "id": "fsk-3228",
    "title": "멸치 전복 저염국수",
-   "description": "멸치 양념장을 활용해 소금 사용을 줄였어요.\n멸치와 황태포를 약한 불에 볶아서 이용하면 감칠맛이 향상되요. 상비 조미료: 고춧가루, 식초. 수량 미표기 재료: 달걀지단(흰자, 노른자 각각 1장), 식용유(5㎖).",
+   "description": "멸치 양념장을 활용해 소금 사용을 줄였어요.\n멸치와 황태포를 약한 불에 볶아서 이용하면 감칠맛이 향상되요. 상비 조미료: 고춧가루, 식초, 통후추. 수량 미표기 재료: 달걀지단(흰자, 노른자 각각 1장), 식용유(5㎖).",
    "mealSlots": [
     "아침",
     "점심",
@@ -32035,13 +31503,6 @@
      "ingredientID": "onion",
      "rawName": "양파",
      "quantity": 60.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -32517,7 +31978,7 @@
   {
    "id": "fsk-3239",
    "title": "연두부 토마토",
-   "description": "사과드레싱의 상큼함과 발사믹식초의 시큼함을 더해 싱거운 맛을 보완했어요. 수량 미표기 재료: 방울토마토(6~7개=50g), 어린잎채소(약간).",
+   "description": "사과드레싱의 상큼함과 발사믹식초의 시큼함을 더해 싱거운 맛을 보완했어요. 상비 조미료: 발사믹식초. 수량 미표기 재료: 방울토마토(6~7개=50g), 어린잎채소(약간).",
    "mealSlots": [
     "아침",
     "점심",
@@ -32540,13 +32001,6 @@
      "ingredientID": "auto-스트링치즈",
      "rawName": "스트링치즈",
      "quantity": 40.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -32589,7 +32043,7 @@
   {
    "id": "fsk-324",
    "title": "된장시금치옹심이",
-   "description": "칼륨이 많이 들어 있는 채소들을 이용해 된장 속에 들어 있는 나트륨을 줄여주었고,\n바지락 데친 물을 버리지 않고 사용하여 짠맛을 감칠맛으로 대체하였다. 상비 조미료: 밀가루.",
+   "description": "칼륨이 많이 들어 있는 채소들을 이용해 된장 속에 들어 있는 나트륨을 줄여주었고,\n바지락 데친 물을 버리지 않고 사용하여 짠맛을 감칠맛으로 대체하였다. 상비 조미료: 밀가루, 볶은소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -32660,13 +32114,6 @@
      "ingredientID": "auto-저염된장",
      "rawName": "저염된장",
      "quantity": 25.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     }
@@ -32766,7 +32213,7 @@
   {
    "id": "fsk-3241",
    "title": "참나물무말이 물김치",
-   "description": "식초를 사용하여 맛에 새콤함을 주어 나트륨의 사용을 줄였어요. 상비 조미료: 설탕. 수량 미표기 재료: 마늘(2쪽), 물(20㎖), 사과(½개).",
+   "description": "식초를 사용하여 맛에 새콤함을 주어 나트륨의 사용을 줄였어요. 상비 조미료: 사과식초, 설탕. 수량 미표기 재료: 마늘(2쪽), 물(20㎖), 사과(½개).",
    "mealSlots": [
     "점심",
     "저녁"
@@ -32796,20 +32243,6 @@
      "rawName": "레몬",
      "quantity": 1.0,
      "unit": "개",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 15.0,
-     "unit": "g",
      "preparation": null
     },
     {
@@ -33354,8 +32787,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00325_2.png",
    "ingredients": [
     {
-     "ingredientID": "auto-양념족발",
-     "rawName": "양념족발",
+     "ingredientID": "auto-족발",
+     "rawName": "족발",
      "quantity": 200.0,
      "unit": "g",
      "preparation": null
@@ -33416,7 +32849,7 @@
   {
    "id": "fsk-326",
    "title": "함초떡갈비",
-   "description": "소금 대신 자연식품인 함초를 사용하여 함초 특유의 맛과 향미로 짠맛을 대체하였다. 상비 조미료: 설탕, 통깨, 흰후추.",
+   "description": "소금 대신 자연식품인 함초를 사용하여 함초 특유의 맛과 향미로 짠맛을 대체하였다. 상비 조미료: 발사믹식초, 설탕, 통깨, 함초소금, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -33494,20 +32927,6 @@
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 30.0,
      "unit": "g",
      "preparation": null
     }
@@ -33969,7 +33388,7 @@
   {
    "id": "fsk-327",
    "title": "삼색소면",
-   "description": "다시마와 모시조개를 이용하여 천연육수를 만들어 감칠맛을 높였다. 상비 조미료: 청주. 수량 미표기 재료: 3가지색 소면(분홍, 초록, 흰색) 각 25g씩.",
+   "description": "다시마와 모시조개를 이용하여 천연육수를 만들어 감칠맛을 높였다. 상비 조미료: 볶은소금, 청주. 수량 미표기 재료: 3가지색 소면(분홍, 초록, 흰색) 각 25g씩.",
    "mealSlots": [
     "아침",
     "점심",
@@ -34020,13 +33439,6 @@
      "ingredientID": "auto-모시조개",
      "rawName": "모시조개",
      "quantity": 200.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     }
@@ -34562,7 +33974,7 @@
   {
    "id": "fsk-328",
    "title": "돼지수육맑은전골",
-   "description": "국물을 내는 육수는 천연재료를, 곁들이장은 어간장을 사용하여 일반간장, 소금을 대체하여 나트륨 함량을 줄였다. 상비 조미료: 물, 식초.",
+   "description": "국물을 내는 육수는 천연재료를, 곁들이장은 어간장을 사용하여 일반간장, 소금을 대체하여 나트륨 함량을 줄였다. 상비 조미료: 물, 식초, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -34584,13 +33996,6 @@
      "ingredientID": "auto-된장",
      "rawName": "된장",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -36061,7 +35466,7 @@
   {
    "id": "fsk-335",
    "title": "함초소고기말이",
-   "description": "소고기의 잡냄새를 마늘기름으로 잡아주어 기본 간을 해주지 않아도 잡냄새를 잡을 수 있다.\n또 함초의 씹는 맛과 짭짤한 맛이 짠맛을 대체하였다.",
+   "description": "소고기의 잡냄새를 마늘기름으로 잡아주어 기본 간을 해주지 않아도 잡냄새를 잡을 수 있다.\n또 함초의 씹는 맛과 짭짤한 맛이 짠맛을 대체하였다. 상비 조미료: 버섯마늘소금, 허브식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -36136,23 +35541,9 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-허브식초",
-     "rawName": "허브식초",
-     "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-연겨자",
      "rawName": "연겨자",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-버섯마늘소금",
-     "rawName": "버섯마늘소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -36177,7 +35568,7 @@
   {
    "id": "fsk-336",
    "title": "묵계밥",
-   "description": "천연 재료로 만든 버섯마늘소금으로 구수하고 맛있는 국물을 내서 나트륨을 줄일 수 있고,\n집에서 만든 맛간장을 이용해 감칠맛을 높여서 나트륨을 줄였다. 상비 조미료: 흰후추. 수량 미표기 재료: 도토리묵, 올방개묵.",
+   "description": "천연 재료로 만든 버섯마늘소금으로 구수하고 맛있는 국물을 내서 나트륨을 줄일 수 있고,\n집에서 만든 맛간장을 이용해 감칠맛을 높여서 나트륨을 줄였다. 상비 조미료: 버섯마늘소금, 흰후추. 수량 미표기 재료: 도토리묵, 올방개묵.",
    "mealSlots": [
     "아침",
     "점심",
@@ -36249,13 +35640,6 @@
      "ingredientID": "auto-맛간장",
      "rawName": "맛간장",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-버섯마늘소금",
-     "rawName": "버섯마늘소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -36505,7 +35889,7 @@
   {
    "id": "fsk-337",
    "title": "근채류주먹밥",
-   "description": "향이 있는 우엉과 맛간장을 사용해 맛을 냈고 다양한 채소를 이용해 씹는 맛으로 짠맛을 대체하였다. 상비 조미료: 통깨.",
+   "description": "향이 있는 우엉과 맛간장을 사용해 맛을 냈고 다양한 채소를 이용해 씹는 맛으로 짠맛을 대체하였다. 상비 조미료: 통깨, 함초소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -36591,13 +35975,6 @@
      "ingredientID": "auto-마늘기름",
      "rawName": "마늘기름",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -36711,7 +36088,7 @@
   {
    "id": "fsk-339",
    "title": "달콤스테이크",
-   "description": "레드와인과 망고를 이용해 새콤달콤한 소스를 만들어 소스의 짠맛을 대체하였다. 상비 조미료: 설탕, 후추.",
+   "description": "레드와인과 망고를 이용해 새콤달콤한 소스를 만들어 소스의 짠맛을 대체하였다. 상비 조미료: 볶은소금, 설탕, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -36761,13 +36138,6 @@
      "ingredientID": "auto-딸기잼",
      "rawName": "딸기잼",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     },
@@ -36945,7 +36315,7 @@
   {
    "id": "fsk-341",
    "title": "바비큐리조또",
-   "description": "통후추와 맛간장, 발사믹식초를 이용해 조림장을 만들어\n통삼겹살의 두께가 있어도 간장을 많이 사용 안 해도 깊은 맛을 낼 수가 있다. 상비 조미료: 올리브오일, 흰후추.",
+   "description": "통후추와 맛간장, 발사믹식초를 이용해 조림장을 만들어\n통삼겹살의 두께가 있어도 간장을 많이 사용 안 해도 깊은 맛을 낼 수가 있다. 상비 조미료: 발사믹식초, 올리브오일, 통후추, 흰후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -36967,20 +36337,6 @@
     {
      "ingredientID": "auto-맛간장",
      "rawName": "맛간장",
-     "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -37063,7 +36419,7 @@
   {
    "id": "fsk-342",
    "title": "간편콩국수",
-   "description": "소금 대신 마늘기름을 사용해 채소를 볶을 때 향을 내주어 나트륨 함량을 줄여주었고,\n두유와 두부를 믹서에 갈아 고소함을 높여서 짜지 않은 콩국수를 만들었다. 상비 조미료: 통깨.",
+   "description": "소금 대신 마늘기름을 사용해 채소를 볶을 때 향을 내주어 나트륨 함량을 줄여주었고,\n두유와 두부를 믹서에 갈아 고소함을 높여서 짜지 않은 콩국수를 만들었다. 상비 조미료: 볶은소금, 통깨.",
    "mealSlots": [
     "아침",
     "점심",
@@ -37093,13 +36449,6 @@
      "ingredientID": "auto-마늘기름",
      "rawName": "마늘기름",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -38080,8 +37429,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-볶음-소스",
-     "rawName": "볶음 소스",
+     "ingredientID": "auto-소스",
+     "rawName": "소스",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -38548,7 +37897,7 @@
   {
    "id": "fsk-347",
    "title": "브로콜리스프",
-   "description": "닭육수를 이용해 풍미를 높였고 닭육수 자체의 맛으로 소금 사용을 줄였다.\n버터는 일반 버터 대신 저염버터을 이용하면 더 좋다. 상비 조미료: 설탕.",
+   "description": "닭육수를 이용해 풍미를 높였고 닭육수 자체의 맛으로 소금 사용을 줄였다.\n버터는 일반 버터 대신 저염버터을 이용하면 더 좋다. 상비 조미료: 설탕, 함초소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -38585,13 +37934,6 @@
      "ingredientID": "auto-생크림",
      "rawName": "생크림",
      "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -38959,7 +38301,7 @@
   {
    "id": "fsk-350",
    "title": "매생이찰범벅",
-   "description": "소금 대신 녹차소금을 사용하여 염분 섭취량을 줄이고, 멸치로 육수를 우려내 시원한 맛을 높였다.",
+   "description": "소금 대신 녹차소금을 사용하여 염분 섭취량을 줄이고, 멸치로 육수를 우려내 시원한 맛을 높였다. 상비 조미료: 녹차소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -39003,13 +38345,6 @@
      "ingredientID": "auto-밤",
      "rawName": "밤",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-녹차소금",
-     "rawName": "녹차소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -39296,7 +38631,7 @@
   {
    "id": "fsk-353",
    "title": "치즈리조또",
-   "description": "소금 대신 소량의 볶음소금을 사용하여 구수한 맛을 높이고 생 표고 버섯을 채썰어 넣어 부드러운 식감을 살렸다. 수량 미표기 재료: 우유 180mg.",
+   "description": "소금 대신 소량의 볶음소금을 사용하여 구수한 맛을 높이고 생 표고 버섯을 채썰어 넣어 부드러운 식감을 살렸다. 상비 조미료: 볶은소금. 수량 미표기 재료: 우유 180mg.",
    "mealSlots": [
     "아침",
     "점심",
@@ -39340,13 +38675,6 @@
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     }
@@ -41010,7 +40338,7 @@
   {
    "id": "fsk-360",
    "title": "비트양파김치",
-   "description": "비트와 식초를 이용해 절임물을 만들어 짜지 않은 새콤달콤한 김치를 만들었다. 상비 조미료: 물, 식초.",
+   "description": "비트와 식초를 이용해 절임물을 만들어 짜지 않은 새콤달콤한 김치를 만들었다. 상비 조미료: 물, 볶은소금, 식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -41025,13 +40353,6 @@
      "ingredientID": "onion",
      "rawName": "양파",
      "quantity": 150.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -41184,7 +40505,7 @@
   {
    "id": "fsk-362",
    "title": "곤약잡채",
-   "description": "•곤약과 버섯을 이용해 식감을 높이고 소스에 맛간장과 다진마늘, 다진대파를 넣어 나트륨 함량을 낮췄어요. 상비 조미료: 식용유, 통깨, 흰후추.",
+   "description": "•곤약과 버섯을 이용해 식감을 높이고 소스에 맛간장과 다진마늘, 다진대파를 넣어 나트륨 함량을 낮췄어요. 상비 조미료: 식용유, 통깨, 흑설탕, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -41261,13 +40582,6 @@
     {
      "ingredientID": "auto-맛간장",
      "rawName": "맛간장",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-흑설탕",
-     "rawName": "흑설탕",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -41619,7 +40933,7 @@
   {
    "id": "fsk-367",
    "title": "두부까나페",
-   "description": "마요네즈에 갖가지 야채를 버무린 소스를 사용하여 나트륨 섭취를 줄였고, 로즈마리의 향기로 느끼한 두부구이의 맛을 잡아주었다. 상비 조미료: 올리브오일, 후추.",
+   "description": "마요네즈에 갖가지 야채를 버무린 소스를 사용하여 나트륨 섭취를 줄였고, 로즈마리의 향기로 느끼한 두부구이의 맛을 잡아주었다. 상비 조미료: 볶은소금, 올리브오일, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -41647,13 +40961,6 @@
     {
      "ingredientID": "auto-로즈마리",
      "rawName": "로즈마리",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -41728,7 +41035,7 @@
   {
    "id": "fsk-368",
    "title": "두부청국장죽",
-   "description": "죽에 청국장가루를 사용해서 구수한 맛이 짠맛을 대체하고 두부, 소고기, 채소를 넣어 씹는 맛과 음식의 색감으로 맛을 높여주었다. 상비 조미료: 흰후추.",
+   "description": "죽에 청국장가루를 사용해서 구수한 맛이 짠맛을 대체하고 두부, 소고기, 채소를 넣어 씹는 맛과 음식의 색감으로 맛을 높여주었다. 상비 조미료: 버섯마늘소금, 흰후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -41804,13 +41111,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-버섯마늘소금",
-     "rawName": "버섯마늘소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "garlic",
      "rawName": "다진마늘",
      "quantity": 10.0,
@@ -41852,7 +41152,7 @@
   {
    "id": "fsk-369",
    "title": "망고샐러드",
-   "description": "쫄깃한 증편을 사용해 식감을 높이고, 망고와 유자청 등을 이용해 짜지 않은 샐러드 소스를 사용하여 짠맛을 대체하였다. 상비 조미료: 식초, 올리브오일, 통깨, 후추.",
+   "description": "쫄깃한 증편을 사용해 식감을 높이고, 망고와 유자청 등을 이용해 짜지 않은 샐러드 소스를 사용하여 짠맛을 대체하였다. 상비 조미료: 볶은소금, 식초, 올리브오일, 통깨, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -41909,13 +41209,6 @@
      "ingredientID": "auto-유자청",
      "rawName": "유자청",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -42108,7 +41401,7 @@
   {
    "id": "fsk-371",
    "title": "장어구이",
-   "description": "소스를 만들 때 발사믹식초를 사용하여 특유의 맛을 활용해 졸여 나트륨을 줄였다. 상비 조미료: 올리고당.",
+   "description": "소스를 만들 때 발사믹식초를 사용하여 특유의 맛을 활용해 졸여 나트륨을 줄였다. 상비 조미료: 발사믹식초, 올리고당.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -42169,13 +41462,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-명이김치",
      "rawName": "명이김치",
      "quantity": 25.0,
@@ -42210,7 +41496,7 @@
   {
    "id": "fsk-372",
    "title": "안심스테이크",
-   "description": "호두를 다져서 소스에 발라주어 씹으면 씹을수록 육즙과 만나 고소함을 더해 주었고, 망고와 블루베리잼을 사용해 달콤하면서 풍미를 더해 짠맛을 대체하였다. 상비 조미료: 올리고당, 흰후추.",
+   "description": "호두를 다져서 소스에 발라주어 씹으면 씹을수록 육즙과 만나 고소함을 더해 주었고, 망고와 블루베리잼을 사용해 달콤하면서 풍미를 더해 짠맛을 대체하였다. 상비 조미료: 볶은소금, 올리고당, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -42290,13 +41576,6 @@
      "quantity": 15.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -42320,7 +41599,7 @@
   {
    "id": "fsk-373",
    "title": "로제파스타",
-   "description": "곁들이 채소를 입자가 있게 잘라주어 씹는 맛을 주었고 채소의 신선함을 함께 주어 나트륨 사용을 줄였다.",
+   "description": "곁들이 채소를 입자가 있게 잘라주어 씹는 맛을 주었고 채소의 신선함을 함께 주어 나트륨 사용을 줄였다. 상비 조미료: 함초소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -42378,13 +41657,6 @@
      "ingredientID": "auto-파슬리가루",
      "rawName": "파슬리가루",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -42532,7 +41804,7 @@
   {
    "id": "fsk-375",
    "title": "쪽갈비구이",
-   "description": "고기에는 로즈마리의 향으로 잡냄새를 제거해주고 통후추를 사용해 훨씬 더 깊은 맛을 내주어 소금을 사용 안 해도 깊은 맛을 내 주어 나트륨을 줄였다. 상비 조미료: 설탕, 식초, 올리브오일.",
+   "description": "고기에는 로즈마리의 향으로 잡냄새를 제거해주고 통후추를 사용해 훨씬 더 깊은 맛을 내주어 소금을 사용 안 해도 깊은 맛을 내 주어 나트륨을 줄였다. 상비 조미료: 백후추, 설탕, 식초, 올리브오일, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -42547,13 +41819,6 @@
      "ingredientID": "auto-쪽갈비",
      "rawName": "쪽갈비",
      "quantity": 400.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -42610,13 +41875,6 @@
      "ingredientID": "garlic",
      "rawName": "다진마늘",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-백후추",
-     "rawName": "백후추",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     }
@@ -42764,7 +42022,7 @@
   {
    "id": "fsk-3763",
    "title": "애호박전 멘보샤와 콩국뇨끼",
-   "description": "1 칼륨이 풍부한 토마토, 오이, 감자를 활용하여 나트륨 배출을 도왔어요.\n2 사과식초를 넣어 상큼한 맛으로 심심한 맛을 보완했어요.\n3 크림소스 대신 콩물을 사용해 담백한 맛을 더해 심심한 맛을 보완했어요. 상비 조미료: 소금, 전분, 튀김가루, 후추.",
+   "description": "1 칼륨이 풍부한 토마토, 오이, 감자를 활용하여 나트륨 배출을 도왔어요.\n2 사과식초를 넣어 상큼한 맛으로 심심한 맛을 보완했어요.\n3 크림소스 대신 콩물을 사용해 담백한 맛을 더해 심심한 맛을 보완했어요. 상비 조미료: 사과식초, 소금, 식용유, 전분, 튀김가루, 후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -42822,20 +42080,6 @@
      "ingredientID": "auto-콩물",
      "rawName": "콩물",
      "quantity": 100.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-양념-식용유",
-     "rawName": "양념 식용유",
-     "quantity": 180.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 20.0,
      "unit": "g",
      "preparation": null
     },
@@ -42961,8 +42205,8 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-양념-들깻가루",
-     "rawName": "양념 들깻가루",
+     "ingredientID": "auto-들깻가루",
+     "rawName": "들깻가루",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -42988,7 +42232,7 @@
   {
    "id": "fsk-3765",
    "title": "청국장 또옥국수",
-   "description": "1. 마늘, 고춧가루, 강황가루, 청국장가루, 레몬 등을 활용하여 풍미를 높여 나트륨과 당류 사용량을 줄였어요.\n2. 양파의 단맛과 바삭한 식감을 활용하여 당류 사용량을 줄였어요. 상비 조미료: 물, 소금, 식용유, 후추.",
+   "description": "1. 마늘, 고춧가루, 강황가루, 청국장가루, 레몬 등을 활용하여 풍미를 높여 나트륨과 당류 사용량을 줄였어요.\n2. 양파의 단맛과 바삭한 식감을 활용하여 당류 사용량을 줄였어요. 상비 조미료: 고운 고춧가루, 물, 소금, 식용유, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -43049,13 +42293,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-고운-고춧가루",
-     "rawName": "고운 고춧가루",
-     "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "soy-sauce",
      "rawName": "간장",
      "quantity": 10.0,
@@ -43095,7 +42332,7 @@
   {
    "id": "fsk-3768",
    "title": "떠먹는 송편",
-   "description": "1. 향신 재료인 청양고추, 고추기름 등을 활용하여 심심한 맛을 보완했어요.\n2. 양송이버섯의 감칠맛을 활용해 생크림 소스를 직접 만들어 심심한 맛을 보완하고 나트륨 사용량을\n줄였어요. 상비 조미료: 소금, 식용유, 올리고당, 통깨.",
+   "description": "1. 향신 재료인 청양고추, 고추기름 등을 활용하여 심심한 맛을 보완했어요.\n2. 양송이버섯의 감칠맛을 활용해 생크림 소스를 직접 만들어 심심한 맛을 보완하고 나트륨 사용량을\n줄였어요. 상비 조미료: 소금, 식용유, 올리고당, 통깨, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -43201,13 +42438,6 @@
      "ingredientID": "auto-고추기름",
      "rawName": "고추기름",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -43425,7 +42655,7 @@
   {
    "id": "fsk-3770",
    "title": "고추장 가스파초 물쫄면",
-   "description": "1. 칼륨이 풍부한 토마토를 활용하여 나트륨 배출을 도왔어요.\n2. 향신 재료인 마늘, 바질, 올리브유를 활용하여 풍미를 높이고 나트륨 사용량을 줄였어요.\n3. 볶은 양파의 단맛을 활용하여 당류 사용량을 줄였어요. 상비 조미료: 소금, 식용유, 올리브유, 후춧가루.",
+   "description": "1. 칼륨이 풍부한 토마토를 활용하여 나트륨 배출을 도왔어요.\n2. 향신 재료인 마늘, 바질, 올리브유를 활용하여 풍미를 높이고 나트륨 사용량을 줄였어요.\n3. 볶은 양파의 단맛을 활용하여 당류 사용량을 줄였어요. 상비 조미료: 소금, 식용유, 올리브유, 화이트와인식초, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -43510,13 +42740,6 @@
      "ingredientID": "auto-쫄면-사리",
      "rawName": "쫄면 사리",
      "quantity": 100.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-화이트와인식초",
-     "rawName": "화이트와인식초",
-     "quantity": 20.0,
      "unit": "g",
      "preparation": null
     },
@@ -44078,7 +43301,7 @@
   {
    "id": "fsk-3781",
    "title": "오소부코",
-   "description": "1. 향신 재료인 깻잎, 참나물을 활용해 풍미를 높여 심심한 맛을 보완했어요.\n2. 칼륨이 풍부한 양파, 당근, 셀러리를 활용하여 나트륨 배출을 도왔어요. 상비 조미료: 소금, 올리브유, 청주, 후추.",
+   "description": "1. 향신 재료인 깻잎, 참나물을 활용해 풍미를 높여 심심한 맛을 보완했어요.\n2. 칼륨이 풍부한 양파, 당근, 셀러리를 활용하여 나트륨 배출을 도왔어요. 상비 조미료: 사과식초, 소금, 올리브유, 청주, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -44149,13 +43372,6 @@
      "ingredientID": "auto-참나물",
      "rawName": "참나물",
      "quantity": 12.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
@@ -44567,7 +43783,7 @@
   {
    "id": "fsk-382",
    "title": "웰빙꼬치",
-   "description": "버터와 발사믹 식초를 이용해 소스를 만들고 설탕으로 소스의 농도와 윤기를 내주면서 발사믹 식초의 상큼한 맛으로 짠맛을 대체하였다. 상비 조미료: 설탕, 올리브오일, 흰 후추.",
+   "description": "버터와 발사믹 식초를 이용해 소스를 만들고 설탕으로 소스의 농도와 윤기를 내주면서 발사믹 식초의 상큼한 맛으로 짠맛을 대체하였다. 상비 조미료: 발사믹 식초, 설탕, 올리브오일, 통후추, 흰 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -44649,20 +43865,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹-식초",
-     "rawName": "발사믹 식초",
-     "quantity": 100.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-버터",
      "rawName": "버터",
      "quantity": 30.0,
@@ -44691,7 +43893,7 @@
   {
    "id": "fsk-383",
    "title": "매운닭날개구이",
-   "description": "닭날개에 간을 내어 닭 고유의 맛과 향신료 특유의 맛이 조화를 이루어 짠맛을 대체하였다. 상비 조미료: 고춧가루, 후추.",
+   "description": "닭날개에 간을 내어 닭 고유의 맛과 향신료 특유의 맛이 조화를 이루어 짠맛을 대체하였다. 상비 조미료: 고춧가루, 황설탕, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -44748,13 +43950,6 @@
      "ingredientID": "auto-버터",
      "rawName": "버터",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-황설탕",
-     "rawName": "황설탕",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -44897,7 +44092,7 @@
   {
    "id": "fsk-385",
    "title": "토마토스프파스타",
-   "description": "나트륨 배출에 도움을 주는 토마토와 갖가지 채소들이 조화를 이루어 짠맛을 대체하였다. 상비 조미료: 올리브오일.",
+   "description": "나트륨 배출에 도움을 주는 토마토와 갖가지 채소들이 조화를 이루어 짠맛을 대체하였다. 상비 조미료: 올리브오일, 함초소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -44954,13 +44149,6 @@
     {
      "ingredientID": "auto-파슬리가루",
      "rawName": "파슬리가루",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -45593,7 +44781,7 @@
   {
    "id": "fsk-392",
    "title": "토마토소고기찜",
-   "description": "샐러리, 파슬리가루, 흰후추 등 향신료를 사용해 향신료 특유의 맛과 향으로 짠맛을 대체하였다. 상비 조미료: 흰후추.",
+   "description": "샐러리, 파슬리가루, 흰후추 등 향신료를 사용해 향신료 특유의 맛과 향으로 짠맛을 대체하였다. 상비 조미료: 함초소금, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -45664,13 +44852,6 @@
      "ingredientID": "auto-파슬리가루",
      "rawName": "파슬리가루",
      "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     }
@@ -45777,7 +44958,7 @@
   {
    "id": "fsk-394",
    "title": "삼겹살꼬치구이",
-   "description": "소금 대신 후추, 로즈마리 등의 향신료와 마늘기름, 대파를 사용하여 나트륨을 줄였으며, 이 재료들 특유의 맛과 향이 삼겹살의 누린내를 잡아주고 음식을 조화롭게 해준다. 상비 조미료: 고춧가루, 후추.",
+   "description": "소금 대신 후추, 로즈마리 등의 향신료와 마늘기름, 대파를 사용하여 나트륨을 줄였으며, 이 재료들 특유의 맛과 향이 삼겹살의 누린내를 잡아주고 음식을 조화롭게 해준다. 상비 조미료: 고춧가루, 통후추, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -45813,13 +44994,6 @@
      "ingredientID": "auto-로즈마리",
      "rawName": "로즈마리",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -46058,7 +45232,7 @@
   {
    "id": "fsk-397",
    "title": "호박죽",
-   "description": "호박죽의 감칠맛을 높이기 위해 버섯마늘소금과 치즈가루로 간을 하였다.\n볶은 현미를 이용해 나트륨 사용을 줄여주고 고소함을 더했다. 상비 조미료: 흰후추.",
+   "description": "호박죽의 감칠맛을 높이기 위해 버섯마늘소금과 치즈가루로 간을 하였다.\n볶은 현미를 이용해 나트륨 사용을 줄여주고 고소함을 더했다. 상비 조미료: 버섯마늘소금, 흰후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -46102,13 +45276,6 @@
      "ingredientID": "auto-볶은-현미",
      "rawName": "볶은 현미",
      "quantity": 25.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-버섯마늘소금",
-     "rawName": "버섯마늘소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -46719,7 +45886,7 @@
   {
    "id": "fsk-404",
    "title": "저염 동치미",
-   "description": "천연 재료인 함초를 사용하여 소금 사용량을 줄여 주었으며, 매실청과 청양고추를 넣어 시원함과 칼칼한 맛을 더해 짜지 않은 동치미를 만들 수 있었다.",
+   "description": "천연 재료인 함초를 사용하여 소금 사용량을 줄여 주었으며, 매실청과 청양고추를 넣어 시원함과 칼칼한 맛을 더해 짜지 않은 동치미를 만들 수 있었다. 상비 조미료: 함초소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -46783,13 +45950,6 @@
      "ingredientID": "garlic",
      "rawName": "마늘",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -47069,7 +46229,7 @@
   {
    "id": "fsk-408",
    "title": "맑은육개장",
-   "description": "청양고추의 매콤한 맛을 더해 소금 함량을 낮추어 주었으며, 국간장이 아닌 다진마늘과 대파, 후추, 맛간장 사용을 통해 염도를 낮추어주면서 감칠맛과 칼칼한 맛을 더해 주었다. 상비 조미료: 물, 후추.",
+   "description": "청양고추의 매콤한 맛을 더해 소금 함량을 낮추어 주었으며, 국간장이 아닌 다진마늘과 대파, 후추, 맛간장 사용을 통해 염도를 낮추어주면서 감칠맛과 칼칼한 맛을 더해 주었다. 상비 조미료: 물, 볶은소금, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -47112,13 +46272,6 @@
      "ingredientID": "auto-팽이버섯",
      "rawName": "팽이버섯",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -47193,7 +46346,7 @@
   {
    "id": "fsk-409",
    "title": "주꾸미보양샐러드",
-   "description": "소스에 레몬즙과 정제염이 아닌 레몬소금을 사용하여 비린맛을 잡았고, 소금 사용량을 줄여 나트륨을 줄인 메뉴로 만들 수 있었다. 상비 조미료: 식초, 흰후추.",
+   "description": "소스에 레몬즙과 정제염이 아닌 레몬소금을 사용하여 비린맛을 잡았고, 소금 사용량을 줄여 나트륨을 줄인 메뉴로 만들 수 있었다. 상비 조미료: 레몬소금, 식초, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -47264,13 +46417,6 @@
      "ingredientID": "green-onion",
      "rawName": "다진대파",
      "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-레몬소금",
-     "rawName": "레몬소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -47417,7 +46563,7 @@
   {
    "id": "fsk-411",
    "title": "카레감자전",
-   "description": "카레가루를 이용하여 맛을 내어 나트륨 양을 줄여 주었으며, 소스로 발사믹식초를 넣어 간장의 염분을 줄이면서 맛을 높일 수 있었다. 상비 조미료: 설탕.",
+   "description": "카레가루를 이용하여 맛을 내어 나트륨 양을 줄여 주었으며, 소스로 발사믹식초를 넣어 간장의 염분을 줄이면서 맛을 높일 수 있었다. 상비 조미료: 발사믹식초, 설탕, 유기농 밀가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -47432,13 +46578,6 @@
      "ingredientID": "auto-감자",
      "rawName": "감자",
      "quantity": 150.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-유기농-밀가루",
-     "rawName": "유기농 밀가루",
-     "quantity": 50.0,
      "unit": "g",
      "preparation": null
     },
@@ -47466,13 +46605,6 @@
     {
      "ingredientID": "auto-마늘기름",
      "rawName": "마늘기름",
-     "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
      "quantity": 30.0,
      "unit": "g",
      "preparation": null
@@ -47607,7 +46739,7 @@
   {
    "id": "fsk-413",
    "title": "더덕비트물김치",
-   "description": "더덕의 쓴맛을 제거하려고 소금물에 담가 주는데, 소금물에 담그는 대신 식초에 담가 염분이 더덕에 배는 것을 방지하였고, 생강청을 이용해 매콤하면서 달콤한 맛을 주어 국물의 깊은 맛을 내주었다. 상비 조미료: 식초.",
+   "description": "더덕의 쓴맛을 제거하려고 소금물에 담가 주는데, 소금물에 담그는 대신 식초에 담가 염분이 더덕에 배는 것을 방지하였고, 생강청을 이용해 매콤하면서 달콤한 맛을 주어 국물의 깊은 맛을 내주었다. 상비 조미료: 식초, 함초소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -47650,13 +46782,6 @@
      "ingredientID": "auto-비트",
      "rawName": "비트",
      "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -47795,7 +46920,7 @@
   {
    "id": "fsk-415",
    "title": "매실동치미",
-   "description": "동치미 국물에 매실청과 생강청을 넣어 시원함과 새콤달콤한 맛을 더해주어 소금 사용량을 줄였으며, 청양고추를 썰어 넣어 칼칼함을 높여 동치미의 염분을 낮출 수 있었다.",
+   "description": "동치미 국물에 매실청과 생강청을 넣어 시원함과 새콤달콤한 맛을 더해주어 소금 사용량을 줄였으며, 청양고추를 썰어 넣어 칼칼함을 높여 동치미의 염분을 낮출 수 있었다. 상비 조미료: 함초소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -47835,13 +46960,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-매실청",
      "rawName": "매실청",
      "quantity": 30.0,
@@ -47852,13 +46970,6 @@
      "ingredientID": "auto-생강청",
      "rawName": "생강청",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -48103,7 +47214,7 @@
   {
    "id": "fsk-418",
    "title": "파인애플볶음밥",
-   "description": "파인애플에 레몬소금을 살짝 뿌려서 단맛을 향상시키고 더욱 쫀득하게 만들어준다.\n과일을 이용해 만든 맛간장을 마지막에 살짝 첨가해주면서 풍미를 더해주는 요리법으로 나트륨을 줄였다. 상비 조미료: 통깨, 흰후추.",
+   "description": "파인애플에 레몬소금을 살짝 뿌려서 단맛을 향상시키고 더욱 쫀득하게 만들어준다.\n과일을 이용해 만든 맛간장을 마지막에 살짝 첨가해주면서 풍미를 더해주는 요리법으로 나트륨을 줄였다. 상비 조미료: 레몬소금, 통깨, 흰후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -48182,13 +47293,6 @@
      "ingredientID": "auto-마늘기름",
      "rawName": "마늘기름",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-레몬소금",
-     "rawName": "레몬소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -48299,7 +47403,7 @@
   {
    "id": "fsk-420",
    "title": "코다리맑은찜",
-   "description": "소스를 만들 때 레몬즙을 이용해 상큼한 맛이 짠맛을 대체하여 간장을 조금만 사용해도\n깊은 맛을 내는 효과로 나트륨을 줄였다. 상비 조미료: 청주, 통깨, 흰후추.",
+   "description": "소스를 만들 때 레몬즙을 이용해 상큼한 맛이 짠맛을 대체하여 간장을 조금만 사용해도\n깊은 맛을 내는 효과로 나트륨을 줄였다. 상비 조미료: 청주, 통깨, 함초소금, 흰후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -48346,23 +47450,9 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-간편어간장",
      "rawName": "간편어간장",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-함초소금",
-     "rawName": "함초소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -48821,7 +47911,7 @@
   {
    "id": "fsk-425",
    "title": "새콤한연어샐러드",
-   "description": "감식초와 유자청으로 상큼한 맛을 주었고, 말린 토마토를 이용해 씹는 맛이 짠맛을 대체하였다.",
+   "description": "감식초와 유자청으로 상큼한 맛을 주었고, 말린 토마토를 이용해 씹는 맛이 짠맛을 대체하였다. 상비 조미료: 감식초, 볶은소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -48875,24 +47965,10 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-감식초",
-     "rawName": "감식초",
-     "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-정종",
      "rawName": "정종",
      "quantity": 100.0,
      "unit": "ml",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 0.5,
-     "unit": "g",
      "preparation": null
     }
    ],
@@ -49652,7 +48728,7 @@
   {
    "id": "fsk-433",
    "title": "치자연근물김치",
-   "description": "국물을 만들 때 마늘을 이용해 마늘의 향을 충분히 살려 시원한 맛을 내주었으며 생연근으로 식감을 살려주었다. 상비 조미료: 설탕, 식초.",
+   "description": "국물을 만들 때 마늘을 이용해 마늘의 향을 충분히 살려 시원한 맛을 내주었으며 생연근으로 식감을 살려주었다. 상비 조미료: 볶은소금, 설탕, 식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -49716,13 +48792,6 @@
      "ingredientID": "auto-생강청",
      "rawName": "생강청",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-볶은소금",
-     "rawName": "볶은소금",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     }
@@ -50074,7 +49143,7 @@
   {
    "id": "fsk-437",
    "title": "유부완자탕",
-   "description": "유부주머니가 어린이들의 호기심을 자극할 수 있으며, 새우를 넣어 감칠맛을 더해 짠맛을 대체하였어요. 상비 조미료: 후춧가루.",
+   "description": "유부주머니가 어린이들의 호기심을 자극할 수 있으며, 새우를 넣어 감칠맛을 더해 짠맛을 대체하였어요. 상비 조미료: 저염소금, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -50138,13 +49207,6 @@
      "ingredientID": "garlic",
      "rawName": "마늘",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-저염소금",
-     "rawName": "저염소금",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     },
@@ -53677,7 +52739,7 @@
   {
    "id": "fsk-468",
    "title": "L..A갈비구이",
-   "description": "월계수잎과 통후추 등을 사용해 깊은 맛을 내주어 소금을 사용하지 않아도 깊은 맛이 나는 갈비를 만들었어요. 상비 조미료: 설탕, 올리고당, 통깨.",
+   "description": "월계수잎과 통후추 등을 사용해 깊은 맛을 내주어 소금을 사용하지 않아도 깊은 맛이 나는 갈비를 만들었어요. 상비 조미료: 설탕, 올리고당, 통깨, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -53719,13 +52781,6 @@
     {
      "ingredientID": "auto-월계수잎",
      "rawName": "월계수잎",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
      "quantity": 5.0,
      "unit": "g",
      "preparation": null
@@ -54367,7 +53422,7 @@
   {
    "id": "fsk-475",
    "title": "오렌지삼겹찜",
-   "description": "로즈마리와 함께 숙성시킨 삼겹살에 오렌지와 와사비를 곁들여 만든 소스가 어우러져 별도의 소금 없이도 맛을 느낄 수 있어요. 상비 조미료: 설탕, 올리브오일.",
+   "description": "로즈마리와 함께 숙성시킨 삼겹살에 오렌지와 와사비를 곁들여 만든 소스가 어우러져 별도의 소금 없이도 맛을 느낄 수 있어요. 상비 조미료: 설탕, 올리브오일, 저염소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -54438,13 +53493,6 @@
      "ingredientID": "auto-정종",
      "rawName": "정종",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-저염소금",
-     "rawName": "저염소금",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -55456,7 +54504,7 @@
   {
    "id": "fsk-485",
    "title": "유자등갈비구이",
-   "description": "유자소스가 고기의 잡내를 없애주고, 고기를 연하게 합니다. 새콤달콤한 소스로 인해 나트륨을 적게 넣고도 맛있는 등갈비를 만들 수 있어요. 상비 조미료: 설탕, 소금, 식용유, 식초. 수량 미표기 재료: 마늘(20g)m 적양배추(20g).",
+   "description": "유자소스가 고기의 잡내를 없애주고, 고기를 연하게 합니다. 새콤달콤한 소스로 인해 나트륨을 적게 넣고도 맛있는 등갈비를 만들 수 있어요. 상비 조미료: 설탕, 소금, 식용유, 식초, 통후추. 수량 미표기 재료: 마늘(20g)m 적양배추(20g).",
    "mealSlots": [
     "점심",
     "저녁"
@@ -55485,13 +54533,6 @@
      "ingredientID": "auto-생강",
      "rawName": "생강",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 3.0,
      "unit": "g",
      "preparation": null
     },
@@ -56133,7 +55174,7 @@
   {
    "id": "fsk-491",
    "title": "황태볶음면",
-   "description": "오징어, 새우, 황태 등 해산물의 감칠맛을 이용하여 나트륨 사용을 줄일 수 있어요. 상비 조미료: 설탕, 올리브오일.",
+   "description": "오징어, 새우, 황태 등 해산물의 감칠맛을 이용하여 나트륨 사용을 줄일 수 있어요. 상비 조미료: 굵은 소금, 설탕, 올리브오일.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -56162,13 +55203,6 @@
      "ingredientID": "auto-오징어",
      "rawName": "오징어",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-굵은-소금",
-     "rawName": "굵은 소금",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -56602,7 +55636,7 @@
   {
    "id": "fsk-495",
    "title": "백김치닭살샐러드",
-   "description": "백김치로 간을 하여 나트륨 사용을 줄였어요 상비 조미료: 설탕, 소금, 올리브오일.",
+   "description": "백김치로 간을 하여 나트륨 사용을 줄였어요 상비 조미료: 발사믹식초, 설탕, 소금, 올리브오일, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -56625,13 +55659,6 @@
      "rawName": "월계수잎",
      "quantity": 1.0,
      "unit": "장",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 2.0,
-     "unit": "g",
      "preparation": null
     },
     {
@@ -56680,13 +55707,6 @@
      "ingredientID": "auto-양상추",
      "rawName": "양상추",
      "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 20.0,
      "unit": "g",
      "preparation": null
     }
@@ -58701,7 +57721,7 @@
   {
    "id": "fsk-516",
    "title": "해물칼국수",
-   "description": "칼국수면을 직접 만들어 나트륨 함량을 낮추고 풍부한 해산물을 이용하여 간장 사용을 줄였어요. 상비 조미료: 녹말가루, 밀가루, 소금.",
+   "description": "칼국수면을 직접 만들어 나트륨 함량을 낮추고 풍부한 해산물을 이용하여 간장 사용을 줄였어요. 상비 조미료: 녹말가루, 덧밀가루, 밀가루, 소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -58713,13 +57733,6 @@
    "symbolName": "🍱",
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/cook/10_00516_2.png",
    "ingredients": [
-    {
-     "ingredientID": "auto-덧밀가루",
-     "rawName": "덧밀가루",
-     "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
     {
      "ingredientID": "auto-애호박",
      "rawName": "애호박",
@@ -60145,7 +59158,7 @@
   {
    "id": "fsk-529",
    "title": "탕평채",
-   "description": "저염간장을 소스로 사용해서 나트륨을 감소시켰어요. 상비 조미료: 설탕, 식초, 통깨.",
+   "description": "저염간장을 소스로 사용해서 나트륨을 감소시켰어요. 상비 조미료: 맛소금, 설탕, 식초, 통깨.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -60160,13 +59173,6 @@
      "ingredientID": "auto-청포묵",
      "rawName": "청포묵",
      "quantity": 150.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-맛소금",
-     "rawName": "맛소금",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -60260,7 +59266,7 @@
   {
    "id": "fsk-530",
    "title": "세가지샐러드",
-   "description": "마, 흑임자 등을 섞어서 만든 소스는 나트륨 함량을 낮춰주어요. 상비 조미료: 설탕, 식초, 올리브오일.",
+   "description": "마, 흑임자 등을 섞어서 만든 소스는 나트륨 함량을 낮춰주어요. 상비 조미료: 설탕, 식초, 올리브오일, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -60282,13 +59288,6 @@
      "ingredientID": "auto-닭고기살",
      "rawName": "닭고기살",
      "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     },
@@ -61715,7 +60714,7 @@
   {
    "id": "fsk-544",
    "title": "삼겹살부추찜",
-   "description": "찜기를 이용한 조리법은 수증기로 된장 간이 베이므로 나트륨을 낮출 수 있는 조리법이예요. 상비 조미료: 물, 설탕, 올리고당. 수량 미표기 재료: 물녹말(녹말 10g, 물 10g).",
+   "description": "찜기를 이용한 조리법은 수증기로 된장 간이 베이므로 나트륨을 낮출 수 있는 조리법이예요. 상비 조미료: 물, 설탕, 올리고당, 통후추. 수량 미표기 재료: 물녹말(녹말 10g, 물 10g).",
    "mealSlots": [
     "점심",
     "저녁"
@@ -61751,13 +60750,6 @@
      "ingredientID": "auto-월계수잎",
      "rawName": "월계수잎",
      "quantity": 3.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -61800,13 +60792,6 @@
      "ingredientID": "auto-저염간장",
      "rawName": "저염간장",
      "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 5.0,
      "unit": "g",
      "preparation": null
     },
@@ -73109,7 +72094,7 @@
   {
    "id": "fsk-677",
    "title": "민어매운탕",
-   "description": "양념장을 미리 만들어 숙성시켜 사용하면 얼큰한 맛이 증가되고 풍미가 좋아진다. 상비 조미료: 맛술, 물, 후추.",
+   "description": "양념장을 미리 만들어 숙성시켜 사용하면 얼큰한 맛이 증가되고 풍미가 좋아진다. 상비 조미료: 고운 고춧가루, 굵은 고춧가루, 맛술, 물, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -73238,20 +72223,6 @@
      "quantity": 2.5,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-굵은-고춧가루",
-     "rawName": "굵은 고춧가루",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-고운-고춧가루",
-     "rawName": "고운 고춧가루",
-     "quantity": 1.25,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -73275,7 +72246,7 @@
   {
    "id": "fsk-678",
    "title": "가지나물냉국",
-   "description": "가지나물을 무쳐 냉장 보관했다가 먹을 때 다시마국물을 부어 먹으면 나물과 냉국 두 가지로 즐길 수 있다. - 두가지 식초를 혼합하여 냉국의 간을 맞추면 감칠맛이 더 좋아진다. 상비 조미료: 소금, 통깨.",
+   "description": "가지나물을 무쳐 냉장 보관했다가 먹을 때 다시마국물을 부어 먹으면 나물과 냉국 두 가지로 즐길 수 있다. - 두가지 식초를 혼합하여 냉국의 간을 맞추면 감칠맛이 더 좋아진다. 상비 조미료: 감식초, 사과식초, 소금, 통깨.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -73327,20 +72298,6 @@
      "quantity": 100.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 1.25,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-감식초",
-     "rawName": "감식초",
-     "quantity": 1.25,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -73363,7 +72320,7 @@
   {
    "id": "fsk-679",
    "title": "수삼매운닭찜",
-   "description": "닭을 데칠 때 생강편을 넣으면 비린내가 없어진다. - 노두유는 캐러멜소스 대신 사용되는 간장의 일종으로 찜과 구이에 넣으면 색이 진해지고 향이 좋아진다. 상비 조미료: 올리고당, 후추.",
+   "description": "닭을 데칠 때 생강편을 넣으면 비린내가 없어진다. - 노두유는 캐러멜소스 대신 사용되는 간장의 일종으로 찜과 구이에 넣으면 색이 진해지고 향이 좋아진다. 상비 조미료: 올리고당, 황설탕, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -73448,13 +72405,6 @@
      "ingredientID": "soy-sauce",
      "rawName": "간장",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-황설탕",
-     "rawName": "황설탕",
-     "quantity": 8.0,
      "unit": "g",
      "preparation": null
     },
@@ -73547,7 +72497,7 @@
   {
    "id": "fsk-681",
    "title": "별미병어조림",
-   "description": "무를 먼저 끓인 뒤 병어를 넣어야 시원한 맛도 잘 우러나고 생선살이 부서지지 않는다. - 물 대신 다시마멸치국물을 넣으면 더욱 깊은 맛을 낼 수 있다. - 매실액 만드는 법 : 매실과 설탕을 동량으로 준비한다. 씻어서 물기를 말린 매실을 병에 한켜 담고 설탕을 켜켜이 뿌려 밀봉하여 100일간 숙성한 뒤 매실을 건져내고 맑은 액만 패트병에 담아 냉장 보관해 두고 사용한다. 고기 재는 양념, 조림, 오이냉국, 겉절이, 무침 등에 두루 사용하면 요리 상비 조미료: 맛술, 물, 소금, 후추.",
+   "description": "무를 먼저 끓인 뒤 병어를 넣어야 시원한 맛도 잘 우러나고 생선살이 부서지지 않는다. - 물 대신 다시마멸치국물을 넣으면 더욱 깊은 맛을 낼 수 있다. - 매실액 만드는 법 : 매실과 설탕을 동량으로 준비한다. 씻어서 물기를 말린 매실을 병에 한켜 담고 설탕을 켜켜이 뿌려 밀봉하여 100일간 숙성한 뒤 매실을 건져내고 맑은 액만 패트병에 담아 냉장 보관해 두고 사용한다. 고기 재는 양념, 조림, 오이냉국, 겉절이, 무침 등에 두루 사용하면 요리 상비 조미료: 고운 고춧가루, 굵은 고춧가루, 맛술, 물, 소금, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -73604,20 +72554,6 @@
      "ingredientID": "gochujang",
      "rawName": "고추장",
      "quantity": 6.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-굵은-고춧가루",
-     "rawName": "굵은 고춧가루",
-     "quantity": 1.7,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-고운-고춧가루",
-     "rawName": "고운 고춧가루",
-     "quantity": 0.85,
      "unit": "g",
      "preparation": null
     },
@@ -74393,7 +73329,7 @@
   {
    "id": "fsk-695",
    "title": "애호박장떡말이밥",
-   "description": "애호박장떡을 얇게 부쳐야 잘 말린다. 상비 조미료: 물, 소금.",
+   "description": "애호박장떡을 얇게 부쳐야 잘 말린다. 상비 조미료: 물, 소금, 우리밀가루.",
    "mealSlots": [
     "아침",
     "점심",
@@ -74437,13 +73373,6 @@
      "ingredientID": "gochujang",
      "rawName": "고추장",
      "quantity": 15.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-우리밀가루",
-     "rawName": "우리밀가루",
-     "quantity": 50.0,
      "unit": "g",
      "preparation": null
     },
@@ -76128,7 +75057,7 @@
   {
    "id": "fsk-724",
    "title": "연근배추홍시샐러드",
-   "description": "연근은 최대한 얇게 썰어야 바삭바삭한 칩이 된다. - 연근은 식초물에 담가 갈변을 방지한다. 상비 조미료: 소금.",
+   "description": "연근은 최대한 얇게 썰어야 바삭바삭한 칩이 된다. - 연근은 식초물에 담가 갈변을 방지한다. 상비 조미료: 3배 식초, 소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -76199,13 +75128,6 @@
      "ingredientID": "auto-호상요구르트",
      "rawName": "호상요구르트",
      "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-3배-식초",
-     "rawName": "3배 식초",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     }
@@ -76389,7 +75311,7 @@
   {
    "id": "fsk-728",
    "title": "과일겨자채",
-   "description": "샐러드를 크래커 등에 올려 카나페로 먹어도 맛있고 샌드위치 속으로 사용해도 좋다.",
+   "description": "샐러드를 크래커 등에 올려 카나페로 먹어도 맛있고 샌드위치 속으로 사용해도 좋다. 상비 조미료: 사과식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -76466,13 +75388,6 @@
     {
      "ingredientID": "auto-연유",
      "rawName": "연유",
-     "quantity": 2.5,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
      "quantity": 2.5,
      "unit": "g",
      "preparation": null
@@ -77142,7 +76057,7 @@
   {
    "id": "fsk-740",
    "title": "물파래콩전",
-   "description": "노란콩은 물에 충분히 불려야 연료소비가 적고 잘 갈아진다. 상비 조미료: 식초, 통깨.",
+   "description": "노란콩은 물에 충분히 불려야 연료소비가 적고 잘 갈아진다. 상비 조미료: 식초, 우리밀가루, 통깨.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -77164,13 +76079,6 @@
      "ingredientID": "auto-노란콩",
      "rawName": "노란콩",
      "quantity": 25.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-우리밀가루",
-     "rawName": "우리밀가루",
-     "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
@@ -77547,7 +76455,7 @@
   {
    "id": "fsk-77",
    "title": "마늘드레싱을 곁들인 키위샐러드",
-   "description": "마늘드레싱은 기존의 나트륨 함량이 높은 샐러드 드레싱을 대신하여 사용하면 나트륨을 줄일 수 있을 뿐만 아니라 식전 애피타이저로 활용해도 좋아요. 상비 조미료: 물, 설탕. 수량 미표기 재료: 무순 약간.",
+   "description": "마늘드레싱은 기존의 나트륨 함량이 높은 샐러드 드레싱을 대신하여 사용하면 나트륨을 줄일 수 있을 뿐만 아니라 식전 애피타이저로 활용해도 좋아요. 상비 조미료: 물, 사과식초, 설탕. 수량 미표기 재료: 무순 약간.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -77590,13 +76498,6 @@
      "ingredientID": "auto-땅콩",
      "rawName": "땅콩",
      "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-사과식초",
-     "rawName": "사과식초",
-     "quantity": 30.0,
      "unit": "g",
      "preparation": null
     },
@@ -77673,8 +76574,8 @@
    "imageURL": "https://www.foodsafetykorea.go.kr/uploadimg/20160318/20160318051200_1458288720482.png",
    "ingredients": [
     {
-     "ingredientID": "auto-재료-1인분-봄동",
-     "rawName": "재료 1인분 봄동",
+     "ingredientID": "auto-1인분-봄동",
+     "rawName": "1인분 봄동",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -77784,7 +76685,7 @@
   {
    "id": "fsk-775",
    "title": "구운 주먹밥",
-   "description": "현미밥과 톳을 넣어 만든 주먹밥에 달걀물을 입혀 구워낸 별미 상비 조미료: 식초, 참깨.",
+   "description": "현미밥과 톳을 넣어 만든 주먹밥에 달걀물을 입혀 구워낸 별미 상비 조미료: 식초, 참깨, 톳 무침양념 설탕.",
    "mealSlots": [
     "아침",
     "점심",
@@ -77830,13 +76731,6 @@
      "quantity": 4.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-톳-무침양념-설탕",
-     "rawName": "톳 무침양념 설탕",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -77859,7 +76753,7 @@
   {
    "id": "fsk-776",
    "title": "깻잎장아찌롤",
-   "description": "삶은 달걀과 양파로 속을 만들어 밥과 깻잎장아찌로 롤을 만들어 나트륨을 줄인 일품요리 상비 조미료: 물, 참깨.",
+   "description": "삶은 달걀과 양파로 속을 만들어 밥과 깻잎장아찌로 롤을 만들어 나트륨을 줄인 일품요리 상비 조미료: 머스터드소스 설탕, 물, 참깨.",
    "mealSlots": [
     "아침",
     "점심",
@@ -77931,13 +76825,6 @@
      "ingredientID": "auto-마요네즈",
      "rawName": "마요네즈",
      "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-머스터드소스-설탕",
-     "rawName": "머스터드소스 설탕",
-     "quantity": 3.0,
      "unit": "g",
      "preparation": null
     },
@@ -79560,7 +78447,7 @@
   {
    "id": "fsk-800",
    "title": "양송이버섯 달걀 크레페",
-   "description": "반찬 · 굽기 상비 조미료: 밀가루, 설탕, 식용유.",
+   "description": "반찬 · 굽기 상비 조미료: 메밀가루, 밀가루, 설탕, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -79588,13 +78475,6 @@
     {
      "ingredientID": "auto-에벤탈치즈",
      "rawName": "에벤탈치즈",
-     "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-메밀가루",
-     "rawName": "메밀가루",
      "quantity": 20.0,
      "unit": "g",
      "preparation": null
@@ -79669,7 +78549,7 @@
   {
    "id": "fsk-801",
    "title": "채소 팬케익",
-   "description": "반찬 · 굽기 상비 조미료: 식용유, 후춧가루.",
+   "description": "반찬 · 굽기 상비 조미료: 식용유, 저나트륨 베이킹 파우더, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -79712,13 +78592,6 @@
      "ingredientID": "auto-중력분",
      "rawName": "중력분",
      "quantity": 32.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-저나트륨-베이킹-파우더",
-     "rawName": "저나트륨 베이킹 파우더",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     },
@@ -79772,7 +78645,7 @@
   {
    "id": "fsk-804",
    "title": "모듬탕수",
-   "description": "녹말이 들어간 점도가 있는 소스류는 염분이 적어도 싱겁게 느끼지 않도록 하므로 이를 적절히 사용하는 것이 저나트륨 요리에 좋다 상비 조미료: 설탕, 식용유, 식초.",
+   "description": "녹말이 들어간 점도가 있는 소스류는 염분이 적어도 싱겁게 느끼지 않도록 하므로 이를 적절히 사용하는 것이 저나트륨 요리에 좋다 상비 조미료: 감자녹말가루, 설탕, 식용유, 식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -79815,13 +78688,6 @@
      "ingredientID": "auto-브로컬리",
      "rawName": "브로컬리",
      "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-감자녹말가루",
-     "rawName": "감자녹말가루",
-     "quantity": 7.0,
      "unit": "g",
      "preparation": null
     },
@@ -80473,7 +79339,7 @@
   {
    "id": "fsk-815",
    "title": "발사믹으로 양념한 채소요리",
-   "description": "저나트륨 소금의 맛은 보통 소금과 비슷하지만 Na(나트륨) 대신 K(칼륨)을 써서 만든 소금으로 나트륨의 함량을 줄이는 요리에 사용하기 적합하다. 상비 조미료: 올리브오일.",
+   "description": "저나트륨 소금의 맛은 보통 소금과 비슷하지만 Na(나트륨) 대신 K(칼륨)을 써서 만든 소금으로 나트륨의 함량을 줄이는 요리에 사용하기 적합하다. 상비 조미료: 올리브오일, 저나트륨소금, 포도식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -80527,13 +79393,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-포도식초",
-     "rawName": "포도식초",
-     "quantity": 5.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-오레가노마른것",
      "rawName": "오레가노마른것",
      "quantity": 0.5,
@@ -80551,13 +79410,6 @@
      "ingredientID": "auto-로즈마리마다진것",
      "rawName": "로즈마리마다진것",
      "quantity": 0.5,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-저나트륨소금",
-     "rawName": "저나트륨소금",
-     "quantity": 0.2,
      "unit": "g",
      "preparation": null
     }
@@ -81015,7 +79867,7 @@
   {
    "id": "fsk-821",
    "title": "양배추 깻잎 피클",
-   "description": "반찬 · 기타 상비 조미료: 물, 설탕.",
+   "description": "반찬 · 기타 상비 조미료: 물, 설탕, 식초 2g. 소금, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -81051,20 +79903,6 @@
      "ingredientID": "auto-홍고추",
      "rawName": "홍고추",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-식초-2g-소금",
-     "rawName": "식초 2g. 소금",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 0.5,
      "unit": "g",
      "preparation": null
     }
@@ -81290,7 +80128,7 @@
   {
    "id": "fsk-826",
    "title": "참기름 드레싱의 즉석 샐러드",
-   "description": "반찬 · 기타 상비 조미료: 설탕, 식초, 통깨. 수량 미표기 재료: 견과류 : 아몬드.",
+   "description": "반찬 · 기타 상비 조미료: 고운고춧가루, 설탕, 식초, 통깨. 수량 미표기 재료: 견과류 : 아몬드.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -81375,13 +80213,6 @@
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 4.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-고운고춧가루",
-     "rawName": "고운고춧가루",
-     "quantity": 1.0,
      "unit": "g",
      "preparation": null
     }
@@ -82852,7 +81683,7 @@
   {
    "id": "fsk-859",
    "title": "양송이버섯과 포도주스를 가미한 등심구이",
-   "description": "저나트륨 요리에서는 여러 사양 향신료를 섞어서 조리하면 강한 향으로 인해 염도가 낮은 것이 잘 인식되지 않게 해준다. 상비 조미료: 물, 설탕, 소금.",
+   "description": "저나트륨 요리에서는 여러 사양 향신료를 섞어서 조리하면 강한 향으로 인해 염도가 낮은 것이 잘 인식되지 않게 해준다. 상비 조미료: 물, 설탕, 소금, 통후추.",
    "mealSlots": [
     "아침",
     "점심",
@@ -82935,13 +81766,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-타임",
      "rawName": "타임",
      "quantity": 2.5,
@@ -82970,7 +81794,7 @@
   {
    "id": "fsk-861",
    "title": "케이준 스타일 닭고기 요리",
-   "description": "반찬 · 굽기 상비 조미료: 식용유, 후추.",
+   "description": "반찬 · 굽기 상비 조미료: 식용유, 황설탕, 후추, 흰후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -83017,13 +81841,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-흰후춧가루",
-     "rawName": "흰후춧가루",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-오레가노마른것",
      "rawName": "오레가노마른것",
      "quantity": 0.5,
@@ -83040,13 +81857,6 @@
     {
      "ingredientID": "auto-바질마른것",
      "rawName": "바질마른것",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-황설탕",
-     "rawName": "황설탕",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -83258,7 +82068,7 @@
   {
    "id": "fsk-867",
    "title": "돼지고기 수육 부추부침",
-   "description": "저나트륨 두부 된장소스는 된장의 양을 1/5정도 줄이고 대신 두부를 으깨서 소스 분량을 늘린 것이다. 상비 조미료: 물, 설탕, 소금, 식초.",
+   "description": "저나트륨 두부 된장소스는 된장의 양을 1/5정도 줄이고 대신 두부를 으깨서 소스 분량을 늘린 것이다. 상비 조미료: 물, 발사믹식초, 설탕, 소금, 식초, 통후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -83298,13 +82108,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-통후추",
-     "rawName": "통후추",
-     "quantity": 0.5,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-영양부추",
      "rawName": "영양부추",
      "quantity": 10.0,
@@ -83336,13 +82139,6 @@
      "ingredientID": "soy-sauce",
      "rawName": "간장",
      "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
@@ -83512,7 +82308,7 @@
   {
    "id": "fsk-869",
    "title": "낙지볶음면",
-   "description": "낙지나 쭈꾸미는 간이 없이도 먹을 수 있으므로 그대로 채소와 간을 하지 않고 볶은 후 소스를 만들어 먹기 직전에 넣는다. 상비 조미료: 고춧가루, 소금.",
+   "description": "낙지나 쭈꾸미는 간이 없이도 먹을 수 있으므로 그대로 채소와 간을 하지 않고 볶은 후 소스를 만들어 먹기 직전에 넣는다. 상비 조미료: 고춧가루, 매운고춧가루, 소금.",
    "mealSlots": [
     "아침",
     "점심",
@@ -83605,13 +82401,6 @@
      "ingredientID": "auto-굴소스",
      "rawName": "굴소스",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-매운고춧가루",
-     "rawName": "매운고춧가루",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -83801,7 +82590,7 @@
   {
    "id": "fsk-872",
    "title": "해산물 샤브샤브",
-   "description": "국&찌개 · 끓이기 상비 조미료: 맛술, 식초.",
+   "description": "국&찌개 · 끓이기 상비 조미료: 맛술, 볶은통깨, 식초.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -83911,13 +82700,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-볶은통깨",
-     "rawName": "볶은통깨",
-     "quantity": 3.8,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-피넷버터",
      "rawName": "피넷버터",
      "quantity": 5.8,
@@ -83959,7 +82741,7 @@
   {
    "id": "fsk-873",
    "title": "고등어구이",
-   "description": "고등어는 소금을 뿌리지 않은 생태로 갈색이 나도록 바싹 굽는다. 상비 조미료: 밀가루, 올리브오일.",
+   "description": "고등어는 소금을 뿌리지 않은 생태로 갈색이 나도록 바싹 굽는다. 상비 조미료: 밀가루, 발사믹식초, 올리브오일.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -83981,13 +82763,6 @@
      "ingredientID": "soy-sauce",
      "rawName": "간장",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 6.0,
      "unit": "g",
      "preparation": null
     },
@@ -84243,7 +83018,7 @@
   {
    "id": "fsk-876",
    "title": "금태찜",
-   "description": "보통 매운 찜요리 종류는 염도가 2~3% 되므로 생선을 그대로 찌거나 약한 간의 찜소스를 뿌려 조리하면 비린맛도 적고 담백한 생선 요리가 된다. 상비 조미료: 녹말가루, 맛술, 소금, 식초, 청주.",
+   "description": "보통 매운 찜요리 종류는 염도가 2~3% 되므로 생선을 그대로 찌거나 약한 간의 찜소스를 뿌려 조리하면 비린맛도 적고 담백한 생선 요리가 된다. 상비 조미료: 녹말가루, 맛술, 소금, 식초, 청주, 흰후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -84258,13 +83033,6 @@
      "ingredientID": "auto-금태",
      "rawName": "금태",
      "quantity": 50.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-흰후춧가루",
-     "rawName": "흰후춧가루",
-     "quantity": 0.1,
      "unit": "g",
      "preparation": null
     },
@@ -84513,7 +83281,7 @@
   {
    "id": "fsk-879",
    "title": "꽃게강정",
-   "description": "반찬 · 튀기기 상비 조미료: 맛술, 물엿, 식용유, 후춧가루.",
+   "description": "반찬 · 튀기기 상비 조미료: 맛술, 매운 고춧가루, 물엿, 식용유, 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -84577,13 +83345,6 @@
      "ingredientID": "auto-찹쌀가루",
      "rawName": "찹쌀가루",
      "quantity": 8.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-매운-고춧가루",
-     "rawName": "매운 고춧가루",
-     "quantity": 1.3,
      "unit": "g",
      "preparation": null
     },
@@ -85253,7 +84014,7 @@
   {
    "id": "fsk-888",
    "title": "연어냉채",
-   "description": "저나트륨 파인애플 소스의 경우 소금 양이 1/5 이상 줄어 있지만 파인애플 주스가 설탕, 올리브 오일과 어우러져 싱겁게 느끼지 않고 먹을 수 있는 소스이다. 상비 조미료: 녹말가루, 설탕, 소금, 올리브오일.",
+   "description": "저나트륨 파인애플 소스의 경우 소금 양이 1/5 이상 줄어 있지만 파인애플 주스가 설탕, 올리브 오일과 어우러져 싱겁게 느끼지 않고 먹을 수 있는 소스이다. 상비 조미료: 녹말가루, 설탕, 소금, 올리브오일, 흰후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -85268,13 +84029,6 @@
      "ingredientID": "auto-훈재연어",
      "rawName": "훈재연어",
      "quantity": 40.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-흰후춧가루",
-     "rawName": "흰후춧가루",
-     "quantity": 0.01,
      "unit": "g",
      "preparation": null
     },
@@ -86264,7 +85018,7 @@
   {
    "id": "fsk-914",
    "title": "돼지고기 토마토 두부볶음",
-   "description": "전분을 육수에 넣어 풀어주면 음식의 향이 더 좋아진다. 고기, 두부나 토마토의 모양이 으깨지지 않도록 유의하며, 전체적으로 부드러운 질감을 갖고 있어야 한다. 상비 조미료: 소금.",
+   "description": "전분을 육수에 넣어 풀어주면 음식의 향이 더 좋아진다. 고기, 두부나 토마토의 모양이 으깨지지 않도록 유의하며, 전체적으로 부드러운 질감을 갖고 있어야 한다. 상비 조미료: 물전분, 소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -86327,13 +85081,6 @@
     {
      "ingredientID": "auto-닭육수",
      "rawName": "닭육수",
-     "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
@@ -87126,7 +85873,7 @@
   {
    "id": "fsk-928",
    "title": "유부 만두찜",
-   "description": "유부는 기름기를 제거하기 위해 끓는 물에 데쳐서 사용하는 것이 좋다. 상비 조미료: 깨소금, 설탕, 소금, 식초. 수량 미표기 재료: 흰 후춧가루 적당량.",
+   "description": "유부는 기름기를 제거하기 위해 끓는 물에 데쳐서 사용하는 것이 좋다. 상비 조미료: 깨소금, 설탕, 소금, 식초, 흰 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -87899,7 +86646,7 @@
   {
    "id": "fsk-937",
    "title": "새우 완자탕",
-   "description": "새우 대신 흰살생선으로 만들어도 가능하다. 상비 조미료: 소금, 전분. 수량 미표기 재료: 흰 후춧가루 적당량.",
+   "description": "새우 대신 흰살생선으로 만들어도 가능하다. 상비 조미료: 소금, 전분, 흰 후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -88199,7 +86946,7 @@
   {
    "id": "fsk-941",
    "title": "야채볶음",
-   "description": "반찬 · 볶기 상비 조미료: 소금, 식용유.",
+   "description": "반찬 · 볶기 상비 조미료: 물전분, 소금, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -88249,13 +86996,6 @@
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 6.0,
      "unit": "g",
      "preparation": null
     },
@@ -88646,7 +87386,7 @@
   {
    "id": "fsk-959",
    "title": "단호박 새우찜",
-   "description": "단호박 속에 쌀과 견과류를 함께 넣어 만들어도 좋다. 상비 조미료: 깨소금, 밀가루, 소금.",
+   "description": "단호박 속에 쌀과 견과류를 함께 넣어 만들어도 좋다. 상비 조미료: 깨소금, 밀가루, 소금, 흰후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -88716,13 +87456,6 @@
     {
      "ingredientID": "sesame-oil",
      "rawName": "참기름",
-     "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-흰후춧가루",
-     "rawName": "흰후춧가루",
      "quantity": 1.0,
      "unit": "g",
      "preparation": null
@@ -88905,7 +87638,7 @@
   {
    "id": "fsk-961",
    "title": "라이스페이퍼 새우롤",
-   "description": "모든 재료를 준비 하여 아이들에게 롤을 말도록 하는 것도 재미를 주는 방법이다. 상비 조미료: 물, 설탕, 식초. 수량 미표기 재료: 고추기름 약간, 물전분 약간.",
+   "description": "모든 재료를 준비 하여 아이들에게 롤을 말도록 하는 것도 재미를 주는 방법이다. 상비 조미료: 물, 물전분, 설탕, 식초. 수량 미표기 재료: 고추기름 약간.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -89205,7 +87938,7 @@
   {
    "id": "fsk-966",
    "title": "배추 달걀볶음",
-   "description": "반찬 · 기타 상비 조미료: 소금, 식용유.",
+   "description": "반찬 · 기타 상비 조미료: 물전분, 소금, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -89271,13 +88004,6 @@
      "quantity": 10.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -89298,7 +88024,7 @@
   {
    "id": "fsk-967",
    "title": "사과와 양파를 곁들인 돼지등심 요리",
-   "description": "돼지고기는 종이타월을 이용하여 핏물을 제거한 후 사용하면 냄새가 적고 맛이 좋다. 상비 조미료: 소금, 올리브오일.",
+   "description": "돼지고기는 종이타월을 이용하여 핏물을 제거한 후 사용하면 냄새가 적고 맛이 좋다. 상비 조미료: 소금, 올리브오일, 통후추부순것.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -89341,13 +88067,6 @@
      "ingredientID": "auto-사과",
      "rawName": "사과",
      "quantity": 20.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-통후추부순것",
-     "rawName": "통후추부순것",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     }
@@ -89489,7 +88208,7 @@
   {
    "id": "fsk-970",
    "title": "생선살 완자 찹쌀 찜",
-   "description": "치자가 없으면 사용하지 않거나 혹은 야채를 갈아서 함께 넣어 색을 이용할 수 있다. 상비 조미료: 소금, 전분. 수량 미표기 재료: 흰후춧가루 적당량.",
+   "description": "치자가 없으면 사용하지 않거나 혹은 야채를 갈아서 함께 넣어 색을 이용할 수 있다. 상비 조미료: 소금, 전분, 흰후춧가루.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -90096,7 +88815,7 @@
   {
    "id": "fsk-979",
    "title": "중국식 바비큐 폭립",
-   "description": "돼지갈비는 찬물에 담가 여러번 핏물을 우려내어 사용한다. 상비 조미료: 소금, 식용유, 후추. 수량 미표기 재료: 케이엔페퍼약간.",
+   "description": "돼지갈비는 찬물에 담가 여러번 핏물을 우려내어 사용한다. 상비 조미료: 레드와인식초, 소금, 식용유, 황설탕, 후추. 수량 미표기 재료: 케이엔페퍼약간.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -90125,20 +88844,6 @@
      "ingredientID": "auto-마늘다진것",
      "rawName": "마늘다진것",
      "quantity": 4.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-레드와인식초",
-     "rawName": "레드와인식초",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-황설탕",
-     "rawName": "황설탕",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -90423,7 +89128,7 @@
   {
    "id": "fsk-986",
    "title": "나스와 샐러드",
-   "description": "디존머스터드 대신 허니 머스터드로 대체해서 사용해도 좋다. 상비 조미료: 설탕. 수량 미표기 재료: 캔참치 20g<strong>.",
+   "description": "디존머스터드 대신 허니 머스터드로 대체해서 사용해도 좋다. 상비 조미료: </strong> 올리브오일, 레드와인식초, 설탕. 수량 미표기 재료: 캔참치 20g<strong>.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -90494,20 +89199,6 @@
      "ingredientID": "auto-바질",
      "rawName": "바질",
      "quantity": 1.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-strong-올리브오일",
-     "rawName": "</strong> 올리브오일",
-     "quantity": 2.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-레드와인식초",
-     "rawName": "레드와인식초",
-     "quantity": 2.0,
      "unit": "g",
      "preparation": null
     },
@@ -90626,7 +89317,7 @@
   {
    "id": "fsk-988",
    "title": "모듬옥수수",
-   "description": "철판에 넣어 뜨겁게 제공해도 좋다. 상비 조미료: 소금, 식용유.",
+   "description": "철판에 넣어 뜨겁게 제공해도 좋다. 상비 조미료: 물전분, 소금, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -90669,13 +89360,6 @@
      "ingredientID": "chicken-thigh",
      "rawName": "닭고기",
      "quantity": 35.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 6.0,
      "unit": "g",
      "preparation": null
     }
@@ -90896,7 +89580,7 @@
   {
    "id": "fsk-991",
    "title": "산호두부",
-   "description": "반찬 · 끓이기 상비 조미료: 소금.",
+   "description": "반찬 · 끓이기 상비 조미료: 물전분, 소금.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -90955,13 +89639,6 @@
      "quantity": 3.0,
      "unit": "g",
      "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 10.0,
-     "unit": "g",
-     "preparation": null
     }
    ],
    "steps": [
@@ -90984,7 +89661,7 @@
   {
    "id": "fsk-993",
    "title": "시금치 돼지고기 볶음",
-   "description": "취향에 따라 팔각을 넣기도 한다. 상비 조미료: 소금, 식용유.",
+   "description": "취향에 따라 팔각을 넣기도 한다. 상비 조미료: 물전분, 소금, 식용유.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -90999,13 +89676,6 @@
      "ingredientID": "auto-돼지고기살코기",
      "rawName": "돼지고기살코기",
      "quantity": 40.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
-     "ingredientID": "auto-물전분",
-     "rawName": "물전분",
-     "quantity": 10.0,
      "unit": "g",
      "preparation": null
     },
@@ -91065,7 +89735,7 @@
   {
    "id": "fsk-994",
    "title": "발사믹과 로즈마리로 향을 낸 오븐구이 야채",
-   "description": "사과나 파인애플과 같은 과일도 가능하다 상비 조미료: 소금, 후추.",
+   "description": "사과나 파인애플과 같은 과일도 가능하다 상비 조미료: 발사믹식초, 소금, 후추.",
    "mealSlots": [
     "점심",
     "저녁"
@@ -91112,13 +89782,6 @@
      "preparation": null
     },
     {
-     "ingredientID": "auto-발사믹식초",
-     "rawName": "발사믹식초",
-     "quantity": 30.0,
-     "unit": "g",
-     "preparation": null
-    },
-    {
      "ingredientID": "auto-로즈마리",
      "rawName": "로즈마리",
      "quantity": 2.0,
@@ -91147,7 +89810,7 @@
   {
    "id": "fsk-995",
    "title": "종이에 싸서 구운 도미(파필로테)",
-   "description": "오븐에 넣을 때 내열 접시나 오븐용 팬에 올려서 넣는다. 상비 조미료: 소금, 후추. 수량 미표기 재료: 유산지, 통후추 약간.",
+   "description": "오븐에 넣을 때 내열 접시나 오븐용 팬에 올려서 넣는다. 상비 조미료: 소금, 통후추, 후추. 수량 미표기 재료: 유산지.",
    "mealSlots": [
     "점심",
     "저녁"
