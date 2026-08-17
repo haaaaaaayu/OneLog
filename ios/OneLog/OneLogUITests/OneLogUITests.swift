@@ -12,8 +12,13 @@ final class OneLogUITests: XCTestCase {
             completeOnboarding(app)
         }
         XCTAssertTrue(app.buttons["tab.home"].waitForExistence(timeout: 5))
-        // 홈 상단 알림 토스트가 헤더를 가린다. 4초 뒤 사라진다.
         _ = app.buttons["home.createPlan"].waitForExistence(timeout: 5)
+        // 홈 상단 알림 토스트가 헤더(마이페이지 버튼)를 가린다. 스스로 사라질 때까지 기다렸다 넘긴다.
+        let toastClose = app.buttons["알림 닫기"]
+        for _ in 0..<12 where toastClose.exists {
+            if toastClose.isHittable { toastClose.tap() }
+            Thread.sleep(forTimeInterval: 0.5)
+        }
         return app
     }
 
@@ -44,13 +49,15 @@ final class OneLogUITests: XCTestCase {
         }
     }
 
-    func testOnboardingCollectsAccountAndPreferencesThenOpensMyPage() {
+    /// 마이페이지(383:24)에서 계정·프로필·불호 설정 경로가 살아 있는지 본다.
+    func testMyPageKeepsAccountProfileAndTastePaths() {
         let app = launchApp(resetState: true)
 
         app.buttons["마이페이지"].tap()
-        XCTAssertTrue(app.navigationBars["마이페이지"].waitForExistence(timeout: 5))
-        // 계정 연결 해제 버튼은 계정이 연결된 상태에서만 보인다.
-        XCTAssertTrue(app.buttons["계정 연결 해제"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.staticTexts["마이페이지"].waitForExistence(timeout: 5))
+
+        // 내 정보 수정(395:23). 계정 관리도 이 화면 안에 있다.
+        app.buttons["mypage.editProfile"].tap()
 
         let nickname = app.textFields["mypage.nickname"]
         XCTAssertTrue(nickname.waitForExistence(timeout: 5))
@@ -58,11 +65,18 @@ final class OneLogUITests: XCTestCase {
         nickname.typeText("한끼")
         app.buttons["mypage.saveProfile"].tap()
 
+        // 불호 음식·알레르기 시트(396:77)
+        XCTAssertTrue(app.buttons["mypage.preferences"].waitForExistence(timeout: 5))
         app.buttons["mypage.preferences"].tap()
-        XCTAssertTrue(app.navigationBars["추천 설정"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.staticTexts["자동 추천에서 제외할 재료"].waitForExistence(timeout: 5))
-        // 불호 메뉴 섹션은 재료 목록 아래에 있어 스크롤해야 화면에 올라온다.
-        XCTAssertTrue(scrollUntilVisible(app, app.staticTexts["자동 추천에서 제외할 메뉴"]))
+        XCTAssertTrue(app.buttons["sheet.save"].waitForExistence(timeout: 5))
+        app.buttons["sheet.save"].tap()
+
+        // 계정 관리는 내 정보 수정 화면 안에 있고, 연결된 상태에서만 해제가 뜬다.
+        // 확인 다이얼로그를 닫는 건 시스템 시트라 여기서 열어보고 테스트를 끝낸다.
+        app.buttons["mypage.editProfile"].tap()
+        XCTAssertTrue(app.buttons["mypage.manageAccount"].waitForExistence(timeout: 5))
+        app.buttons["mypage.manageAccount"].tap()
+        XCTAssertTrue(app.buttons["계정 연결 해제"].waitForExistence(timeout: 5))
     }
 
     private func scrollUntilVisible(_ app: XCUIApplication, _ element: XCUIElement, swipes: Int = 12) -> Bool {
@@ -73,32 +87,39 @@ final class OneLogUITests: XCTestCase {
         return element.exists
     }
 
-    func testCalculableFilterLeadsToShoppingListWithRealQuantities() {
-        // 앞선 실행이 남긴 식단이 쌓이면 "확인 필요" 품목이 섞여 들어와 단정이 깨진다.
-        let app = launchApp(resetState: true)
+    /// 식단을 만드는 유일한 경로는 `식단 만들기`다. 확정까지 마치고 흐름을 닫는다.
+    private func createPlan(_ app: XCUIApplication) {
+        XCTAssertTrue(app.buttons["home.createPlan"].waitForExistence(timeout: 5))
+        app.buttons["home.createPlan"].tap()
 
-        app.buttons["tab.recipe"].tap()
-        app.buttons["home.calculableFilter"].tap()
-        let addButton = app.buttons.matching(NSPredicate(format: "label CONTAINS '에 담기'")).firstMatch
-        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
-        addButton.tap()
+        let next = app.buttons["plan.next"]
+        XCTAssertTrue(next.waitForExistence(timeout: 5))
+        // 1 기간 → … → 9 가격 확인 → 완료
+        for step in 2...9 {
+            next.tap()
+            XCTAssertTrue(app.staticTexts["\(step) / 11"].waitForExistence(timeout: 5), "\(step)단계로 넘어가지 못했습니다")
+        }
+        next.tap()
+        XCTAssertTrue(app.buttons["tab.plan"].waitForExistence(timeout: 5))
+    }
+
+    func testConfirmedPlanProducesShoppingListWithQuantities() {
+        // 앞선 실행이 남긴 식단이 쌓이면 품목이 섞여 들어와 단정이 흔들린다.
+        let app = launchApp(resetState: true)
+        createPlan(app)
 
         app.buttons["tab.plan"].tap()
         app.buttons["meals.shopping"].tap()
         XCTAssertTrue(app.navigationBars["장보기"].waitForExistence(timeout: 5))
-        // 계산이 되는 레시피만 담았으므로 "확인 필요" 문구가 뜨면 안 된다.
-        XCTAssertFalse(app.staticTexts["판매 단위 확인 필요"].exists)
+        // 확정한 식단의 재료가 실제 수량과 함께 올라와야 한다.
+        let quantityRow = app.staticTexts.matching(NSPredicate(format: "label CONTAINS '필요'")).firstMatch
+        XCTAssertTrue(quantityRow.waitForExistence(timeout: 5), "장보기 목록에 필요량이 없습니다")
     }
 
-    /// F26 진입점. 탭을 6개로 늘리면 iOS가 마지막 탭을 More로 접으므로 장보기에서 들어간다.
+    /// F26 진입점. 피그마 탭에는 나눔이 따로 있지만 장보기에서도 이어갈 수 있어야 한다.
     func testShareEntryPointIsReachableFromShopping() {
-        let app = launchApp()
-
-        app.buttons["tab.recipe"].tap()
-        app.buttons["home.calculableFilter"].tap()
-        let addButton = app.buttons.matching(NSPredicate(format: "label CONTAINS '에 담기'")).firstMatch
-        XCTAssertTrue(addButton.waitForExistence(timeout: 5))
-        addButton.tap()
+        let app = launchApp(resetState: true)
+        createPlan(app)
 
         app.buttons["tab.plan"].tap()
         app.buttons["meals.shopping"].tap()
@@ -117,14 +138,18 @@ final class OneLogUITests: XCTestCase {
         // 실제 Google 웹 로그인 창은 테스트에서 띄울 수 없다. 실패 경로만 확인한다.
         app.launchArguments.append("-uiTestGoogleSignInFails")
         app.launch()
+        // 첫 실행은 번들 레시피를 읽느라 시작 화면이 늦게 뜬다. 뜨기 전에 누르면 탭이 그냥 사라진다.
+        XCTAssertTrue(app.images.firstMatch.waitForExistence(timeout: 10))
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 
         let google = app.buttons["onboarding.google"]
         XCTAssertTrue(google.waitForExistence(timeout: 5))
         google.tap()
 
-        XCTAssertTrue(app.buttons["다시 시도"].waitForExistence(timeout: 5))
-        XCTAssertTrue(app.buttons["onboarding.deviceOnly"].exists)
+        // 실패해도 계정 단계에 남아 다시 시도(Google 버튼)와 기기 전용 시작을 함께 보여준다.
+        XCTAssertTrue(app.buttons["onboarding.deviceOnly"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["onboarding.google"].exists)
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label CONTAINS 'Google 로그인'")).firstMatch.exists)
     }
 
     /// 피그마 `식단 만들기 1~8`을 순서대로 지나 식단이 실제로 담기는지 본다.

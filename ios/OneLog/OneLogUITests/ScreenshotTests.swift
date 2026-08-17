@@ -15,6 +15,8 @@ final class ScreenshotTests: XCTestCase {
         continueAfterFailure = true
         app = XCUIApplication()
         app.launchArguments.append("-uiTestResetState")
+        // 이 인자가 없으면 Google 버튼이 실제 웹 로그인 창을 띄워 캡처가 그대로 멈춘다.
+        app.launchArguments.append("-uiTestGoogleSignInFails")
         app.launch()
     }
 
@@ -70,11 +72,11 @@ final class ScreenshotTests: XCTestCase {
         shot("onboarding-basic-verified")
 
         // 350:2304 조리도구
-        tap(app.buttons["다음"])
+        tap(app.buttons["다음"].firstMatch)
         shot("onboarding-tools")
 
         // 366:86 / 370:11 불호·알레르기
-        tap(app.buttons["다음"])
+        tap(app.buttons["다음"].firstMatch)
         shot("onboarding-dislikes")
         tap(app.buttons["알레르기·못 먹는 재료"])
         shot("onboarding-allergies")
@@ -114,13 +116,13 @@ final class ScreenshotTests: XCTestCase {
         // 396:23 시트/요리 숙련도
         if tap(app.buttons["mypage.skill"]) {
             shot("sheet-skill")
-            tap(app.buttons["닫기"])
+            tap(app.buttons["sheet.save"])
         }
 
         // 396:77 시트/불호 음식·알레르기
         if tap(app.buttons["mypage.taste"]) {
             shot("sheet-taste")
-            tap(app.buttons["닫기"])
+            tap(app.buttons["sheet.save"])
         }
 
         // 395:23 내 정보 수정
@@ -135,14 +137,21 @@ final class ScreenshotTests: XCTestCase {
         app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         tap(app.buttons["onboarding.google"])
         tap(app.buttons["onboarding.deviceOnly"])
-        tap(app.buttons["다음"])
-        tap(app.buttons["다음"])
+        tap(app.buttons["다음"].firstMatch)
+        tap(app.buttons["다음"].firstMatch)
         tap(app.buttons["한끼로그 시작하기"]) || tap(app.buttons["onboarding.later"])
         _ = app.buttons["tab.home"].waitForExistence(timeout: 5)
         Thread.sleep(forTimeInterval: 5)
 
-        // 홈 카드 → 식단 만들기 시트
-        guard tap(app.buttons["home.createPlan"]) || tap(app.staticTexts["새 식단 만들기"]) else {
+        // 홈 상단 알림 토스트가 버튼을 가린다. 사라질 때까지 기다린다.
+        let toastClose = app.buttons["알림 닫기"]
+        for _ in 0..<12 where toastClose.exists {
+            if toastClose.isHittable { toastClose.tap() }
+            Thread.sleep(forTimeInterval: 0.5)
+        }
+
+        // 홈 카드 → 식단 만들기
+        guard tap(app.buttons["home.createPlan"]) else {
             return XCTFail("식단 만들기 진입점을 찾지 못했습니다")
         }
         _ = app.buttons["plan.next"].waitForExistence(timeout: 5)

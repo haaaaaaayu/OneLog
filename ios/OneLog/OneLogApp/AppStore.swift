@@ -20,7 +20,13 @@ final class AppStore: ObservableObject {
     init() {
         // UI 테스트가 온보딩부터 다시 확인할 수 있도록 저장 상태를 비운다.
         if ProcessInfo.processInfo.arguments.contains("-uiTestResetState") {
+            // 시뮬레이터는 앱 컨테이너 밖(기기 단위 Preferences)에 값을 남겨 두기도 한다.
+            // 키 하나만 지우면 예전 실행의 상태가 살아남아 테스트가 온보딩부터 시작하지 못한다.
+            if let identifier = Bundle.main.bundleIdentifier {
+                UserDefaults.standard.removePersistentDomain(forName: identifier)
+            }
             UserDefaults.standard.removeObject(forKey: Self.storageKey)
+            UserDefaults.standard.synchronize()
         }
         if let data = UserDefaults.standard.data(forKey: Self.storageKey),
            let envelope = try? JSONDecoder().decode(PersistedEnvelope.self, from: data),
