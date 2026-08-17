@@ -23,6 +23,8 @@
 		A014 /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V008 /* OnboardingView.swift */; };
 		A015 /* Sharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = S007 /* Sharing.swift */; };
 		A016 /* ShareStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S008 /* ShareStore.swift */; };
+		A018 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V010 /* HomeView.swift */; };
+		A019 /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V011 /* MyPageView.swift */; };
 		A017 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V009 /* ShareView.swift */; };
 		FB001 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRAUTH /* FirebaseAuth */; };
 		FB002 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRESTORE /* FirebaseFirestore */; };
@@ -76,6 +78,8 @@
 		V004 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		V005 /* MealsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealsView.swift; sourceTree = "<group>"; };
 		V006 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
+		V010 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		V011 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
 		V007 /* FridgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FridgeView.swift; sourceTree = "<group>"; };
 		V008 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -183,6 +187,8 @@
 				V007 /* FridgeView.swift */,
 				V008 /* OnboardingView.swift */,
 				V009 /* ShareView.swift */,
+				V010 /* HomeView.swift */,
+				V011 /* MyPageView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -342,6 +348,8 @@
 				A014 /* OnboardingView.swift in Sources */,
 				A015 /* Sharing.swift in Sources */,
 				A016 /* ShareStore.swift in Sources */,
+				A018 /* HomeView.swift in Sources */,
+				A019 /* MyPageView.swift in Sources */,
 				A017 /* ShareView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -391,6 +399,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "한끼로그";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native;
@@ -415,6 +424,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "한끼로그";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.food-and-drink";
+				INFOPLIST_KEY_UIUserInterfaceStyle = Light;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native;

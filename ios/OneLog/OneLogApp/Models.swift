@@ -43,8 +43,14 @@ enum CookingTool: String, CaseIterable, Codable, Identifiable, Hashable {
     case pan = "프라이팬"
     case pot = "냄비"
     case microwave = "전자레인지"
+    case airfryer = "에어프라이어"
+    case oven = "오븐"
+    case blender = "믹서기"
     case knife = "칼"
     case bowl = "볼"
+
+    /// 피그마 `첫가입 / 2. 조리도구`(350:2304)에 놓인 6개. 칼·볼은 화면에 없고 항상 보유로 둔다.
+    static let selectable: [CookingTool] = [.pan, .microwave, .airfryer, .oven, .pot, .blender]
 
     var id: String { rawValue }
     var symbolName: String {
@@ -52,11 +58,52 @@ enum CookingTool: String, CaseIterable, Codable, Identifiable, Hashable {
         case .pan: return "frying.pan"
         case .pot: return "cooktop"
         case .microwave: return "microwave"
+        case .airfryer: return "wind"
+        case .oven: return "oven"
+        case .blender: return "blender"
         case .knife: return "fork.knife"
         case .bowl: return "takeoutbag.and.cup.and.straw"
         }
     }
+
+    /// 피그마에서 내려받은 아이콘. 화면에 없는 도구는 값이 없다.
+    var assetName: String? {
+        switch self {
+        case .pan: return "ToolPan"
+        case .microwave: return "ToolMicrowave"
+        case .airfryer: return "ToolAirfryer"
+        case .oven: return "ToolOven"
+        case .pot: return "ToolPot"
+        case .blender: return "ToolBlender"
+        case .knife, .bowl: return nil
+        }
+    }
 }
+
+/// 피그마 `기본정보 / 요리 숙련도`(350:2282) 칩.
+enum CookingSkill: String, CaseIterable, Codable, Identifiable, Hashable {
+    case beginner = "하수"
+    case intermediate = "중수"
+    case advanced = "고수"
+
+    var id: String { rawValue }
+}
+
+/// 피그마 `기본정보 / 선호 조리 시간`(350:2291) 칩.
+enum CookTimePreference: String, CaseIterable, Codable, Identifiable, Hashable {
+    case under10 = "10분 이하"
+    case under20 = "20분 이하"
+    case over30 = "30분 이상"
+    case any = "상관없어요"
+
+    var id: String { rawValue }
+}
+
+/// 피그마 `첫가입 / 3. 불호 재료`(368:24) 칩 목록.
+let dislikedIngredientChoices = ["오이", "버섯", "가지", "고수", "당근", "대파", "양파"]
+
+/// 피그마 `첫가입 / 4. 알레르기 재료`(370:60) 칩 목록.
+let allergyChoices = ["해산물", "유제품", "견과류", "계란", "밀(글루텐)", "갑각류"]
 
 struct PackageSize: Codable, Hashable {
     var amount: Double
@@ -194,18 +241,22 @@ struct UserProfile: Codable, Hashable {
     var nickname: String = ""
     var age: Int?
     var neighborhood: String = ""
+    /// 피그마 `기본정보 / 생년월일`. `YYYY-MM-DD` 문자열이고 비어 있으면 미입력이다.
+    var birthDate: String = ""
 
     private enum CodingKeys: String, CodingKey {
         case nickname
         case age
         case neighborhood
+        case birthDate
     }
 
     // 커스텀 이니셜라이저가 생기면 멤버와이즈 이니셜라이저가 사라지므로 직접 둔다.
-    init(nickname: String = "", age: Int? = nil, neighborhood: String = "") {
+    init(nickname: String = "", age: Int? = nil, neighborhood: String = "", birthDate: String = "") {
         self.nickname = nickname
         self.age = age
         self.neighborhood = neighborhood
+        self.birthDate = birthDate
     }
 
     // 기본값만으로는 예전 저장 데이터가 디코딩되지 않으므로 키 단위로 복구한다.
@@ -214,6 +265,7 @@ struct UserProfile: Codable, Hashable {
         nickname = try container.decodeIfPresent(String.self, forKey: .nickname) ?? ""
         age = try container.decodeIfPresent(Int.self, forKey: .age)
         neighborhood = try container.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
+        birthDate = try container.decodeIfPresent(String.self, forKey: .birthDate) ?? ""
     }
 }
 
@@ -221,11 +273,23 @@ struct AppPreferences: Codable, Hashable {
     var dislikedIngredientIDs: Set<String> = []
     var dislikedRecipeIDs: Set<String> = []
     var availableTools: Set<CookingTool> = Set(CookingTool.allCases)
+    /// 알레르기·못 먹는 재료. 불호와 달리 추천에서 완전히 제외한다.
+    var allergyIngredientIDs: Set<String> = []
+    /// 재료 사전에 없는 칩과 직접 입력값은 이름 그대로 남긴다.
+    var customDislikedNames: Set<String> = []
+    var customAllergyNames: Set<String> = []
+    var cookingSkill: CookingSkill?
+    var preferredCookTime: CookTimePreference?
 
     private enum CodingKeys: String, CodingKey {
         case dislikedIngredientIDs
         case dislikedRecipeIDs
         case availableTools
+        case allergyIngredientIDs
+        case customDislikedNames
+        case customAllergyNames
+        case cookingSkill
+        case preferredCookTime
     }
 
     init() {}
@@ -235,7 +299,14 @@ struct AppPreferences: Codable, Hashable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         dislikedIngredientIDs = try container.decodeIfPresent(Set<String>.self, forKey: .dislikedIngredientIDs) ?? []
         dislikedRecipeIDs = try container.decodeIfPresent(Set<String>.self, forKey: .dislikedRecipeIDs) ?? []
-        availableTools = try container.decodeIfPresent(Set<CookingTool>.self, forKey: .availableTools) ?? Set(CookingTool.allCases)
+        // 저장된 도구 목록에 모르는 값이 있어도 설정 전체를 잃지 않는다.
+        let toolNames = try container.decodeIfPresent(Set<String>.self, forKey: .availableTools)
+        availableTools = toolNames.map { Set($0.compactMap(CookingTool.init(rawValue:))) } ?? Set(CookingTool.allCases)
+        allergyIngredientIDs = try container.decodeIfPresent(Set<String>.self, forKey: .allergyIngredientIDs) ?? []
+        customDislikedNames = try container.decodeIfPresent(Set<String>.self, forKey: .customDislikedNames) ?? []
+        customAllergyNames = try container.decodeIfPresent(Set<String>.self, forKey: .customAllergyNames) ?? []
+        cookingSkill = try container.decodeIfPresent(String.self, forKey: .cookingSkill).flatMap(CookingSkill.init(rawValue:))
+        preferredCookTime = try container.decodeIfPresent(String.self, forKey: .preferredCookTime).flatMap(CookTimePreference.init(rawValue:))
     }
 }
 

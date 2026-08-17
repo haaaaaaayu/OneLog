@@ -291,6 +291,7 @@ func isRecommendable(_ recipe: Recipe, preferences: AppPreferences) -> Bool {
     let IDs = Set(recipe.ingredients.map(\.ingredientID))
     guard !preferences.dislikedRecipeIDs.contains(recipe.id) else { return false }
     guard preferences.dislikedIngredientIDs.isDisjoint(with: IDs) else { return false }
+    guard preferences.allergyIngredientIDs.isDisjoint(with: IDs) else { return false }
     guard recipe.requiredTools.isSubset(of: preferences.availableTools) else { return false }
     return true
 }

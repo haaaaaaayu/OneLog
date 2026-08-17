@@ -41,6 +41,21 @@ final class AppStore: ObservableObject {
         calculateShoppingPlan(requirements: aggregateRequirements(for: state.plannedMeals), inventory: state.inventory, packageOverrides: state.packageOverrides)
     }
 
+    /// 확인한 가격이 있는 품목에서 보유 재고 덕분에 덜 산 포장 금액. 홈(383:328)과 마이페이지(384:33) 게이지가 함께 쓴다.
+    /// ponytail: `밖에서 사먹는 것 대비` 절약의 기준값이 기획에 없어 확정 가격 기반 절약만 센다.
+    var monthlyConfirmedSavings: Int {
+        let drafts = plannedMeals.map {
+            PlannedMealDraft(recipeID: $0.recipeID, date: $0.date, mealSlot: $0.mealSlot, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+        }
+        guard !drafts.isEmpty else { return 0 }
+        return estimate(for: drafts, targetBudget: 0).confirmedInventorySavings
+    }
+
+    var cookedMealsThisMonth: Int {
+        let prefix = String(isoDateString().prefix(7))
+        return state.completions.filter { $0.completedAt.hasPrefix(prefix) }.count
+    }
+
     func estimate(for drafts: [PlannedMealDraft], targetBudget: Int) -> BudgetEstimate {
         budgetEstimate(drafts: drafts, targetBudget: targetBudget, inventory: state.inventory, prices: state.prices, packageOverrides: state.packageOverrides)
     }
@@ -112,6 +127,84 @@ final class AppStore: ObservableObject {
             state.profile.age = safeAge
         }
         notice = "프로필을 저장했어요."
+    }
+
+    /// 피그마 `첫가입 / 1. 기본정보`(350:2256)와 `내 정보 수정`(395:23)이 함께 쓰는 저장 경로.
+    /// 생년월일은 `YYYY-MM-DD` 형식일 때만 저장하고, 동네는 사용자가 적은 문자열만 남긴다(좌표·위치 권한 없음).
+    func setBasicProfile(nickname: String, birthDate: String, neighborhood: String, skill: CookingSkill?, cookTime: CookTimePreference?, notify: Bool = true) {
+        let trimmedNickname = String(nickname.trimmingCharacters(in: .whitespacesAndNewlines).prefix(20))
+        let trimmedNeighborhood = String(neighborhood.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
+        let safeBirthDate = Self.isValidBirthDate(birthDate) ? birthDate : ""
+        update { state in
+            state.profile.nickname = trimmedNickname
+            state.profile.birthDate = safeBirthDate
+            state.profile.neighborhood = trimmedNeighborhood
+            state.preferences.cookingSkill = skill
+            state.preferences.preferredCookTime = cookTime
+        }
+        if notify { notice = "기본 정보를 저장했어요." }
+    }
+
+    /// 불호 재료 칩 선택. 재료 사전에 있으면 ID로, 없으면 이름 그대로 남긴다.
+    func setDislikedIngredientNames(_ names: Set<String>, notify: Bool = true) {
+        let split = Self.splitByCatalog(names)
+        update { state in
+            state.preferences.dislikedIngredientIDs = split.ids
+            state.preferences.customDislikedNames = split.names
+        }
+        if notify { notice = "안 좋아하는 재료를 저장했어요. 이미 담은 식사는 지우지 않았어요." }
+    }
+
+    /// 알레르기·못 먹는 재료. 자동 추천에서 완전히 제외한다.
+    func setAllergyIngredientNames(_ names: Set<String>, notify: Bool = true) {
+        let split = Self.splitByCatalog(names)
+        update { state in
+            state.preferences.allergyIngredientIDs = split.ids
+            state.preferences.customAllergyNames = split.names
+        }
+        if notify { notice = "알레르기 재료를 저장했어요. 추천에서 완전히 빼드릴게요." }
+    }
+
+    func setAvailableTools(_ tools: Set<CookingTool>, notify: Bool = true) {
+        // 화면에 없는 도구(칼·볼)는 항상 보유로 두어 기존 레시피 추천이 끊기지 않게 한다.
+        let hidden = Set(CookingTool.allCases).subtracting(CookingTool.selectable)
+        update { $0.preferences.availableTools = tools.intersection(CookingTool.selectable).union(hidden) }
+        if notify { notice = "보유 조리도구를 저장했어요." }
+    }
+
+    /// 화면에 보여줄 불호 재료 칩. 디자인 기본 목록 + 사용자가 이미 고른 재료.
+    var dislikedIngredientNames: Set<String> {
+        Set(state.preferences.dislikedIngredientIDs.compactMap { ingredient(for: $0)?.name })
+            .union(state.preferences.customDislikedNames)
+    }
+
+    var allergyIngredientNames: Set<String> {
+        Set(state.preferences.allergyIngredientIDs.compactMap { ingredient(for: $0)?.name })
+            .union(state.preferences.customAllergyNames)
+    }
+
+    private static func splitByCatalog(_ names: Set<String>) -> (ids: Set<String>, names: Set<String>) {
+        var ids: Set<String> = []
+        var custom: Set<String> = []
+        for name in names {
+            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { continue }
+            if let match = resolveIngredient(trimmed) {
+                ids.insert(match.id)
+            } else {
+                custom.insert(String(trimmed.prefix(20)))
+            }
+        }
+        return (ids, custom)
+    }
+
+    private static func isValidBirthDate(_ value: String) -> Bool {
+        guard value.count == 10 else { return false }
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: value) != nil
     }
 
     /// 동네 나눔(F26)에서만 쓰는 자기입력 값이다. 위치 권한을 요청하지 않고 좌표도 저장하지 않는다.

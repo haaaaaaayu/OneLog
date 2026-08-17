@@ -52,7 +52,28 @@ struct MealsView: View {
             }
             .background(Color.oneLogCream)
             .navigationTitle("내 식사")
+            // 피그마에 없는 화면(장보기·냉장고·추천 설정)은 식단관리 탭에서 이어간다.
             .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        ShoppingView()
+                            .environmentObject(store)
+                    } label: {
+                        Image(systemName: "cart")
+                    }
+                    .accessibilityLabel("장보기")
+                    .accessibilityIdentifier("meals.shopping")
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    NavigationLink {
+                        FridgeView()
+                            .environmentObject(store)
+                    } label: {
+                        Image(systemName: "refrigerator")
+                    }
+                    .accessibilityLabel("냉장고")
+                    .accessibilityIdentifier("meals.fridge")
+                }
                 ToolbarItem(placement: .topBarTrailing) {
                     NavigationLink {
                         PlanView()
