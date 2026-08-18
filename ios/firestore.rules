@@ -33,7 +33,18 @@ service cloud.firestore {
         && request.resource.data.authorNickname.size() <= 20
         && request.resource.data.meetupNote.size() <= 200
         && request.resource.data.amount is number
-        && request.resource.data.amount > 0;
+        && request.resource.data.amount > 0
+        // 도보 시간 표시용 대략 좌표(선택). 값이 있으면 위·경도 범위 안이어야 한다.
+        && (
+          !('coordinate' in request.resource.data) || request.resource.data.coordinate == null || (
+            request.resource.data.coordinate.latitude is number
+            && request.resource.data.coordinate.longitude is number
+            && request.resource.data.coordinate.latitude >= -90
+            && request.resource.data.coordinate.latitude <= 90
+            && request.resource.data.coordinate.longitude >= -180
+            && request.resource.data.coordinate.longitude <= 180
+          )
+        );
 
       // 작성자는 자기 글 전체를 고칠 수 있다.
       // 그 외 로그인 사용자는 참여 목록과 상태만, 정원 안에서, 자기 자신만 넣고 뺄 수 있다.

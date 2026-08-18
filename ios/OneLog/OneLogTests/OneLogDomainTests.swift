@@ -269,6 +269,41 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertFalse(budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: drifted, packageOverrides: overrides).isComplete)
     }
 
+    /// F25 도보 시간. 좌표가 없으면 표시하지 않고, 있으면 직선 거리 ÷ 75m/분으로 센다.
+    func testWalkingMinutesNeedsBothCoordinates() {
+        let seongsu = ShareCoordinate(latitude: 37.544, longitude: 127.056)
+        let nearby = ShareCoordinate(latitude: 37.548, longitude: 127.056) // 약 445m 북쪽
+
+        XCTAssertNil(walkingMinutes(from: seongsu, to: nil))
+        XCTAssertNil(walkingMinutes(from: nil, to: nearby))
+
+        XCTAssertEqual(walkingMinutes(from: seongsu, to: nearby), 6, "445m면 도보 6분이어야 합니다")
+        XCTAssertEqual(walkingText(from: seongsu, to: nearby), "도보 약 6분")
+
+        // 같은 자리여도 0분이 아니라 최소 1분으로 보여준다.
+        XCTAssertEqual(walkingMinutes(from: seongsu, to: seongsu), 1)
+    }
+
+    /// 좌표는 약 100m 격자로만 저장한다. 집 주소가 그대로 남으면 안 된다.
+    func testCoordinateIsRoundedAndValidated() {
+        let rounded = ShareCoordinate.rounded(latitude: 37.5442891, longitude: 127.0563123)
+        XCTAssertEqual(rounded?.latitude, 37.544)
+        XCTAssertEqual(rounded?.longitude, 127.056)
+
+        XCTAssertNil(ShareCoordinate.rounded(latitude: 91, longitude: 127))
+        XCTAssertNil(ShareCoordinate.rounded(latitude: .nan, longitude: 127))
+    }
+
+    /// 좌표 필드가 없던 예전 글도 그대로 읽혀야 한다.
+    func testSharePostDecodesWithoutCoordinate() throws {
+        let json = Data(#"{"id":"p1","kind":"split","ingredientID":"egg","ingredientName":"계란","amount":5,"unit":"개","neighborhood":"성수동","meetupNote":"","authorID":"u1","authorNickname":"퍼핌","participantIDs":[],"capacity":2,"status":"open","createdAt":0,"expiresAt":1}"#.utf8)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+        let post = try decoder.decode(SharePost.self, from: json)
+        XCTAssertNil(post.coordinate)
+        XCTAssertEqual(post.ingredientName, "계란")
+    }
+
     func testDislikedRecipeIsExcludedFromAutoRecommendationOnly() {
         var preferences = AppPreferences()
         preferences.dislikedRecipeIDs = ["tuna-mayo-rice"]

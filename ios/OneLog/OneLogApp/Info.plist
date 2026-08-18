@@ -11,6 +11,8 @@
 -->
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>같은 동네 이웃과의 도보 거리(약 몇 분)를 보여주는 데만 씁니다. 위치는 약 100m 단위로 반올림해 저장하고, 계속 추적하지 않습니다.</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>

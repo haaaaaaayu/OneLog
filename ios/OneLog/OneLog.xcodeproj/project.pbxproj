@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		A001 /* OneLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = S004 /* OneLogApp.swift */; };
 		A030 /* FigmaFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = S010 /* FigmaFont.swift */; };
+		A031 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = S011 /* LocationProvider.swift */; };
 		R005 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = FT001 /* Fonts */; };
 		A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = S003 /* Models.swift */; };
 		A003 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = S006 /* SeedData.swift */; };
@@ -69,6 +70,7 @@
 		S001 /* AppStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStore.swift; sourceTree = "<group>"; };
 		S002 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		S010 /* FigmaFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FigmaFont.swift; sourceTree = "<group>"; };
+		S011 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
 		S003 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		S004 /* OneLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogApp.swift; sourceTree = "<group>"; };
 		S005 /* PlannerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerEngine.swift; sourceTree = "<group>"; };
@@ -133,6 +135,7 @@
 				S001 /* AppStore.swift */,
 				S002 /* DesignSystem.swift */,
 				S010 /* FigmaFont.swift */,
+				S011 /* LocationProvider.swift */,
 				S003 /* Models.swift */,
 				S004 /* OneLogApp.swift */,
 				S005 /* PlannerEngine.swift */,
@@ -349,6 +352,7 @@
 				A002 /* Models.swift in Sources */,
 				A001 /* OneLogApp.swift in Sources */,
 				A030 /* FigmaFont.swift in Sources */,
+				A031 /* LocationProvider.swift in Sources */,
 				A004 /* PlannerEngine.swift in Sources */,
 				A003 /* SeedData.swift in Sources */,
 				A007 /* RootView.swift in Sources */,

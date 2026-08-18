@@ -280,6 +280,12 @@ final class AppStore: ObservableObject {
         notice = trimmed.isEmpty ? "동네를 지웠어요. 동네 나눔 글은 보이지 않아요." : "동네를 \(trimmed)(으)로 저장했어요."
     }
 
+    /// F25 도보 시간 표시용 대략 좌표. 값은 이미 약 100m 격자로 반올림된 상태로 들어온다.
+    func setNeighborhoodCoordinate(_ coordinate: ShareCoordinate?) {
+        guard state.profile.coordinate != coordinate else { return }
+        update { $0.profile.coordinate = coordinate }
+    }
+
     func toggleFavorite(_ recipeID: String) {
         guard recipe(for: recipeID) != nil else { return }
         update { state in

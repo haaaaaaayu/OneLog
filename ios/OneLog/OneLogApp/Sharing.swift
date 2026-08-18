@@ -54,8 +54,10 @@ struct SharePost: Codable, Identifiable, Hashable {
     /// 나눌 수 있는 양. 판매 단위가 확인된 재료에서만 계산된 값을 채운다.
     var amount: Double
     var unit: Unit
-    /// 사용자가 직접 적은 동네 이름. GPS·위치 인증을 쓰지 않는다(F25 미확정, AGENTS 3절 10항).
+    /// 사용자가 직접 적은 동네 이름. 같은 이름끼리 글이 보인다.
     var neighborhood: String
+    /// 글쓴이의 대략 위치(약 100m 격자). 도보 시간을 보여주는 데만 쓴다. 없으면 표시하지 않는다.
+    var coordinate: ShareCoordinate?
     /// 예전 버전에서 글에 저장하던 만남 메모. 새 약속은 `meetup/details` 하위 문서에 저장한다.
     /// 기존 Firestore 문서와의 하위 호환을 위해 남겨 둔다.
     var meetupNote: String
@@ -179,4 +181,49 @@ func rankSharePosts(
             if $0.score != $1.score { return $0.score > $1.score }
             return $0.post.createdAt > $1.post.createdAt
         }
+}
+
+// MARK: - 위치 (F25)
+
+/// 동네 나눔에서 쓰는 좌표. **2026-08-18 사용자 확정**으로 GPS를 쓴다.
+/// 집 주소가 그대로 남지 않도록 약 100m 격자로 반올림해서 저장한다.
+struct ShareCoordinate: Codable, Hashable {
+    var latitude: Double
+    var longitude: Double
+
+    /// 소수 셋째 자리 ≈ 위도 110m, 서울 기준 경도 90m. 도보 시간 계산에는 충분하다.
+    static func rounded(latitude: Double, longitude: Double) -> ShareCoordinate? {
+        guard latitude.isFinite, longitude.isFinite,
+              (-90...90).contains(latitude), (-180...180).contains(longitude) else { return nil }
+        return ShareCoordinate(
+            latitude: (latitude * 1000).rounded() / 1000,
+            longitude: (longitude * 1000).rounded() / 1000
+        )
+    }
+}
+
+/// 두 좌표 사이 직선 거리(m). 하버사인.
+func distanceMeters(_ from: ShareCoordinate, _ to: ShareCoordinate) -> Double {
+    let earthRadius = 6_371_000.0
+    let lat1 = from.latitude * .pi / 180
+    let lat2 = to.latitude * .pi / 180
+    let deltaLat = (to.latitude - from.latitude) * .pi / 180
+    let deltaLon = (to.longitude - from.longitude) * .pi / 180
+    let a = sin(deltaLat / 2) * sin(deltaLat / 2)
+        + cos(lat1) * cos(lat2) * sin(deltaLon / 2) * sin(deltaLon / 2)
+    return 2 * earthRadius * atan2(sqrt(a), sqrt(1 - a))
+}
+
+/// 도보 시간(분). ponytail: 직선 거리 ÷ 도보 75m/분(=4.5km/h) 가정이다.
+/// 실제 보행 경로가 아니므로 화면에서도 `약 n분`으로 표시한다. 경로 API가 생기면 이 함수만 바꾼다.
+func walkingMinutes(from: ShareCoordinate?, to: ShareCoordinate?) -> Int? {
+    guard let from, let to else { return nil }
+    let meters = distanceMeters(from, to)
+    guard meters.isFinite else { return nil }
+    return max(1, Int((meters / 75).rounded(.up)))
+}
+
+func walkingText(from: ShareCoordinate?, to: ShareCoordinate?) -> String? {
+    guard let minutes = walkingMinutes(from: from, to: to) else { return nil }
+    return minutes >= 60 ? "도보 1시간 이상" : "도보 약 \(minutes)분"
 }

@@ -170,5 +170,15 @@ final class ScreenshotTests: XCTestCase {
         if tap(app.buttons["meals.shopping"]) {
             shot("care-2-shopping")
         }
+
+        // 재료공유 1 / 공동구매·소분 (350:1267)
+        tap(app.buttons["tab.share"])
+        let field = app.textFields["neighborhoodField"]
+        if field.waitForExistence(timeout: 4) {
+            field.tap()
+            field.typeText("성수동")
+            tap(app.buttons["저장"])
+        }
+        shot("share-1-main")
     }
 }

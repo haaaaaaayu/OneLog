@@ -243,20 +243,24 @@ struct UserProfile: Codable, Hashable {
     var neighborhood: String = ""
     /// 피그마 `기본정보 / 생년월일`. `YYYY-MM-DD` 문자열이고 비어 있으면 미입력이다.
     var birthDate: String = ""
+    /// F25 위치. **2026-08-18 사용자 확정**으로 GPS를 쓴다. 약 100m 격자로 반올림한 값만 담는다.
+    var coordinate: ShareCoordinate?
 
     private enum CodingKeys: String, CodingKey {
         case nickname
         case age
         case neighborhood
         case birthDate
+        case coordinate
     }
 
     // 커스텀 이니셜라이저가 생기면 멤버와이즈 이니셜라이저가 사라지므로 직접 둔다.
-    init(nickname: String = "", age: Int? = nil, neighborhood: String = "", birthDate: String = "") {
+    init(nickname: String = "", age: Int? = nil, neighborhood: String = "", birthDate: String = "", coordinate: ShareCoordinate? = nil) {
         self.nickname = nickname
         self.age = age
         self.neighborhood = neighborhood
         self.birthDate = birthDate
+        self.coordinate = coordinate
     }
 
     // 기본값만으로는 예전 저장 데이터가 디코딩되지 않으므로 키 단위로 복구한다.
@@ -266,6 +270,7 @@ struct UserProfile: Codable, Hashable {
         age = try container.decodeIfPresent(Int.self, forKey: .age)
         neighborhood = try container.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
         birthDate = try container.decodeIfPresent(String.self, forKey: .birthDate) ?? ""
+        coordinate = try container.decodeIfPresent(ShareCoordinate.self, forKey: .coordinate)
     }
 }
 

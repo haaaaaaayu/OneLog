@@ -105,7 +105,7 @@ final class ShareStore: ObservableObject {
 
     /// 저장 전에 길이·인원·금액을 여기서 자른다. Firestore 보안 규칙(`ios/firestore.rules`)이 같은 조건을 서버에서 한 번 더 막는다.
     @discardableResult
-    func createPost(draft: ShareDraft, neighborhood: String, pricePerShare: Int?, capacity: Int, nickname: String) async -> Bool {
+    func createPost(draft: ShareDraft, neighborhood: String, pricePerShare: Int?, capacity: Int, nickname: String, coordinate: ShareCoordinate? = nil) async -> Bool {
         guard let postsCollection else {
             errorMessage = Self.notConfiguredMessage
             return false
@@ -135,6 +135,8 @@ final class ShareStore: ObservableObject {
             amount: draft.amount,
             unit: draft.unit,
             neighborhood: String(place.prefix(30)),
+            // 도보 시간 표시용 대략 좌표(약 100m 격자). 권한을 거부하면 nil로 올라간다.
+            coordinate: coordinate,
             // 약속 정보는 공개 동네 글과 분리된 `meetup/details`에 저장한다.
             meetupNote: "",
             pricePerShare: pricePerShare.flatMap { (0...200_000).contains($0) ? $0 : nil },
