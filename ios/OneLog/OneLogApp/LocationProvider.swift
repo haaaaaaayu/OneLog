@@ -15,6 +15,7 @@ final class LocationProvider: NSObject, ObservableObject {
 
     private let manager = CLLocationManager()
     private var continuation: CheckedContinuation<ShareCoordinate?, Never>?
+    private var timeoutTask: Task<Void, Never>?
 
     override init() {
         super.init()
@@ -31,6 +32,7 @@ final class LocationProvider: NSObject, ObservableObject {
     /// 권한을 요청하고 좌표를 1회 읽는다. 거부·실패면 nil을 준다.
     @discardableResult
     func requestOnce() async -> ShareCoordinate? {
+        if let coordinate { return coordinate }
         guard !isRequesting else { return coordinate }
         guard !isDenied else {
             errorMessage = "위치 권한이 꺼져 있어요. 설정에서 켜면 도보 시간을 보여드릴게요."
@@ -45,7 +47,18 @@ final class LocationProvider: NSObject, ObservableObject {
 
         let result = await withCheckedContinuation { (continuation: CheckedContinuation<ShareCoordinate?, Never>) in
             self.continuation = continuation
-            manager.requestLocation()
+            // 권한 콜백이 먼저 오기 전에는 위치를 요청하지 않는다. 권한을
+            // 거부한 직후 `requestLocation()`을 호출하면 실패 콜백이 오지
+            // 않는 OS 조합이 있어, 아래 delegate에서 승인된 경우에만 호출한다.
+            if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+                manager.requestLocation()
+            }
+            timeoutTask = Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(8))
+                guard !Task.isCancelled, let self, self.isRequesting else { return }
+                self.errorMessage = "위치 확인에 시간이 걸리고 있어요. 동네 이름만으로도 나눔은 그대로 쓸 수 있어요."
+                self.finish(nil)
+            }
         }
         isRequesting = false
         if let result { coordinate = result }
@@ -53,8 +66,11 @@ final class LocationProvider: NSObject, ObservableObject {
     }
 
     private func finish(_ value: ShareCoordinate?) {
-        continuation?.resume(returning: value)
+        timeoutTask?.cancel()
+        timeoutTask = nil
+        guard let pending = continuation else { return }
         continuation = nil
+        pending.resume(returning: value)
     }
 }
 
@@ -78,6 +94,10 @@ extension LocationProvider: CLLocationManagerDelegate {
             if self.isDenied {
                 self.errorMessage = "위치 권한이 꺼져 있어요. 동네 이름만으로도 나눔은 그대로 쓸 수 있어요."
                 self.finish(nil)
+            } else if self.isRequesting,
+                      self.continuation != nil,
+                      manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+                manager.requestLocation()
             }
         }
     }

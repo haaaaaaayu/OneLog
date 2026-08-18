@@ -57,7 +57,9 @@ struct SharePost: Codable, Identifiable, Hashable {
     /// 사용자가 직접 적은 동네 이름. 같은 이름끼리 글이 보인다.
     var neighborhood: String
     /// 글쓴이의 대략 위치(약 100m 격자). 도보 시간을 보여주는 데만 쓴다. 없으면 표시하지 않는다.
-    var coordinate: ShareCoordinate?
+    // 기본값을 둬서 좌표를 저장하지 않던 이전 글과 테스트 데이터도
+    // 새 모델의 이니셜라이저를 그대로 사용할 수 있게 한다.
+    var coordinate: ShareCoordinate? = nil
     /// 예전 버전에서 글에 저장하던 만남 메모. 새 약속은 `meetup/details` 하위 문서에 저장한다.
     /// 기존 Firestore 문서와의 하위 호환을 위해 남겨 둔다.
     var meetupNote: String
@@ -134,7 +136,7 @@ struct ShareDraft: Identifiable, Hashable {
 /// 남는 양이 실제로 살 양보다 많으면 한 포장이 과한 경우라 `같이 사기`, 그보다 적으면 `나눠 쓰기`로 제안한다.
 func shareDrafts(from items: [ShoppingPlanItem]) -> [ShareDraft] {
     items.compactMap { item in
-        guard item.precision != .manual,
+        guard item.precision == .exact,
               item.additionalNeeded > 0,
               let remaining = item.expectedRemaining,
               remaining > 0 else { return nil }
@@ -158,7 +160,7 @@ func rankSharePosts(
     myUserID: String,
     now: Date = Date()
 ) -> [ShareMatch] {
-    let needIDs = Set(shoppingItems.filter { $0.additionalNeeded > 0 }.map(\.ingredientID))
+    let needIDs = Set(shoppingItems.filter { $0.precision == .exact && $0.additionalNeeded > 0 }.map(\.ingredientID))
 
     return posts
         .filter { $0.isVisible(now: now) && $0.authorID != myUserID && !dislikedIngredientIDs.contains($0.ingredientID) }

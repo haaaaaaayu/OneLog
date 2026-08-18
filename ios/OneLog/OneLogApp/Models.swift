@@ -246,7 +246,8 @@ struct UserAccount: Codable, Hashable {
 }
 
 /// 목적에 필요한 최소 범위만 수집한다(AGENTS 11절). 나이는 선택 입력이며 비우면 저장하지 않는다.
-/// 동네는 F26 동네 나눔에서만 쓰는 사용자 자기입력 문자열이다. GPS·위치 인증은 받지 않는다(F25 미확정).
+/// 동네는 F26 동네 나눔에서 쓰는 사용자 자기입력 문자열이다. 좌표는 F25의
+/// WhenInUse 1회 측정 결과를 약 100m 격자로 반올림한 값만 저장한다.
 struct UserProfile: Codable, Hashable {
     var nickname: String = ""
     var age: Int?
@@ -489,6 +490,8 @@ struct PlanRequest {
     let inventory: [InventoryItem]
     let prices: [String: IngredientPrice]
     let preferences: AppPreferences
+    /// 식단 생성 중에도 사용자가 확인한 판매 단위를 같은 계산기에 전달한다.
+    var packageOverrides: [String: PackageSize] = [:]
 }
 
 struct LeftoverRecommendation: Identifiable, Hashable {

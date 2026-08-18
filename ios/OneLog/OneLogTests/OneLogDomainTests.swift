@@ -54,6 +54,30 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertTrue(estimate.unknownCostIngredientIDs.contains("cabbage"))
     }
 
+    func testUnknownInventoryDoesNotBecomeConfirmedBudgetEvenWhenPriceExists() {
+        guard let recipe = recipes.first(where: { !$0.ingredients.isEmpty }) else {
+            return XCTFail("테스트할 레시피가 없습니다")
+        }
+        let draft = PlannedMealDraft(recipeID: recipe.id, date: "2026-08-14", mealSlot: recipe.mealSlots.first ?? .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+        let baseItems = calculateShoppingPlan(requirements: aggregateRequirements(for: [draft]), inventory: [])
+        var prices: [String: IngredientPrice] = [:]
+        for item in baseItems {
+            prices[item.ingredientID] = IngredientPrice(price: 1000, packageAmount: item.packageSize.amount, unit: item.unit, confirmedAt: "2026-08-14", source: "user")
+        }
+        guard let unknown = baseItems.first else { return XCTFail("구매 품목이 없습니다") }
+
+        let estimate = budgetEstimate(
+            drafts: [draft],
+            targetBudget: 30000,
+            inventory: [InventoryItem(ingredientID: unknown.ingredientID, quantity: nil, unit: unknown.unit, quantityStatus: .unknown, updatedAt: "2026-08-14")],
+            prices: prices
+        )
+
+        XCTAssertFalse(estimate.isComplete)
+        XCTAssertNil(estimate.remainingBudget)
+        XCTAssertTrue(estimate.unknownCostIngredientIDs.contains(unknown.ingredientID))
+    }
+
     func testPlanSupportsDateSpecificMealsAndReturnsMultipleOptions() {
         let start = "2026-08-14"
         let request = PlanRequest(
@@ -133,9 +157,11 @@ final class OneLogDomainTests: XCTestCase {
         let start = "2026-08-14"
         let requestWithTooManyDays = PlanRequest(startDate: start, days: 8, slotsByDate: [start: [.dinner]], targetBudget: 10000, favorites: [], inventory: [], prices: [:], preferences: AppPreferences())
         let requestWithoutMeals = PlanRequest(startDate: start, days: 1, slotsByDate: [start: []], targetBudget: 10000, favorites: [], inventory: [], prices: [:], preferences: AppPreferences())
+        let requestWithoutBudget = PlanRequest(startDate: start, days: 1, slotsByDate: [start: [.dinner]], targetBudget: 0, favorites: [], inventory: [], prices: [:], preferences: AppPreferences())
 
         XCTAssertTrue(generateMealPlanOptions(request: requestWithTooManyDays).isEmpty)
         XCTAssertTrue(generateMealPlanOptions(request: requestWithoutMeals).isEmpty)
+        XCTAssertTrue(generateMealPlanOptions(request: requestWithoutBudget).isEmpty)
     }
 
     func testShoppingSignatureUsesComputedPurchaseQuantity() {
@@ -396,6 +422,7 @@ final class OneLogDomainTests: XCTestCase {
         let drafts = shareDrafts(from: [
             planItem("onion", needed: 1, remaining: 3),
             planItem("egg", needed: 10, remaining: 2),
+            planItem("carrot", needed: 1, remaining: 3, precision: .estimated),
             planItem("tofu", needed: 1, remaining: 5, precision: .manual),
             planItem("milk", needed: 1, remaining: 0),
         ])

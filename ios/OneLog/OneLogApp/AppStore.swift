@@ -200,10 +200,12 @@ final class AppStore: ObservableObject {
         let trimmedNickname = String(nickname.trimmingCharacters(in: .whitespacesAndNewlines).prefix(20))
         let trimmedNeighborhood = String(neighborhood.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
         let safeBirthDate = Self.isValidBirthDate(birthDate) ? birthDate : ""
+        let neighborhoodChanged = state.profile.neighborhood != trimmedNeighborhood
         update { state in
             state.profile.nickname = trimmedNickname
             state.profile.birthDate = safeBirthDate
             state.profile.neighborhood = trimmedNeighborhood
+            if neighborhoodChanged { state.profile.coordinate = nil }
             state.preferences.cookingSkill = skill
             state.preferences.preferredCookTime = cookTime
         }
@@ -276,14 +278,19 @@ final class AppStore: ObservableObject {
     func setNeighborhood(_ value: String) {
         let trimmed = String(value.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
         guard trimmed != state.profile.neighborhood else { return }
-        update { $0.profile.neighborhood = trimmed }
+        update {
+            $0.profile.neighborhood = trimmed
+            // 좌표는 입력한 동네와 묶여 있으므로 동네를 바꾸면 다시 1회 확인한다.
+            $0.profile.coordinate = nil
+        }
         notice = trimmed.isEmpty ? "동네를 지웠어요. 동네 나눔 글은 보이지 않아요." : "동네를 \(trimmed)(으)로 저장했어요."
     }
 
     /// F25 도보 시간 표시용 대략 좌표. 값은 이미 약 100m 격자로 반올림된 상태로 들어온다.
     func setNeighborhoodCoordinate(_ coordinate: ShareCoordinate?) {
-        guard state.profile.coordinate != coordinate else { return }
-        update { $0.profile.coordinate = coordinate }
+        let rounded = coordinate.flatMap { ShareCoordinate.rounded(latitude: $0.latitude, longitude: $0.longitude) }
+        guard state.profile.coordinate != rounded else { return }
+        update { $0.profile.coordinate = rounded }
     }
 
     func toggleFavorite(_ recipeID: String) {
@@ -301,16 +308,16 @@ final class AppStore: ObservableObject {
 
     @discardableResult
     func addPlannedMeal(recipeID: String, date: String, slot: MealSlot) -> Bool {
-        guard recipe(for: recipeID) != nil, date.count == 10 else { return false }
-        let duplicate = state.plannedMeals.contains { $0.recipeID == recipeID && $0.date == date && $0.mealSlot == slot && $0.status == .planned }
+        guard let recipe = recipe(for: recipeID), Self.isValidISODate(date), recipe.mealSlots.contains(slot) else { return false }
+        let duplicate = state.plannedMeals.contains { $0.date == date && $0.mealSlot == slot && $0.status != .cooked }
         guard !duplicate else {
-            notice = "같은 날짜와 끼니에 이미 담긴 메뉴예요."
+            notice = "같은 날짜와 끼니에 이미 다른 메뉴가 담겨 있어요. 식단 관리에서 바꿔 주세요."
             return false
         }
         update { state in
             state.plannedMeals.append(PlannedMeal(id: UUID().uuidString, recipeID: recipeID, date: date, mealSlot: slot, status: .planned, createdAt: ISO8601DateFormatter().string(from: Date())))
         }
-        let title = recipe(for: recipeID)?.title ?? "메뉴"
+        let title = recipe.title
         notice = ["\(title)를 내 식사에 담았어요.", preferenceWarning(forRecipeID: recipeID)].compactMap { $0 }.joined(separator: " ")
         return true
     }
@@ -325,6 +332,10 @@ final class AppStore: ObservableObject {
         let disliked = Set(recipe.ingredients.map(\.ingredientID)).intersection(state.preferences.dislikedIngredientIDs)
         if !disliked.isEmpty {
             reasons.append("불호 재료 \(disliked.compactMap { ingredient(for: $0)?.name }.sorted().joined(separator: ", ")) 포함")
+        }
+        let allergy = Set(recipe.ingredients.map(\.ingredientID)).intersection(state.preferences.allergyIngredientIDs)
+        if !allergy.isEmpty {
+            reasons.append("알레르기 재료 \(allergy.compactMap { ingredient(for: $0)?.name }.sorted().joined(separator: ", ")) 포함")
         }
         let missingTools = recipe.requiredTools.subtracting(state.preferences.availableTools)
         if !missingTools.isEmpty {
@@ -341,10 +352,19 @@ final class AppStore: ObservableObject {
             // 식단관리 화면이 남은 예산을 보여주려면 확정 시점의 목표 예산이 필요하다.
             if targetBudget > 0 { state.targetBudget = targetBudget }
             for draft in option.drafts {
-                let duplicate = state.plannedMeals.contains { $0.recipeID == draft.recipeID && $0.date == draft.date && $0.mealSlot == draft.mealSlot && $0.status == .planned }
-                guard !duplicate else { continue }
-                state.plannedMeals.append(PlannedMeal(id: UUID().uuidString, recipeID: draft.recipeID, date: draft.date, mealSlot: draft.mealSlot, status: .planned, createdAt: ISO8601DateFormatter().string(from: Date())))
-                added += 1
+                // 새 식단을 다시 확정하면 같은 날짜·끼니의 예정 메뉴를
+                // 복제하지 않고 교체한다. 완료 기록은 보존하고, 건너뛴 끼니는
+                // 새 계획으로 되살린다.
+                if let index = state.plannedMeals.firstIndex(where: { $0.date == draft.date && $0.mealSlot == draft.mealSlot }) {
+                    guard state.plannedMeals[index].status != .cooked else { continue }
+                    let changed = state.plannedMeals[index].recipeID != draft.recipeID || state.plannedMeals[index].status != .planned
+                    state.plannedMeals[index].recipeID = draft.recipeID
+                    state.plannedMeals[index].status = .planned
+                    if changed { added += 1 }
+                } else {
+                    state.plannedMeals.append(PlannedMeal(id: UUID().uuidString, recipeID: draft.recipeID, date: draft.date, mealSlot: draft.mealSlot, status: .planned, createdAt: ISO8601DateFormatter().string(from: Date())))
+                    added += 1
+                }
             }
         }
         notice = added == 0 ? "이미 같은 계획이 있어 새로 추가된 식사가 없어요." : "\(added)개 식사를 내 식사에 담았어요."
@@ -352,7 +372,14 @@ final class AppStore: ObservableObject {
     }
 
     func replaceMeal(_ mealID: String, recipeID: String) {
-        guard let recipe = recipe(for: recipeID), let existing = state.plannedMeals.first(where: { $0.id == mealID }), recipe.mealSlots.contains(existing.mealSlot) else { return }
+        guard let recipe = recipe(for: recipeID),
+              let existing = state.plannedMeals.first(where: { $0.id == mealID }),
+              existing.status != .cooked,
+              recipe.mealSlots.contains(existing.mealSlot),
+              !state.plannedMeals.contains(where: { $0.id != mealID && $0.date == existing.date && $0.mealSlot == existing.mealSlot && $0.status != .cooked }) else {
+            notice = "이 메뉴를 바꿀 수 없는 상태예요."
+            return
+        }
         update { state in
             guard let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }) else { return }
             state.plannedMeals[index].recipeID = recipeID
@@ -361,8 +388,14 @@ final class AppStore: ObservableObject {
     }
 
     func moveMeal(_ mealID: String, date: String, slot: MealSlot) {
-        guard let existing = state.plannedMeals.first(where: { $0.id == mealID }), existing.status == .planned else { return }
-        let conflict = state.plannedMeals.contains { $0.id != mealID && $0.date == date && $0.mealSlot == slot && $0.status == .planned }
+        guard let existing = state.plannedMeals.first(where: { $0.id == mealID }),
+              (existing.status == .planned || existing.status == .skipped),
+              Self.isValidISODate(date),
+              recipe(for: existing.recipeID)?.mealSlots.contains(slot) == true else {
+            notice = "이 식사를 옮길 수 없는 일정이에요."
+            return
+        }
+        let conflict = state.plannedMeals.contains { $0.id != mealID && $0.date == date && $0.mealSlot == slot && $0.status != .cooked }
         guard !conflict else {
             notice = "그 날짜와 끼니에 이미 다른 계획이 있어요."
             return
@@ -459,29 +492,32 @@ final class AppStore: ObservableObject {
 
     @discardableResult
     func confirmPurchase(items: [ShoppingPlanItem]) -> Bool {
-        guard !items.isEmpty else {
+        let confirmedItems = items.filter {
+            $0.precision == .exact && resolvedPurchasePackageCount(for: $0) > 0
+        }
+        guard !confirmedItems.isEmpty else {
             notice = "추가로 살 품목이 없어요."
             return false
         }
-        let signature = shoppingSignature(items, quantityOverrides: state.purchaseQuantityOverrides)
+        let signature = shoppingSignature(confirmedItems, quantityOverrides: state.purchaseQuantityOverrides)
         guard !state.appliedPurchaseSignatures.contains(signature) else {
             notice = "이 장보기 목록은 이미 재고에 반영했어요."
             return false
         }
         update { state in
-            state.inventory = applyPurchases(inventory: state.inventory, shoppingItems: items, quantityOverrides: state.purchaseQuantityOverrides)
+            state.inventory = applyPurchases(inventory: state.inventory, shoppingItems: confirmedItems, quantityOverrides: state.purchaseQuantityOverrides)
             state.appliedPurchaseSignatures.append(signature)
-            appendShoppingEvent(.purchaseConfirmed, itemIDs: items.map(\.id), to: &state)
+            confirmedItems.forEach { state.purchaseChecks[$0.id] = true }
+            appendShoppingEvent(.purchaseConfirmed, itemIDs: confirmedItems.map(\.id), to: &state)
         }
         notice = "구매한 양을 냉장고 재고에 반영했어요. 같은 목록을 다시 눌러도 중복되지 않아요."
         return true
     }
 
-    @discardableResult
     /// F22 `오늘만 비활성화`. 재료는 그대로 두고 상태만 바꾼다. 되돌릴 수 있다.
     func setMealSkipped(_ mealID: String, skipped: Bool) {
         guard let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }),
-              state.plannedMeals[index].status != .cooked else { return }
+              state.plannedMeals[index].status == .planned || state.plannedMeals[index].status == .skipped else { return }
         update { $0.plannedMeals[index].status = skipped ? .skipped : .planned }
         notice = skipped ? "이 끼니를 건너뛰었어요. 재료는 그대로 남아 있어요." : "다시 예정으로 되돌렸어요."
     }
@@ -537,6 +573,21 @@ final class AppStore: ObservableObject {
         state.profile.nickname = String(state.profile.nickname.trimmingCharacters(in: .whitespacesAndNewlines).prefix(20))
         state.profile.age = state.profile.age.flatMap { (14...120).contains($0) ? $0 : nil }
         state.profile.neighborhood = String(state.profile.neighborhood.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
+        state.profile.coordinate = state.profile.coordinate.flatMap { ShareCoordinate.rounded(latitude: $0.latitude, longitude: $0.longitude) }
         return state
+    }
+
+    private func resolvedPurchasePackageCount(for item: ShoppingPlanItem) -> Int {
+        purchasePackageCount(state.purchaseQuantityOverrides[item.id], fallback: item.purchaseQuantity)
+    }
+
+    private static func isValidISODate(_ value: String) -> Bool {
+        guard value.count == 10 else { return false }
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.date(from: value) != nil
     }
 }

@@ -761,7 +761,7 @@ struct PlanView: View {
         case 5:
             return PlanFlowCTA(title: "이 식단 선택", style: .dark, isEnabled: selectedOptionID != nil) { step = 6 }
         case 7:
-            return PlanFlowCTA(title: "이 식단으로 확정", style: .yellow, isEnabled: selectedOption != nil, action: confirmPlan)
+            return PlanFlowCTA(title: "재료와 가격 확인", style: .yellow, isEnabled: selectedOption != nil, action: confirmPlan)
         case 9:
             return PlanFlowCTA(title: "완료", style: .yellow, isEnabled: true, action: finishFlow)
         default:
@@ -789,12 +789,18 @@ struct PlanView: View {
     }
 
     private func confirmPlan() {
-        guard let option = selectedOption else { return }
-        store.applyPlan(option, targetBudget: budgetValue)
+        guard selectedOption != nil else { return }
+        // 이 단계에서는 아직 판매 단위·가격 확인과 업그레이드 선택이
+        // 남아 있다. 최종 `완료`에서 한 번만 실제 식단에 반영한다.
         step = 8
     }
 
     private func finishFlow() {
+        guard let option = selectedOption else {
+            validationMessage = "식단안을 먼저 선택해 주세요."
+            return
+        }
+        store.applyPlan(option, targetBudget: budgetValue)
         options = []
         selectedOptionID = nil
         validationMessage = nil
@@ -824,7 +830,17 @@ struct PlanView: View {
         for date in dates {
             slotsByDate[date] = Set(MealSlot.allCases.filter { selectedSlots.contains(PlanSlotKey(date: date, slot: $0)) })
         }
-        return PlanRequest(startDate: isoDateString(startDate), days: days, slotsByDate: slotsByDate, targetBudget: budgetValue, favorites: Set(store.state.favorites), inventory: store.state.inventory, prices: store.state.prices, preferences: store.state.preferences)
+        return PlanRequest(
+            startDate: isoDateString(startDate),
+            days: days,
+            slotsByDate: slotsByDate,
+            targetBudget: budgetValue,
+            favorites: Set(store.state.favorites),
+            inventory: store.state.inventory,
+            prices: store.state.prices,
+            preferences: store.state.preferences,
+            packageOverrides: store.state.packageOverrides
+        )
     }
 
     private func rebuildSelectedSlotsIfNeeded() {

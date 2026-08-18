@@ -657,6 +657,7 @@ struct RecipeDetailView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
     let recipeID: String
+    @State private var isMealPickerPresented = false
 
     private var recipeValue: Recipe? { recipe(for: recipeID) }
 
@@ -690,6 +691,30 @@ struct RecipeDetailView: View {
         .background(Color(hex: 0xFFF9E8))
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if recipeValue != nil {
+                Button {
+                    isMealPickerPresented = true
+                } label: {
+                    Text("식사에 담기")
+                        .figmaText(15, .bold)
+                        .foregroundStyle(Color.oneLogInk)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 50)
+                        .background(Color.oneLogBrand, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("recipe.detail.addMeal")
+                .padding(.horizontal, 20)
+                .padding(.vertical, 8)
+                .background(Color(hex: 0xFFF9E8).opacity(0.96))
+            }
+        }
+        .sheet(isPresented: $isMealPickerPresented) {
+            if let recipeValue {
+                RecipeMealPicker(recipe: recipeValue).environmentObject(store)
+            }
+        }
     }
 
     private var header: some View {
@@ -839,6 +864,71 @@ struct RecipeDetailView: View {
                         .foregroundStyle(Color.oneLogInk)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top, 6)
+                }
+            }
+        }
+    }
+}
+
+/// 레시피 상세에서 직접 날짜·끼니를 고르는 F03 경로.
+private struct RecipeMealPicker: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    let recipe: Recipe
+
+    @State private var date = Date()
+    @State private var slot: MealSlot
+    @State private var errorMessage: String?
+
+    init(recipe: Recipe) {
+        self.recipe = recipe
+        _slot = State(initialValue: recipe.mealSlots.first ?? .dinner)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("담을 메뉴") {
+                    LabeledContent("레시피", value: recipe.title)
+                    LabeledContent("기준", value: "\(recipe.servings)인분 · \(recipe.cookTimeText)")
+                }
+
+                Section("먹을 일정") {
+                    DatePicker("날짜", selection: $date, displayedComponents: .date)
+                        .environment(\.locale, Locale(identifier: "ko_KR"))
+                        .accessibilityIdentifier("recipe.mealDate")
+                    Picker("끼니", selection: $slot) {
+                        ForEach(recipe.mealSlots) { slot in
+                            Text(slot.rawValue).tag(slot)
+                        }
+                    }
+                    .accessibilityIdentifier("recipe.mealSlot")
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(Color.oneLogOrange)
+                }
+
+                Section {
+                    Button("식사에 담기") {
+                        if store.addPlannedMeal(recipeID: recipe.id, date: isoDateString(date), slot: slot) {
+                            dismiss()
+                        } else {
+                            errorMessage = store.notice ?? "같은 날짜와 끼니에 이미 다른 메뉴가 담겨 있어요."
+                        }
+                    }
+                    .font(.body.weight(.bold))
+                    .foregroundStyle(Color.oneLogInk)
+                    .accessibilityIdentifier("recipe.meal.confirm")
+                }
+            }
+            .navigationTitle("식사에 담기")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("닫기") { dismiss() }
                 }
             }
         }

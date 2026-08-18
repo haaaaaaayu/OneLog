@@ -388,6 +388,18 @@ struct ProfileEditView: View {
                             .accessibilityIdentifier("mypage.manageAccount")
                         }
                     }
+                    if let error = store.accountError {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(error)
+                                .font(.footnote)
+                                .foregroundStyle(Color.oneLogOrange)
+                            Button("Google 계정 다시 연결") {
+                                Task { await store.signInWithGoogle() }
+                            }
+                            .font(.footnote.weight(.bold))
+                            .foregroundStyle(Color.oneLogGreen)
+                        }
+                    }
                 }
                 .padding(.top, 26) // 395:27 콘텐츠 y110
                 .padding(.bottom, 24)

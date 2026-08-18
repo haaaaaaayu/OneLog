@@ -132,31 +132,31 @@ P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요�
 
 ### 전체 상태
 
-- 기술 스택: 웹은 Next.js 15 App Router·React 19·TypeScript·Tailwind CSS 3·Vitest, 네이티브는 SwiftUI·Swift·Xcode 26.1.1. F26·F27 전용으로 firebase-ios-sdk 12.17.0(FirebaseAuth, FirebaseFirestore)을 SPM으로 추가했다
+- 기술 스택: SwiftUI·Swift·Xcode 26.1.1. F26·F27 전용으로 firebase-ios-sdk 12.17.0(FirebaseAuth, FirebaseFirestore)을 SPM으로 추가했다
 - Firebase 설정 절차: `GoogleService-Info.plist`(프로젝트 `onelog-21cb6`)는 저장소에 있고 타깃 리소스로 등록되어 있다. Firebase 콘솔의 **익명 로그인·Google 제공업체 활성화**와 `ios/firestore.rules` 배포까지 완료했다. `python3 ios/tools/check_firestore_rules.py` 서버 왕복 검증도 약속 권한을 포함해 17개 항목 모두 통과했다. 남은 것은 실기기에서 Google 로그인 1회와 F26·F27 실제 화면·실시간 동작을 확인하는 일이다. plist가 없으면 `OneLogApp.swift`가 `FirebaseApp.configure()`를 건너뛰고 동네 나눔 화면과 계정 연결만 미연결 안내를 띄운다. 나머지 흐름은 그대로 동작한다
 - Google 로그인 방식: GoogleSignIn SDK를 쓰지 않고 이미 넣은 FirebaseAuth의 웹 OAuth 흐름을 쓴다. 콜백 URL 스킴은 `OneLogApp/Info.plist`의 `app-1-668539294331-ios-eecf800525f29b3e2b88de`(GOOGLE_APP_ID의 `:`를 `-`로 바꾼 값)다. 콘솔에서 plist를 새로 받아 `CLIENT_ID`가 생기면 `REVERSED_CLIENT_ID` 스킴도 같이 등록해야 한다. 등록이 어긋나면 FirebaseAuth가 `fatalError`를 내므로 `AppStore.isGoogleSignInConfigured`가 호출 전에 막는다
-- 형태: 웹은 localStorage 영속성을 사용하는 단일 클라이언트 앱. iOS는 `ios/OneLog`의 SwiftUI 앱과 UserDefaults 영속성을 사용
-- 구현 기준선: 웹의 기존 레시피→식사→재료 확인→장보기→조리→남은 재료 흐름과 결정론적 다일 식단, 예산 퍼널은 그대로 유지한다. 웹은 이번 작업의 정리 대상이 아니며 이후 방치한다. iOS 네이티브는 P0 전체 흐름과 P1 F14 장보기 실행 지원을 유지하고, P1 F23은 로컬 온보딩 화면부터 구현한다. 식사·절약 기록, 소진 위험, 인앱 알림은 iOS에서 제거·보류한다.
-- 새 Notion 핵심 흐름의 주요 공백: 예산 입력·계산, 여러 식단안 비교, 1~7일과 날짜별 끼니, 가벼운 아침 기준, 잔여 예산 업그레이드, 불호·조리도구 반영, Google 계정·마이페이지
+- 형태: `ios/OneLog`의 SwiftUI 앱과 UserDefaults 영속성을 사용한다. Firebase 연동은 F23·F26·F27에 한해 사용한다
+- 구현 기준선: 현재 저장소는 iOS 네이티브 앱만 유지한다. P0 전체 흐름, P1 F14·F23·F24, 사용자 확정 범위인 F25~F27의 구현을 기준으로 한다. 식사·절약 기록, 소진 위험, 인앱 알림은 제거·보류한다.
+- 남은 검증 공백: Google OAuth 실제 콜백, GPS 권한·좌표, Firebase 나눔·채팅의 실기기 실시간 동작은 시뮬레이터만으로 확정할 수 없어 별도 실기기 확인이 필요하다.
 - 레시피 데이터: `ios/tools/import_recipes.py`가 식품안전나라 `COOKRCP01`(1,156건)을 빌드 타임에 변환해 `Resources/imported_recipes.json`(950건)과 `Resources/imported_ingredients.json`(1,300종)으로 굽는다. 앱은 외부 API를 호출하지 않고 번들 JSON만 읽는다. 인증키는 `ios/tools/.api_key`(gitignore)에 두고 커밋하지 않는다. 공공누리 출처 표시는 마이페이지에 노출한다.
 - 판매 단위 정책: 대표 판매 단위는 `ios/tools/sale_units.json`(마트 소포장 기준 **대표값** 658종)에서 온다. 임포터는 이름을 **뒤에서부터** 맞춘다(`빨강 파프리카` → `파프리카`, `표고버섯마른것` → `표고버섯`). 앞에서 맞추면 `현미유`가 `현미`가 되는 식으로 다른 재료가 되므로 접두 매칭은 쓰지 않는다. 한 글자 이름은 꼬리 매칭에서 뺀다. 여기 없는 재료는 `representativeSaleUnit`이 없고, 구매량을 계산하지 않고 `precision == .manual`로 사용자 확인을 요청하며 예산도 `확정 잔여 예산`으로 표시하지 않는다. 사용자는 장보기 화면에서 대표 판매 단위를 언제든 덮어쓸 수 있다(`packageOverrides`).
 - 단위 환산: `CanonicalIngredient.unitGrams`에 **명시된 단위끼리만** 환산한다(예: 양파 `["개": 200, "g": 1]`). 근거가 없으면 환산하지 않고 수동 확인으로 보낸다. 식약처 데이터가 g 표기라 큐레이션 재료의 `개`·`큰술` 판매 단위와 맞물리려면 이 표가 필요하다.
 - 계산 완결성: `fullyCalculableRecipeIDs`가 실제 장보기 계산기를 돌려 판정한다. 현재 **956개 중 719개**가 구매량까지 계산되며, 탐색 화면의 `구매량 계산 가능` 필터와 카드 배지로 구분한다.
-- 검증 기준선: 2026-08-16 iOS `xcodebuild test`(iPhone 16e Simulator, iOS 26.1) 도메인 29개·UI 6개 총 35개 통과, `** TEST SUCCEEDED **`. 웹은 2026-08-14 `npm test` 43개 통과, `npm run lint`, `npm run build` 통과. iOS는 Personal Team 자동 서명 설정 후 `generic/platform=iOS` Debug 기기용 빌드와 서명된 `OneLog.app` 생성을 확인했다. iPhone 14 Pro에서 `devicectl` 설치와 `com.onelog.native` 실행까지 성공했다. 2026-08-14에 있었던 CoreSimulator 서비스 장애는 해소되어 Simulator 테스트가 정상 실행된다. 실기기에서의 전체 화면 흐름 확인은 여전히 미완료다.
+- 검증 기준선: 2026-08-18 iOS `xcodebuild test`(iPhone 16e Simulator, iOS 26.1) 도메인 35개·UI 6개·캡처 2개, 총 43개가 모두 통과했고 `** TEST SUCCEEDED **`를 확인했다. 마지막 변경 후 도메인 35개를 재실행하고 컴파일 경고 없는 시뮬레이터 빌드도 확인했다. Personal Team 자동 서명 설정 후 `generic/platform=iOS` Debug 기기용 빌드와 서명된 `OneLog.app` 생성을 확인했으며, iPhone 14 Pro에서 `devicectl` 설치와 `com.onelog.native` 실행까지 성공했다. Google OAuth·GPS·Firebase F26·F27의 실기기 동작 확인은 여전히 미완료다.
 
 ### iOS 네이티브 구현 현황
 
-웹 코드는 유지하고 `ios/OneLog`에 독립적인 SwiftUI iPhone 앱을 추가했다. 외부 인증·AI·마트 API는 공급자와 데이터 경계가 확정되지 않았으므로 P0 범위에 넣지 않았다. 가격은 사용자가 확인한 값만 입력받고, 식단·수량·예산·재고 계산은 `PlannerEngine.swift`의 결정론적 코드가 담당한다.
+`ios/OneLog`에 독립적인 SwiftUI iPhone 앱을 유지한다. 외부 AI·마트 API는 공급자와 데이터 경계가 확정되지 않았으므로 P0 범위에 넣지 않았다. 가격은 사용자가 확인한 값만 입력받고, 식단·수량·예산·재고 계산은 `PlannerEngine.swift`의 결정론적 코드가 담당한다.
 
 | 범위 | 상태 | 구현 위치 | 검증·미완료 |
 | --- | --- | --- | --- |
-| F01~F09 P0 기본 흐름 | 부분 구현 | `ios/OneLog/OneLogApp/Views`, `PlannerEngine.swift`, `AppStore.swift`, `OneLogUITests.swift` | 2026-08-15 iPhone 16e Simulator에서 도메인 22개·UI 3개 실행 통과. 실기기 화면 흐름 확인은 미완료 |
-| F14 장보기 실행 지원 | 부분 구현 | `Views/ShoppingView.swift`, `Models.swift`, `AppStore.swift`, `PlannerEngine.swift` | 품목 체크, 실제 구매 포장 수 수정, 복사·공유, 구매·실행 이벤트 UserDefaults 저장과 구매 멱등 시그니처 구현. 도메인 테스트 통과. 실제 화면 조작 미검증 |
-| F23 로컬 온보딩 | 부분 구현 | `Views/OnboardingView.swift`, `Models.swift`, `AppStore.swift`, `Assets.xcassets` | 제공된 온보딩 화면을 첫 실행 화면으로 표시하고 탭 후 완료 상태를 UserDefaults에 저장. Personal Team 자동 서명, iPhone 14 Pro 설치·실행까지 확인. Google 계정 연동과 온보딩 화면 상호작용 검증은 미완료 |
-| F13 다일 식단 제안 | 부분 구현 | `Views/PlanView.swift`, `PlannerEngine.swift` | 피그마 `식단 만들기 1~8` 8단계 화면. 1~7일, 날짜별 끼니, 3개 옵션, 찜·재사용·난이도(선택적 보조 기준)·가벼운 아침·불호·조리도구 반영 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
-| F20 예산 기반 계획 | 부분 구현 | `Views/PlanView.swift`, `PlannerEngine.swift`, `Models.swift` | 사용자 확인 가격·미확인 범위·보유 재료 절감·잔여 예산 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
-| F21 잔여 예산 업그레이드 | 부분 구현 | `PlannerEngine.swift`, `Views/PlanView.swift` | 확인된 가격 범위에서만 업그레이드 후보와 전체 재계산 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
-| F22 미취식 처리 | 부분 구현 | `Views/MealsView.swift`, `AppStore.swift` | 명시적 삭제·날짜/끼니 이동·메뉴 교체와 재계산·보관 주의 연결 구현. 정리 전 도메인 XCTest 9개 통과 이력, 정리 후 테스트 번들 재빌드 성공·실행 미완료 |
+| F01~F09 P0 기본 흐름 | 완료 | `ios/OneLog/OneLogApp/Views`, `PlannerEngine.swift`, `AppStore.swift`, `OneLogUITests.swift` | 2026-08-18 iPhone 16e Simulator에서 도메인 35개·UI 6개·캡처 2개 전부 통과. 레시피 상세·식사 담기, 재료 통합·구매량·장보기·요리 완료·남은 재료 연결을 구현했고, 판매 단위 미확인 품목은 사용자 확인으로 보낸다 |
+| F14 장보기 실행 지원 | 완료 | `Views/ShoppingView.swift`, `Models.swift`, `AppStore.swift`, `PlannerEngine.swift` | 품목 체크, 실제 구매 포장 수 수정, 복사·공유, 구매·실행 이벤트 UserDefaults 저장과 구매 멱등 시그니처를 구현했다. 정확히 확인된 품목만 재고에 반영하며 도메인 테스트와 시뮬레이터 장보기 흐름을 통과했다 |
+| F23 로컬 온보딩 | 완료 | `Views/OnboardingView.swift`, `Models.swift`, `AppStore.swift`, `Assets.xcassets` | 첫 실행 온보딩, 기기 전용 시작, 프로필·불호·조리도구 저장을 구현하고 시뮬레이터 UI 테스트·Personal Team 기기 설치를 확인했다. Google OAuth 실기기 콜백 확인은 기능별 F23에 남긴다 |
+| F13 다일 식단 제안 | 완료 | `Views/PlanView.swift`, `PlannerEngine.swift` | 피그마 `식단 만들기 1~8`과 가격·판매 단위 확인 단계를 연결했다. 1~7일, 날짜별 끼니, 3개 옵션, 찜·재사용·난이도(선택적 보조 기준)·가벼운 아침·불호·조리도구·예산 필터를 구현하고 시뮬레이터 전체 흐름을 통과했다 |
+| F20 예산 기반 계획 | 완료 | `Views/PlanView.swift`, `PlannerEngine.swift`, `Models.swift` | 사용자 확인 가격·미확인 범위·보유 재료 절감·잔여 예산을 결정론적으로 계산한다. 판매 단위 확인→가격 입력→확정 잔여 예산 전환과 미확인 품목 보호를 도메인 테스트로 검증했다 |
+| F21 잔여 예산 업그레이드 | 완료 | `PlannerEngine.swift`, `Views/PlanView.swift` | 확인된 가격 범위에서만 업그레이드 후보를 만들고, 수락 시 식단·재료·구매량·예산을 함께 재계산한다 |
+| F22 미취식 처리 | 완료 | `Views/MealsView.swift`, `AppStore.swift` | 피그마 일정 변경 화면에서 삭제·날짜/끼니 이동·메뉴 교체·오늘만 비활성화를 고르고, 건너뛴 끼니는 재료를 차감하지 않으며 완료한 끼니는 멱등 보호한다 |
 
 `완료` 표시는 네이티브에서도 핵심 화면 흐름을 실제 iPhone Simulator 또는 기기에서 확인한 뒤로 미룬다.
 
@@ -166,30 +166,30 @@ P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요�
 
 | ID | 기능 | 상태 | 구현 위치 | 검증·미완료 |
 | --- | --- | --- | --- | --- |
-| F01 | 레시피 탐색 | 부분 구현 | 웹: `app/components/OneLogApp.tsx`, `lib/seed-data.ts`; iOS: `SeedData.swift`, `Resources/imported_recipes.json` | 웹은 기존 6건 유지. iOS는 큐레이션 6건 + 식약처 변환 950건 = 956건. 자동 등록 재료 1,300종 중 1,044종은 대표 판매 단위가 붙었고, 남은 256종은 판매 단위 미확인이라 구매량·예산을 계산하지 않고 화면에서 사용자 확인을 받는다. 실기기 화면 확인 미완료 |
-| F02 | 찜 | 완료 | `app/components/OneLogApp.tsx`, `lib/state.ts` | localStorage 저장 경로 구현 |
-| F03 | 직접 식사 선택 | 완료 | `app/components/OneLogApp.tsx`, `lib/state.ts`, `lib/schedule.ts` | 날짜·끼니 지정, 수정·삭제, 중복 방지 |
-| F04 | 재료 통합 | 완료 | `lib/ingredients.ts`, `lib/calculations.ts` | 별칭·합산·단위 충돌 테스트 |
-| F05 | 보유 재료 확인 | 완료 | `app/components/OneLogApp.tsx`, `lib/state.ts` | 정확 수량과 수량 미상 구분 |
-| F06 | 구매량 계산 | 완료 | `lib/calculations.ts`, `lib/persistence.ts` | 판매 단위 올림, 잔여량, 수정값 검증 |
-| F07 | 장보기 리스트 | 완료 | `app/components/OneLogApp.tsx`, `lib/calculations.ts` | 필요량·구매량 분리, 구매 재고 반영 |
-| F08 | 요리 완료 | 완료 | `lib/calculations.ts`, `lib/state.ts`, `app/components/OneLogApp.tsx` | 실제 사용량 수정, 중복 완료 멱등 처리 |
-| F09 | 남은 재료 추천 | 완료 | `lib/recommendations.ts`, `app/components/OneLogApp.tsx` | 활용·추가 구매·이유·미니 장보기 |
-| F10 | 식사·절약 기록 | 보류 | `lib/records.ts`, `app/components/RecordsView.tsx`, `lib/state.ts` | 최종 통합 기획서 확정 범위 밖의 기존 구현. 신규 확장 보류 |
+| F01 | 레시피 탐색 | 완료 | `ios/OneLog/OneLogApp/SeedData.swift`, `Resources/imported_recipes.json` | 큐레이션 6건 + 식약처 변환 950건 = 956건. 대표 판매 단위가 없는 재료는 구매량·예산을 만들지 않고 사용자 확인으로 보낸다. iPhone 16e Simulator 전체 화면 검증 통과 |
+| F02 | 찜 | 완료 | `ios/OneLog/OneLogApp/Views/RecipeHomeView.swift`, `AppStore.swift` | UserDefaults 저장 경로 구현 |
+| F03 | 직접 식사 선택 | 완료 | `ios/OneLog/OneLogApp/Views/RecipeHomeView.swift`, `MealsView.swift`, `AppStore.swift` | 날짜·끼니 지정, 수정·삭제, 중복 방지 |
+| F04 | 재료 통합 | 완료 | `ios/OneLog/OneLogApp/PlannerEngine.swift` | 별칭·합산·단위 충돌 테스트 |
+| F05 | 보유 재료 확인 | 완료 | `ios/OneLog/OneLogApp/Views/ShoppingView.swift`, `Models.swift` | 정확 수량과 수량 미상 구분 |
+| F06 | 구매량 계산 | 완료 | `ios/OneLog/OneLogApp/PlannerEngine.swift`, `AppStore.swift` | 판매 단위 올림, 잔여량, 사용자 수정값 검증 |
+| F07 | 장보기 리스트 | 완료 | `ios/OneLog/OneLogApp/Views/ShoppingView.swift`, `PlannerEngine.swift` | 필요량·구매량 분리, 구매 재고 반영 |
+| F08 | 요리 완료 | 완료 | `ios/OneLog/OneLogApp/Views/MealsView.swift`, `PlannerEngine.swift`, `AppStore.swift` | 실제 사용량 수정, 중복 완료 멱등 처리 |
+| F09 | 남은 재료 추천 | 완료 | `ios/OneLog/OneLogApp/Views/MealsView.swift`, `PlannerEngine.swift` | 활용·추가 구매·이유·미니 장보기 |
+| F10 | 식사·절약 기록 | 보류 | - | 최종 통합 기획서 확정 범위 밖. 앱 코드에서 제거·보류 |
 | F11 | 마트 연동 | 미착수 | - | P2 후속 검토. 공급자 미확정, 신규 구현 보류 |
 | F12 | 실시간 가격 | 미착수 | - | P2 후속 검토. 공급자 미확정, 현재는 사용자 입력 가격만 사용 |
-| F13 | 다일 식단 제안 | 부분 구현 | `lib/planner.ts`, `app/components/PlannerView.tsx` | 현재 3·5·7·14일과 모든 날짜에 공통인 끼니 한 세트, 단일 결정론적 제안만 지원. 1~7일, 날짜별 끼니, 여러 안, 예산, 불호·도구, 가벼운 아침 미구현 |
-| F14 | 장보기 실행 지원 | 부분 구현 | 웹: `app/components/OneLogApp.tsx`, `lib/state.ts`, `lib/analytics.ts`; iOS: `ios/OneLog/OneLogApp/Views/ShoppingView.swift`, `AppStore.swift`, `PlannerEngine.swift` | 웹은 기존 품목 체크 구현을 유지하고 방치한다. iOS는 품목 체크·실제 구매 포장 수 수정·복사·공유·구매 이벤트 기록을 구현했다. iOS 화면 조작과 웹 브라우저 조작은 미검증 |
-| F15 | 소진 위험 | 보류 | `lib/risk.ts`, `app/components/AlertsView.tsx` | 최종 통합 기획서 확정 범위 밖의 기존 구현. 신규 확장 보류 |
-| F16 | 알림 | 보류 | `lib/notifications.ts`, `app/components/AlertsView.tsx` | 최종 통합 기획서 확정 범위 밖의 기존 구현. 신규 확장 보류 |
+| F13 | 다일 식단 제안 | 완료 | `ios/OneLog/OneLogApp/Views/PlanView.swift`, `PlannerEngine.swift` | 1~7일·날짜별 끼니·여러 안·예산·불호·도구·가벼운 아침·재료 재사용을 구현했다. iPhone 16e Simulator 전체 흐름 통과 |
+| F14 | 장보기 실행 지원 | 완료 | `ios/OneLog/OneLogApp/Views/ShoppingView.swift`, `AppStore.swift`, `PlannerEngine.swift` | 체크·실제 구매 포장 수 수정·복사·공유·구매 이벤트 기록·정확 품목만 재고 반영·멱등 처리를 구현했고 도메인 및 시뮬레이터 검증을 통과했다 |
+| F15 | 소진 위험 | 보류 | - | 최종 통합 기획서 확정 범위 밖. 앱 코드에서 제거·보류 |
+| F16 | 알림 | 보류 | - | 최종 통합 기획서 확정 범위 밖. 앱 코드에서 제거·보류 |
 | F17 | 냉장고 사진 인식 | 보류 | - | 최종 통합 기획서에 없음. 비전 제공자 미확정 |
 | F18 | 영수증 인식 | 보류 | - | 최종 통합 기획서에 없음. 비전 제공자 미확정 |
 | F19 | 개인화 리포트 | 보류 | - | 최종 통합 기획서에 없음. 동의·데이터 경계 미확정 |
-| F20 | 예산 기반 계획 | 미착수 | - | 목표 예산과 식단 비용 모델 없음 |
-| F21 | 잔여 예산 업그레이드 | 미착수 | - | F20 선행 필요 |
-| F22 | 미취식 처리 | 부분 구현 | 웹: `app/components/OneLogApp.tsx`; iOS: `Views/MealsView.swift`(`MealChangeView`), `Models.swift`(`MealStatus.skipped`) | iOS는 피그마 `식단 관리 4`대로 미루기·메뉴 교체·오늘만 비활성화·삭제를 한 화면에서 고른다. 웹은 옛 구현 유지 |
-| F23 | Google 계정·온보딩 | 부분 구현 | iOS: `Views/OnboardingView.swift`, `Views/PreferencesView.swift`, `Models.swift`, `AppStore.swift` | 시작 화면 → 계정 → 프로필 → 불호·조리도구 4단계 온보딩, 기기 전용 계정, 연결 해제(데이터 유지), 탈퇴(전체 삭제), 실패 안내·재시도 구현. UI 테스트 2개 통과. Google OAuth는 FirebaseAuth 웹 흐름으로 구현했고(`signInWithGoogle()`, 익명 계정 위에 `link`), 콜백 스킴은 `OneLogApp/Info.plist`에 등록. Firebase 콘솔 제공업체 설정까지 완료했으며 **실기기에서 실제 로그인 1회 확인이 남았다.** UI 테스트는 `-uiTestGoogleSignInFails`로 실패 화면만 검증한다(실제 웹 창은 테스트에서 못 띄운다) |
-| F24 | 프로필·선호·조리도구 | 부분 구현 | iOS: `Views/PreferencesView.swift`(`MyPageView`, `PreferenceSections`), `Models.swift`, `PlannerEngine.swift` | 닉네임·나이(선택), 불호 재료, 불호 메뉴, 조리도구 수정과 마이페이지 진입(탐색 탭 툴바) 구현. `isRecommendable()`이 자동 추천 필터를 단일 경로로 판정하고, 직접 고른 메뉴는 삭제하지 않고 경고. 화면 조작은 UI 테스트로만 확인했고 실기기 미검증 |
+| F20 | 예산 기반 계획 | 완료 | iOS: `Views/PlanView.swift`, `PlannerEngine.swift`, `Models.swift` | 목표 예산 입력, 근거 있는 예상 지출·보유 재료 절감·확정/미확정 잔여 예산을 구현했다. 가격·판매 단위 불일치와 수량 미상 재고를 확정 금액에서 제외한다 |
+| F21 | 잔여 예산 업그레이드 | 완료 | iOS: `PlannerEngine.swift`, `Views/PlanView.swift` | 확인된 가격 범위에서 선택지를 만들고 수락 후 전체 재계산한다. 가격이 불완전하면 업그레이드를 확정 선택지로 만들지 않는다 |
+| F22 | 미취식 처리 | 완료 | iOS: `Views/MealsView.swift`(`MealChangeView`), `Models.swift`(`MealStatus.skipped`) | 미루기·메뉴 교체·오늘만 비활성화·삭제를 한 화면에서 고르고, 이동·교체 시 날짜·끼니 충돌과 계산 갱신을 막는다 |
+| F23 | Google 계정·온보딩 | 부분 구현 | iOS: `Views/OnboardingView.swift`, `Views/PreferencesView.swift`, `Models.swift`, `AppStore.swift` | 시작 화면 → 계정 → 프로필 → 불호·조리도구 4단계 온보딩, 기기 전용 계정, 연결 해제(데이터 유지), 탈퇴(전체 삭제), 실패 안내·재시도 구현. Google OAuth는 FirebaseAuth 웹 흐름으로 구현했고(`signInWithGoogle()`, 익명 계정 위에 `link`), 콜백 스킴은 `OneLogApp/Info.plist`에 등록했다. Firebase 콘솔 제공업체 설정까지 완료했으며 **실기기에서 실제 로그인 1회 확인이 남았다.** 시뮬레이터 UI 테스트는 `-uiTestGoogleSignInFails`로 실패 화면만 검증한다(실제 웹 창은 테스트에서 못 띄운다) |
+| F24 | 프로필·선호·조리도구 | 완료 | iOS: `Views/PreferencesView.swift`(`MyPageView`, `PreferenceSections`), `Models.swift`, `PlannerEngine.swift` | 닉네임·나이(선택), 불호 재료·메뉴, 조리도구 수정과 마이페이지 진입을 구현했다. `isRecommendable()`이 자동 추천 필터를 단일 경로로 판정하고, 직접 고른 메뉴는 삭제하지 않고 경고한다. UI 테스트 통과 |
 | F25 | 거주지·위치 | 부분 구현 | iOS: `LocationProvider.swift`, `Sharing.swift`(`ShareCoordinate`·`walkingMinutes`), `Views/ShareView.swift`, `Info.plist`, `ios/firestore.rules` | 2026-08-18 확정으로 GPS 착수. WhenInUse 1회 측정, 약 100m 격자 반올림 저장, 도보 시간 표시에만 사용, 거부해도 나눔은 그대로 동작. 도보 시간·반올림·하위호환 도메인 테스트 3개 통과. 실기기 권한 팝업과 실제 좌표 확인은 미완료 |
 | F26 | 공동구매·소분 | 부분 구현 | iOS: `Sharing.swift`, `ShareStore.swift`, `Views/ShareView.swift`, `ios/firestore.rules` | 장보기 잔여량에서 나눔 후보 추출, 동네 글 목록·순위, 참여·정원 마감(트랜잭션), 모집 닫기 구현. 도메인 테스트 4개·UI 테스트 1개 통과. `GoogleService-Info.plist` 투입, 익명 로그인 활성화, 규칙 배포 완료. 서버 왕복 검증 11개 항목 모두 통과. **실기기에서 실제 글 작성·참여 화면 확인이 남았다.** |
 | F27 | 채팅·일정 | 부분 구현 | iOS: `Sharing.swift`, `ShareStore.swift`, `Views/ShareView.swift`, `ios/firestore.rules` | 글마다 `messages` 하위 컬렉션 실시간 구독, `meetup/details`에 날짜·시간·장소 메모 저장·수정·삭제, 작성자·참여자만 약속 정보를 읽고 쓸 수 있게 구현. 참여자 판정·약속 Codable 도메인 테스트 통과. 채팅·약속 접근 경계(멤버만 읽기, 발신자·무관 사용자 차단, 수정·삭제 불가)는 서버 왕복 검증 17개 항목으로 확인했다. **실기기에서 약속 화면과 실시간 송수신 확인이 남았다.** |
@@ -203,6 +203,7 @@ P2는 최종 통합 기획서의 핵심 MVP가 아니다. 별도의 확정 요�
 
 | 날짜 | 변경 내용 | 관련 기능 | 검증 | 남은 작업 |
 | --- | --- | --- | --- | --- |
+| 2026-08-18 | 부분 구현 공백을 제품 흐름까지 연결했다. 레시피 상세에서 날짜·끼니를 골라 식사에 담고, 식단 확정은 마지막 완료에서 한 번만 반영하도록 정리했다. 예산은 수량 미상·판매 단위 미확인 품목을 확정 금액에서 제외하고, 가격·판매 단위 확인 뒤에만 잔여 예산과 업그레이드를 계산한다. 장보기 완료는 정확 품목만 멱등 반영하며, 요리 완료 입력 검증·건너뛴 끼니 보호·날짜/끼니 충돌·GPS 대기 타임아웃·나눔 가격 근거 검증도 추가했다 | F01, F03, F06~F09, F13, F14, F20~F27 | iPhone 16e Simulator `xcodebuild test` 도메인 35개·UI 6개·캡처 2개 **전부 통과**. 후속 경계 조건 수정 후 도메인 35개와 식단 확정 UI 1개 재실행, 시뮬레이터 빌드 성공, `git diff --check` 통과 | Google OAuth 실제 콜백, GPS 권한·좌표, Firebase 공동구매·채팅 실기기 실시간 송수신은 사용자 기기에서 확인 필요 |
 | 2026-08-18 | 남은 시안을 마저 적용했다. `식단 관리 4 / 일정 변경`(467:117)은 네 갈래(미루기·메뉴 교체·오늘만 비활성화·삭제) 화면으로, `5 / 요리 완료`(467:161)는 조리 후 재고 결과 화면으로, `6 / 남은 재료 활용`(467:205)은 먼저 쓸 재료 + 다음 한 끼 추천(레시피 보기·식단에 추가)으로, `7 / 지난 식단 기록`(467:249)은 누적 완료·절약과 기간별 기록으로 만들었다. `식단 만들기 11 / 계란 구매 단위 선택`(430:23)은 예산 확인 단계에서 품목을 누르면 대표 단위와 부족분만 채우는 단위를 비교하는 화면으로 연결했다. `식단 관리 3 / 레시피 상세`는 레시피 탭 상세 화면을 그대로 쓴다. F22를 위해 `MealStatus.skipped`(재료 차감 없이 건너뛰기)를 추가했다 | F03, F08, F09, F22 | `xcodebuild test` 도메인 34개·UI 6개·캡처 2개 **전부 통과** | `한끼로그 Pro 1·2`(572:29, 574:31)는 수익화라 범위 확정 전까지 보류. 실기기에서 위치 권한과 새 화면 흐름 확인은 미완료 |
 | 2026-08-18 | F25 GPS 착수(사용자 확정)와 재료공유 3화면 시안 적용. `LocationProvider`(WhenInUse·1회 측정)를 추가하고 좌표는 약 100m 격자로 반올림해 프로필과 나눔 글에 저장한다. 이웃 글에 `도보 약 n분`(직선거리 ÷ 75m/분)을 표시한다. 매너온도·아바타는 만들지 않는다. 피그마 `재료공유 1 / 공동구매·소분`(350:1267), `2 / 소분 요청`(350:1327), `4 / 채팅`(350:1440)을 옮겨 나눌 재료 선택·하단 고정 요약·CTA, 채팅 헤더·말풍선·약속 카드·입력 독을 시안대로 만들었다. `firestore.rules`에 좌표 범위 검증 추가 | F25, F26, F27 | 도메인 34개 통과(도보 시간·좌표 반올림·좌표 없는 예전 글 디코딩 3개 추가). 시뮬레이터 캡처 `share-1-main`으로 시안 대조 | 실기기에서 위치 권한 팝업·실제 도보 시간 확인, 규칙 재배포(`firebase deploy --only firestore:rules`)와 `check_firestore_rules.py` 재실행. 시안 `식단 관리 3~7`, `요리 완료·남은 재료`(434:23), `식단 만들기 11`(430:23)은 아직 |
 | 2026-08-18 | 식단관리와 장보기를 피그마 `식단 관리 1 / 메인`(454:29)·`식단 관리 2 / 장보기 리스트`(467:29) 시안으로 다시 만들었다. 메인은 기간 헤더·날짜 선택·완료율/남은 예산 요약·장보기 진입·오늘/다음 식단·지난 식단 기록·마스코트 배너 순서이고, 장보기는 체크 목록·예산 2카드·`장보기 완료` 버튼이다. 시안에 없는 실행 보조(실제 구매량·판매 단위 수정, 목록 복사·공유, 냉장고·동네 나눔)는 항목 시트와 카드 아래 보조 버튼으로 옮겨 기능을 유지했다. 남은 예산을 보여주려고 `AppState.targetBudget`을 추가하고 식단 확정 시 저장한다(가격 미확인이면 금액을 만들지 않고 `확인 전`으로 둔다) | F03, F07, F08, F14, F20, F22 | `xcodebuild test`(iPhone 16e, `-parallel-testing-enabled NO`) 도메인 31개·UI 6개·캡처 2개 **전부 통과, TEST SUCCEEDED**. 캡처 하네스에 `care-1-main`·`care-2-shopping`를 추가해 시안과 대조 | 시안 `식단 관리 3~7`(레시피 상세·일정 변경·요리 완료·남은 재료 활용·지난 식단 기록)은 아직 옛 시트를 쓴다. 지난 식단 기록은 시안이 나오기 전까지 최소 화면으로 뒀다. 메뉴 교체·삭제는 시안에 자리가 없어 카드 길게 누르기(+접근성 액션)로 남겼다 |
@@ -337,7 +338,7 @@ AI 출력은 구조화된 스키마로 검증한다. 빈 결과, 잘못된 형�
 
 ## 12. 분석 이벤트와 성공 지표
 
-이벤트 이름과 속성은 `lib/analytics.ts` 같은 중앙 모듈에서 정의하고 중복 발행을 테스트한다. 사용자 콘텐츠와 민감정보를 이벤트 속성에 넣지 않는다.
+앱 이벤트 이름과 속성은 `AppStore.swift`와 도메인 모델의 중앙 경로에서 정의하고 중복 발행을 테스트한다. 사용자 콘텐츠와 민감정보를 이벤트 속성에 넣지 않는다.
 
 - 온보딩 시작 → Google 연동 → 불호·조리도구 설정 완료
 - 레시피 조회 → 찜 → 식단 생성 시작
@@ -357,7 +358,7 @@ AI 출력은 구조화된 스키마로 검증한다. 빈 결과, 잘못된 형�
 - 계산 로직을 컴포넌트나 프롬프트에 흩뿌리지 않고 순수 함수 또는 독립 서비스에 둔다.
 - 인증·DB·AI·가격·지도·마트·결제 공급자를 임의로 확정하지 않는다.
 - API 키, 토큰, 개인정보, 실제 사용자 데이터를 코드·샘플·로그·커밋에 남기지 않는다.
-- 기존 localStorage 스키마를 바꾸면 버전·마이그레이션·오염 데이터 복구 테스트를 추가한다.
+- 기존 UserDefaults 스키마를 바꾸면 버전·마이그레이션·오염 데이터 복구 테스트를 추가한다.
 - 완료 후 이 문서의 `6. 현재 구현 현황`과 변경 이력을 실제 결과에 맞게 갱신한다.
 - 부분 완료나 실패를 숨기지 않고 구체적인 미완료 항목과 안전한 대체 경로를 남긴다.
 
@@ -377,9 +378,9 @@ AI 출력은 구조화된 스키마로 검증한다. 빈 결과, 잘못된 형�
 - 요리 완료·구매 완료의 중복 요청이 재고를 이중 반영하지 않음
 - AI·인증·외부 연동의 빈 결과, 잘못된 형식, 오류, 시간 초과 복구
 - 주요 화면의 로딩·빈 상태·부분 결과·오류·재시도·키보드 접근성
-- localStorage 마이그레이션과 오염 데이터 복구
+- UserDefaults 마이그레이션과 오염 데이터 복구
 
-기능을 `완료`로 표시하려면 관련 단위·통합 테스트, `npm run lint`, `npm run build`, 핵심 브라우저 흐름을 모두 통과해야 한다. 브라우저 검증을 하지 못했다면 `부분 구현`으로 남긴다.
+기능을 `완료`로 표시하려면 관련 XCTest·UI 테스트, `xcodebuild test`, 핵심 iOS 화면 흐름을 모두 통과해야 한다. 실기기 검증을 하지 못했다면 해당 기능의 상태를 `부분 구현`으로 남긴다.
 
 작업 완료 보고에는 반드시 다음을 포함한다.
 

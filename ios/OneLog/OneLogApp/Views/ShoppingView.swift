@@ -14,7 +14,9 @@ struct ShoppingView: View {
     private var items: [ShoppingPlanItem] { store.currentShoppingItems }
     private var checkedCount: Int { items.filter { store.state.purchaseChecks[$0.id] == true }.count }
     private var purchasableItems: [ShoppingPlanItem] {
-        items.filter { $0.precision != .manual && resolvedPurchaseCount(for: $0, overrides: store.state.purchaseQuantityOverrides) > 0 }
+        // 수량 미상(`.estimated`)은 포장 단위가 있어도 실제 보유량을
+        // 확인하기 전까지 재고에 반영할 수 없다.
+        items.filter { $0.precision == .exact && resolvedPurchaseCount(for: $0, overrides: store.state.purchaseQuantityOverrides) > 0 }
     }
 
     private var estimate: BudgetEstimate {
@@ -43,6 +45,12 @@ struct ShoppingView: View {
                     }
                 } else {
                     itemsCard
+                    if items.contains(where: { $0.precision != .exact }) {
+                        Text("수량을 정확히 확인한 품목만 장보기 완료로 재고에 반영해요.")
+                            .figmaText(11, .medium)
+                            .foregroundStyle(Color.oneLogOrange)
+                            .padding(.horizontal, 4)
+                    }
                     budgetRow
                     completeButton
                     secondaryActions
@@ -136,9 +144,10 @@ struct ShoppingView: View {
     /// `packageSize.label`에는 재료명이 들어 있는 경우가 있어(`가츠오부시 100g`) 수치만 다시 조합한다.
     private func itemTitle(_ item: ShoppingPlanItem) -> String {
         let pack = formatQuantity(item.packageSize.amount, unit: item.unit)
-        guard item.precision != .manual else {
+        guard item.precision == .exact else {
             // 같은 재료라도 단위가 다르면 다른 줄로 나온다. 필요량을 같이 적어 구분한다.
-            return "\(item.ingredientName) \(formatQuantity(item.quantity, unit: item.unit)) · 판매 단위 확인 필요"
+            let reason = item.precision == .estimated ? "보유량 확인 필요" : "판매 단위 확인 필요"
+            return "\(item.ingredientName) \(formatQuantity(item.quantity, unit: item.unit)) · \(reason)"
         }
         let count = resolvedPurchaseCount(for: item, overrides: store.state.purchaseQuantityOverrides)
         guard count > 0 else { return "\(item.ingredientName) · 추가 구매 없음" }
@@ -147,7 +156,7 @@ struct ShoppingView: View {
 
     private func priceText(_ item: ShoppingPlanItem) -> String {
         let count = resolvedPurchaseCount(for: item, overrides: store.state.purchaseQuantityOverrides)
-        guard item.precision != .manual,
+        guard item.precision == .exact,
               let price = store.state.prices[item.ingredientID],
               price.unit == item.unit,
               abs(price.packageAmount - item.packageSize.amount) < 0.000001 else {
@@ -337,7 +346,7 @@ private struct ShoppingItemEditor: View {
                                 .foregroundStyle(Color.oneLogSuccess)
                             }
 
-                            if item.precision != .manual {
+                            if item.precision == .exact {
                                 Divider().overlay(CarePalette.divider)
                                 Text("실제 구매량")
                                     .figmaText(13, .bold)

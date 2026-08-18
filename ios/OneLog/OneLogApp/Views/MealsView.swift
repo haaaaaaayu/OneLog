@@ -279,40 +279,27 @@ struct MealsView: View {
 
     private func mealCard(_ meal: PlannedMeal) -> some View {
         let item = recipe(for: meal.recipeID)
+        let canCook = meal.status == .planned
 
         return CareCard(padding: EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14)) {
             VStack(alignment: .leading, spacing: 10) {
-                Button {
-                    cookingMeal = meal
-                } label: {
-                    HStack(spacing: 10) {
-                        Text(item?.symbolName ?? "🍚")
-                            .figmaText(24, .bold)
-                            .frame(width: 52, height: 52)
-                            .background(CarePalette.thumb, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-
-                        VStack(alignment: .leading, spacing: 3) {
-                            Text("\(meal.mealSlot.rawValue) · \(meal.status == .cooked ? "완료" : "예정")")
-                                .figmaText(11, .medium)
-                                .foregroundStyle(CarePalette.muted)
-                            Text(item?.title ?? "삭제된 메뉴")
-                                .figmaText(16, .bold)
-                                .foregroundStyle(CarePalette.ink)
-                                .lineLimit(1)
-                            Text(metaText(item))
-                                .figmaText(11, .medium)
-                                .foregroundStyle(CarePalette.muted)
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-
-                        Text("›")
-                            .figmaText(16, .bold)
-                            .foregroundStyle(CarePalette.ink)
+                if meal.status == .cooked {
+                    NavigationLink {
+                        RecipeDetailView(recipeID: meal.recipeID).environmentObject(store)
+                    } label: {
+                        mealHeader(meal, item: item)
                     }
-                    .frame(height: 52)
+                    .buttonStyle(.plain)
+                    .accessibilityLabel("\(item?.title ?? "메뉴") 레시피 보기")
+                } else {
+                    Button {
+                        if canCook { cookingMeal = meal } else { changingMeal = meal }
+                    } label: {
+                        mealHeader(meal, item: item)
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(canCook ? "\(item?.title ?? "메뉴") 요리하기" : "\(item?.title ?? "메뉴") 일정 변경")
                 }
-                .buttonStyle(.plain)
-                .accessibilityLabel("\(item?.title ?? "메뉴") 요리하기")
 
                 HStack(spacing: 8) {
                     Button {
@@ -332,17 +319,20 @@ struct MealsView: View {
                     .buttonStyle(.plain)
                     .disabled(meal.status == .cooked)
 
-                    Button {
-                        cookingMeal = meal
+                    NavigationLink {
+                        RecipeDetailView(recipeID: meal.recipeID).environmentObject(store)
                     } label: {
                         Text("레시피 보기")
                             .figmaText(11, .medium)
-                            .foregroundStyle(CarePalette.onDark)
+                            .foregroundStyle(CarePalette.ink)
                             .frame(maxWidth: .infinity)
                             .frame(height: 34)
-                            .background(CarePalette.dark, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .strokeBorder(CarePalette.line, lineWidth: 1)
+                            }
                     }
-                    .buttonStyle(.plain)
                 }
                 .frame(height: 34)
             }
@@ -354,6 +344,34 @@ struct MealsView: View {
         }
         .accessibilityAction(named: "식단 변경") { changingMeal = meal }
         .accessibilityAction(named: "식사 삭제") { store.removeMeal(meal.id) }
+    }
+
+    private func mealHeader(_ meal: PlannedMeal, item: Recipe?) -> some View {
+        HStack(spacing: 10) {
+            Text(item?.symbolName ?? "🍚")
+                .figmaText(24, .bold)
+                .frame(width: 52, height: 52)
+                .background(CarePalette.thumb, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text("\(meal.mealSlot.rawValue) · \(meal.status.label)")
+                    .figmaText(11, .medium)
+                    .foregroundStyle(CarePalette.muted)
+                Text(item?.title ?? "삭제된 메뉴")
+                    .figmaText(16, .bold)
+                    .foregroundStyle(CarePalette.ink)
+                    .lineLimit(1)
+                Text(metaText(item))
+                    .figmaText(11, .medium)
+                    .foregroundStyle(CarePalette.muted)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Text("›")
+                .figmaText(16, .bold)
+                .foregroundStyle(CarePalette.ink)
+        }
+        .frame(height: 52)
     }
 
     private func metaText(_ item: Recipe?) -> String {
@@ -700,6 +718,7 @@ private struct CookingView: View {
     /// 완료하면 시안 `식단 관리 5 / 요리 완료`로 넘어간다.
     @State private var doneConsumptions: [CookingConsumption]?
     @State private var showsLeftovers = false
+    @State private var validationMessage: String?
 
     private var recipeModel: Recipe? { recipe(for: meal.recipeID) }
 
@@ -713,10 +732,30 @@ private struct CookingView: View {
                         CookingDoneView(consumptions: doneConsumptions) { showsLeftovers = true }
                             .environmentObject(store)
                     }
+                } else if meal.status != .planned {
+                    VStack(alignment: .leading, spacing: 14) {
+                        EmptyState(
+                            symbol: meal.status == .cooked ? "checkmark.circle" : "pause.circle",
+                            title: meal.status == .cooked ? "이미 요리한 식사예요" : "건너뛴 식사예요",
+                            message: meal.status == .cooked ? "재고를 다시 차감하지 않도록 완료 상태를 유지해요." : "식단 변경에서 다시 예정으로 되돌린 뒤 요리할 수 있어요."
+                        )
+                        if meal.status == .skipped {
+                            Button("다시 예정으로 되돌리기") {
+                                store.setMealSkipped(meal.id, skipped: false)
+                                dismiss()
+                            }
+                            .font(.body.weight(.bold))
+                            .foregroundStyle(CarePalette.ink)
+                        }
+                    }
+                    .padding(20)
                 } else {
                     cookingForm
                 }
             }
+            .navigationTitle("요리하기")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("닫기") { dismiss() } } }
         }
     }
 
@@ -796,6 +835,11 @@ private struct CookingView: View {
                                 .background(CarePalette.dark, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
                         .buttonStyle(.plain)
+                        if let validationMessage {
+                            Text(validationMessage)
+                                .figmaText(11, .bold)
+                                .foregroundStyle(Color.oneLogOrange)
+                        }
                     } else {
                         EmptyState(symbol: "exclamationmark.triangle", title: "레시피를 찾을 수 없어요", message: "이 식사를 삭제하고 다시 메뉴를 담아 주세요.")
                     }
@@ -803,9 +847,6 @@ private struct CookingView: View {
                 .padding(16)
             }
             .background(CarePalette.canvas)
-            .navigationTitle("요리하기")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("닫기") { dismiss() } } }
             .onAppear {
                 guard let recipeModel else { return }
                 for item in recipeModel.ingredients {
@@ -839,10 +880,22 @@ private struct CookingView: View {
     private func complete(recipe: Recipe) {
         let consumptions = recipe.ingredients.map { item in
             let key = ingredientKey(item.ingredientID, item.unit)
-            let actual = Double(actualQuantities[key] ?? "") ?? item.quantity
+            let actual = Double(actualQuantities[key] ?? "")
             let remaining = recordsRemaining.contains(key) ? Double(remainingQuantities[key] ?? "") : nil
-            return CookingConsumption(ingredientID: item.ingredientID, unit: item.unit, expectedQuantity: item.quantity, actualQuantity: max(actual, 0), remainingQuantity: remaining)
+            return CookingConsumption(ingredientID: item.ingredientID, unit: item.unit, expectedQuantity: item.quantity, actualQuantity: actual ?? -1, remainingQuantity: remaining)
         }
+        guard consumptions.allSatisfy({ $0.actualQuantity.isFinite && $0.actualQuantity >= 0 }) else {
+            validationMessage = "실제 사용량을 0 이상 숫자로 입력해 주세요."
+            return
+        }
+        guard consumptions.allSatisfy({ consumption in
+            guard recordsRemaining.contains(ingredientKey(consumption.ingredientID, consumption.unit)) else { return true }
+            return consumption.remainingQuantity?.isFinite == true && (consumption.remainingQuantity ?? -1) >= 0
+        }) else {
+            validationMessage = "요리 후 남은 양을 0 이상 숫자로 입력해 주세요."
+            return
+        }
+        validationMessage = nil
         if store.completeMeal(meal.id, consumptions: consumptions) { doneConsumptions = consumptions }
     }
 }
@@ -902,15 +955,23 @@ private struct MealChangeView: View {
                         .figmaText(13, .medium)
                         .foregroundStyle(CarePalette.muted)
 
-                    VStack(spacing: 8) {
-                        option("다른 날로 미루기", "식단 안의 다른 날짜·끼니로 이동") { isMovePresented = true }
-                        option("다른 메뉴로 바꾸기", "같은 끼니에 올 수 있는 메뉴로 교체") { isReplacePresented = true }
-                        option(meal.status == .skipped ? "다시 예정으로 되돌리기" : "오늘만 비활성화",
-                               "재료는 차감하지 않고 그대로 보관") {
-                            store.setMealSkipped(meal.id, skipped: meal.status != .skipped)
-                            dismiss()
+                    if meal.status == .cooked {
+                        CareCard(padding: EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 16), fill: CarePalette.thumb) {
+                            Text("완료한 식사는 재고 차감 기록을 보호하기 위해 일정을 바꿀 수 없어요.")
+                                .figmaText(12, .medium, lineHeight: 18)
+                                .foregroundStyle(CarePalette.ink)
                         }
-                        option("식단에서 삭제", "남은 예산과 장보기 목록 다시 계산") { isDeleteConfirmPresented = true }
+                    } else {
+                        VStack(spacing: 8) {
+                            option("다른 날로 미루기", "식단 안의 다른 날짜·끼니로 이동") { isMovePresented = true }
+                            option("다른 메뉴로 바꾸기", "같은 끼니에 올 수 있는 메뉴로 교체") { isReplacePresented = true }
+                            option(meal.status == .skipped ? "다시 예정으로 되돌리기" : "오늘만 비활성화",
+                                   "재료는 차감하지 않고 그대로 보관") {
+                                store.setMealSkipped(meal.id, skipped: meal.status != .skipped)
+                                dismiss()
+                            }
+                            option("식단에서 삭제", "남은 예산과 장보기 목록 다시 계산") { isDeleteConfirmPresented = true }
+                        }
                     }
 
                     Button { dismiss() } label: {

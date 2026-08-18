@@ -59,6 +59,7 @@ final class ShareStore: ObservableObject {
         guard listeningNeighborhood != trimmed || postsListener == nil else { return }
 
         stopPosts()
+        errorMessage = nil
         listeningNeighborhood = trimmed
         isLoading = true
         // ponytail: 동등 조건 하나만 걸어 복합 인덱스 없이 돌린다. 정렬과 만료 제외는 클라이언트에서 한다.
@@ -136,7 +137,7 @@ final class ShareStore: ObservableObject {
             unit: draft.unit,
             neighborhood: String(place.prefix(30)),
             // 도보 시간 표시용 대략 좌표(약 100m 격자). 권한을 거부하면 nil로 올라간다.
-            coordinate: coordinate,
+            coordinate: coordinate.flatMap { ShareCoordinate.rounded(latitude: $0.latitude, longitude: $0.longitude) },
             // 약속 정보는 공개 동네 글과 분리된 `meetup/details`에 저장한다.
             meetupNote: "",
             pricePerShare: pricePerShare.flatMap { (0...200_000).contains($0) ? $0 : nil },
@@ -151,6 +152,7 @@ final class ShareStore: ObservableObject {
         )
         do {
             try postsCollection.document(post.id).setData(from: post)
+            errorMessage = nil
             return true
         } catch {
             errorMessage = "글을 올리지 못했어요. \(error.localizedDescription)"
@@ -183,6 +185,7 @@ final class ShareStore: ObservableObject {
                 }
                 return nil
             }
+            errorMessage = nil
         } catch {
             errorMessage = error.localizedDescription
         }
@@ -199,6 +202,7 @@ final class ShareStore: ObservableObject {
                 "participantIDs": FieldValue.arrayRemove([userID]),
                 "status": ShareStatus.open.rawValue
             ])
+            errorMessage = nil
         } catch {
             errorMessage = "참여를 취소하지 못했어요. \(error.localizedDescription)"
         }
@@ -213,6 +217,7 @@ final class ShareStore: ObservableObject {
         guard userID == post.authorID else { return }
         do {
             try await postsCollection.document(post.id).updateData(["status": ShareStatus.closed.rawValue])
+            errorMessage = nil
         } catch {
             errorMessage = "글을 닫지 못했어요. \(error.localizedDescription)"
         }
@@ -322,6 +327,7 @@ final class ShareStore: ObservableObject {
         )
         do {
             try postsCollection.document(postID).collection("meetup").document("details").setData(from: meetup)
+            errorMessage = nil
             return true
         } catch {
             errorMessage = "약속을 저장하지 못했어요. \(error.localizedDescription)"
@@ -343,6 +349,7 @@ final class ShareStore: ObservableObject {
         }
         do {
             try await postsCollection.document(postID).collection("meetup").document("details").delete()
+            errorMessage = nil
             return true
         } catch {
             errorMessage = "약속을 지우지 못했어요. \(error.localizedDescription)"
@@ -359,6 +366,10 @@ final class ShareStore: ObservableObject {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return false }
         guard await ensureSignedIn(), let userID else { return false }
+        guard let post = posts.first(where: { $0.id == postID }), post.isMember(userID) else {
+            errorMessage = "이 글에 참여한 이웃만 대화할 수 있어요."
+            return false
+        }
         let name = nickname.trimmingCharacters(in: .whitespacesAndNewlines)
         let message = ShareMessage(
             id: UUID().uuidString,
@@ -369,6 +380,7 @@ final class ShareStore: ObservableObject {
         )
         do {
             try postsCollection.document(postID).collection("messages").document(message.id).setData(from: message)
+            errorMessage = nil
             return true
         } catch {
             errorMessage = "메시지를 보내지 못했어요. \(error.localizedDescription)"

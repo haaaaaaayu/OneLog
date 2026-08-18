@@ -46,12 +46,18 @@ struct ShareView: View {
             .sorted { $0.createdAt > $1.createdAt }
     }
 
-    /// 시안 `나누면 아끼는 돈`. 근거가 있는 값만 센다: 고른 재료 중 확인된 가격이 있는 것의 절반.
+    /// 시안 `나누면 아끼는 돈`. 포장 가격과 남는 양이 모두 확인된 경우에만
+    /// 남는 양의 포장가치를 표시한다. 근거가 없으면 금액을 만들지 않는다.
     private var savingText: String {
         let selected = drafts.filter { selectedDraftIDs.contains($0.id) }
         let known = selected.compactMap { draft -> Int? in
-            guard let price = store.state.prices[draft.ingredientID] else { return nil }
-            return price.price / 2
+            guard let item = store.currentShoppingItems.first(where: { $0.ingredientID == draft.ingredientID && $0.unit == draft.unit }),
+                  let price = store.state.prices[draft.ingredientID],
+                  price.unit == draft.unit,
+                  price.packageAmount > 0,
+                  abs(price.packageAmount - item.packageSize.amount) < 0.000001 else { return nil }
+            let ratio = min(max(draft.amount / price.packageAmount, 0), 1)
+            return Int((Double(price.price) * ratio).rounded())
         }
         guard !known.isEmpty else { return "가격 확인 전" }
         return won(known.reduce(0, +))
@@ -135,7 +141,8 @@ struct ShareView: View {
             guard !neighborhood.isEmpty else { return }
             await shareStore.start(neighborhood: neighborhood)
             // 도보 시간을 보여주려면 좌표가 필요하다. 거부하면 시간만 빠지고 나머지는 그대로 쓴다.
-            if let coordinate = await location.requestOnce() {
+            if store.state.profile.coordinate == nil,
+               let coordinate = await location.requestOnce() {
                 store.setNeighborhoodCoordinate(coordinate)
             }
         }
@@ -258,8 +265,8 @@ struct ShareView: View {
 
                             Spacer(minLength: 8)
 
-                            if let price = store.state.prices[draft.ingredientID] {
-                                Text("−\(won(price.price / 2))")
+                            if let saving = savingText(for: draft) {
+                                Text(saving)
                                     .figmaText(12, .bold)
                                     .foregroundStyle(SharePalette.saving)
                                     .padding(.trailing, 14)
@@ -355,6 +362,18 @@ struct ShareView: View {
         var parts = ["\(post.ingredientName) \(post.amountText)", post.kind.label]
         if let price = post.pricePerShare { parts.append("1인 \(won(price))") }
         return parts.joined(separator: " · ")
+    }
+
+    private func savingText(for draft: ShareDraft) -> String? {
+        guard let item = store.currentShoppingItems.first(where: { $0.ingredientID == draft.ingredientID && $0.unit == draft.unit }),
+              item.precision == .exact,
+              let price = store.state.prices[draft.ingredientID],
+              price.unit == draft.unit,
+              price.packageAmount > 0,
+              abs(price.packageAmount - item.packageSize.amount) < 0.000001 else { return nil }
+        let ratio = min(max(draft.amount / price.packageAmount, 0), 1)
+        let value = Int((Double(price.price) * ratio).rounded())
+        return value > 0 ? "−\(won(value))" : nil
     }
 
     // MARK: - 하단 고정 (350:1268)
