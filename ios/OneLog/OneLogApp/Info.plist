@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  나머지 키는 Xcode가 생성해서(GENERATE_INFOPLIST_FILE) 여기에 합쳐 넣는다.
+  이 파일에는 빌드 설정으로 표현할 수 없는 값만 둔다.
+
+  CFBundleURLSchemes: FirebaseAuth 웹 OAuth(F23 Google 로그인)의 콜백 주소.
+  `GoogleService-Info.plist`의 GOOGLE_APP_ID에서 `:`를 `-`로 바꾼 값이다.
+  콘솔에서 Google 로그인을 켠 뒤 plist를 새로 받아 CLIENT_ID가 생겼다면
+  REVERSED_CLIENT_ID도 아래 목록에 추가해야 한다.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>같은 동네 이웃과의 도보 거리(약 몇 분)를 보여주는 데만 씁니다. 위치는 약 100m 단위로 반올림해 저장하고, 계속 추적하지 않습니다.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.onelog.native.firebaseauth</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-668539294331-ios-eecf800525f29b3e2b88de</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

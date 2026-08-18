@@ -1,6 +1,6 @@
 # 한끼로그 iOS
 
-웹 앱과 분리된 SwiftUI iPhone 앱입니다. 외부 인증·AI·가격 API 없이 P0 식단/예산 흐름과 P1 장보기 실행·로컬 온보딩을 먼저 검증합니다.
+SwiftUI iPhone 앱입니다. 외부 인증·AI·가격 API 없이 P0 식단/예산 흐름과 P1 장보기 실행·로컬 온보딩을 먼저 검증합니다.
 
 ## 실행
 
@@ -19,4 +19,4 @@ xcodebuild -project ios/OneLog/OneLog.xcodeproj \
   build-for-testing
 ```
 
-Personal Team 자동 서명을 설정한 뒤 `generic/platform=iOS` Debug 기기용 빌드와 서명된 앱 생성을 확인했습니다. 연결된 iPhone 14 Pro에 `devicectl`로 앱을 설치하고 실행하는 데 성공했습니다. Simulator용 단위 테스트·UI 스모크 테스트 실행과 온보딩 화면 상호작용 확인은 CoreSimulator runtime 문제로 미완료입니다.
+Personal Team 자동 서명을 설정한 뒤 `generic/platform=iOS` Debug 기기용 빌드와 서명된 앱 생성을 확인했습니다. 연결된 iPhone 14 Pro에 `devicectl`로 앱을 설치하고 실행하는 데 성공했습니다. Simulator용 도메인·UI 테스트와 온보딩 화면 상호작용은 현재 검증 기준에 포함됩니다.

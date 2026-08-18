@@ -8,6 +8,15 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     match /sharePosts/{postID} {
+      function sharePost() {
+        return get(/databases/$(database)/documents/sharePosts/$(postID)).data;
+      }
+
+      function isShareMember() {
+        return request.auth != null
+          && (sharePost().authorID == request.auth.uid || request.auth.uid in sharePost().participantIDs);
+      }
+
       allow read: if request.auth != null;
 
       allow create: if request.auth != null
@@ -24,7 +33,18 @@ service cloud.firestore {
         && request.resource.data.authorNickname.size() <= 20
         && request.resource.data.meetupNote.size() <= 200
         && request.resource.data.amount is number
-        && request.resource.data.amount > 0;
+        && request.resource.data.amount > 0
+        // 도보 시간 표시용 대략 좌표(선택). 값이 있으면 위·경도 범위 안이어야 한다.
+        && (
+          !('coordinate' in request.resource.data) || request.resource.data.coordinate == null || (
+            request.resource.data.coordinate.latitude is number
+            && request.resource.data.coordinate.longitude is number
+            && request.resource.data.coordinate.latitude >= -90
+            && request.resource.data.coordinate.latitude <= 90
+            && request.resource.data.coordinate.longitude >= -180
+            && request.resource.data.coordinate.longitude <= 180
+          )
+        );
 
       // 작성자는 자기 글 전체를 고칠 수 있다.
       // 그 외 로그인 사용자는 참여 목록과 상태만, 정원 안에서, 자기 자신만 넣고 뺄 수 있다.
@@ -40,18 +60,25 @@ service cloud.firestore {
 
       allow delete: if request.auth != null && resource.data.authorID == request.auth.uid;
 
+      // 약속 날짜·장소는 글 목록과 분리한다. 작성자·참여자만 읽고 수정·삭제할 수 있다.
+      match /meetup/details {
+        allow read: if isShareMember();
+        allow create, update: if isShareMember()
+          && request.resource.data.keys().hasOnly(['scheduledAt', 'placeNote', 'updatedBy', 'updatedAt'])
+          && request.resource.data.scheduledAt is timestamp
+          && request.resource.data.scheduledAt > request.time
+          && request.resource.data.placeNote is string
+          && request.resource.data.placeNote.size() > 0
+          && request.resource.data.placeNote.size() <= 200
+          && request.resource.data.updatedBy == request.auth.uid
+          && request.resource.data.updatedAt is timestamp;
+        allow delete: if isShareMember();
+      }
+
       // 채팅은 그 글의 작성자와 참여자만 읽고 쓴다.
       match /messages/{messageID} {
-        function post() {
-          return get(/databases/$(database)/documents/sharePosts/$(postID)).data;
-        }
-        function isMember() {
-          return request.auth != null
-            && (post().authorID == request.auth.uid || request.auth.uid in post().participantIDs);
-        }
-
-        allow read: if isMember();
-        allow create: if isMember()
+        allow read: if isShareMember();
+        allow create: if isShareMember()
           && request.resource.data.senderID == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0

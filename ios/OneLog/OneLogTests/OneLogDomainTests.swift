@@ -54,6 +54,30 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertTrue(estimate.unknownCostIngredientIDs.contains("cabbage"))
     }
 
+    func testUnknownInventoryDoesNotBecomeConfirmedBudgetEvenWhenPriceExists() {
+        guard let recipe = recipes.first(where: { !$0.ingredients.isEmpty }) else {
+            return XCTFail("테스트할 레시피가 없습니다")
+        }
+        let draft = PlannedMealDraft(recipeID: recipe.id, date: "2026-08-14", mealSlot: recipe.mealSlots.first ?? .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+        let baseItems = calculateShoppingPlan(requirements: aggregateRequirements(for: [draft]), inventory: [])
+        var prices: [String: IngredientPrice] = [:]
+        for item in baseItems {
+            prices[item.ingredientID] = IngredientPrice(price: 1000, packageAmount: item.packageSize.amount, unit: item.unit, confirmedAt: "2026-08-14", source: "user")
+        }
+        guard let unknown = baseItems.first else { return XCTFail("구매 품목이 없습니다") }
+
+        let estimate = budgetEstimate(
+            drafts: [draft],
+            targetBudget: 30000,
+            inventory: [InventoryItem(ingredientID: unknown.ingredientID, quantity: nil, unit: unknown.unit, quantityStatus: .unknown, updatedAt: "2026-08-14")],
+            prices: prices
+        )
+
+        XCTAssertFalse(estimate.isComplete)
+        XCTAssertNil(estimate.remainingBudget)
+        XCTAssertTrue(estimate.unknownCostIngredientIDs.contains(unknown.ingredientID))
+    }
+
     func testPlanSupportsDateSpecificMealsAndReturnsMultipleOptions() {
         let start = "2026-08-14"
         let request = PlanRequest(
@@ -133,9 +157,11 @@ final class OneLogDomainTests: XCTestCase {
         let start = "2026-08-14"
         let requestWithTooManyDays = PlanRequest(startDate: start, days: 8, slotsByDate: [start: [.dinner]], targetBudget: 10000, favorites: [], inventory: [], prices: [:], preferences: AppPreferences())
         let requestWithoutMeals = PlanRequest(startDate: start, days: 1, slotsByDate: [start: []], targetBudget: 10000, favorites: [], inventory: [], prices: [:], preferences: AppPreferences())
+        let requestWithoutBudget = PlanRequest(startDate: start, days: 1, slotsByDate: [start: [.dinner]], targetBudget: 0, favorites: [], inventory: [], prices: [:], preferences: AppPreferences())
 
         XCTAssertTrue(generateMealPlanOptions(request: requestWithTooManyDays).isEmpty)
         XCTAssertTrue(generateMealPlanOptions(request: requestWithoutMeals).isEmpty)
+        XCTAssertTrue(generateMealPlanOptions(request: requestWithoutBudget).isEmpty)
     }
 
     func testShoppingSignatureUsesComputedPurchaseQuantity() {
@@ -207,7 +233,8 @@ final class OneLogDomainTests: XCTestCase {
 
     func testEnoughImportedRecipesAreFullyCalculable() {
         let calculable = recipes.filter { fullyCalculableRecipeIDs.contains($0.id) }
-        XCTAssertGreaterThanOrEqual(calculable.count, 100, "구매량까지 계산되는 레시피가 \(calculable.count)건뿐입니다")
+        // 2026-08-17 기준 956건 중 719건. 판매 단위 표를 손대다 크게 줄면 잡는 하한선이다.
+        XCTAssertGreaterThanOrEqual(calculable.count, 700, "구매량까지 계산되는 레시피가 \(calculable.count)건뿐입니다")
         // 큐레이션 6건은 전부 계산 가능해야 한다.
         for id in ["chicken-donburi", "tofu-kimchi", "tuna-mayo-rice", "cabbage-egg-stir-fry", "cucumber-tuna-bowl", "kimchi-fried-rice"] {
             XCTAssertTrue(fullyCalculableRecipeIDs.contains(id), "\(id)가 계산 불가로 빠졌습니다")
@@ -233,6 +260,74 @@ final class OneLogDomainTests: XCTestCase {
         let estimate = budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:])
         XCTAssertFalse(estimate.isComplete)
         XCTAssertNil(estimate.remainingBudget)
+    }
+
+    /// 예산 화면의 입력 순서(판매 단위 확인 → 그 포장 가격)가 실제로 예산을 완성시키는지 본다.
+    func testConfirmingSaleUnitThenPriceCompletesBudget() {
+        guard let recipeID = recipes.first(where: { recipe in
+            recipe.ingredients.contains { ingredient(for: $0.ingredientID)?.representativeSaleUnit == nil }
+        })?.id else {
+            return XCTFail("판매 단위 미확인 재료를 쓰는 레시피가 없습니다")
+        }
+        let draft = PlannedMealDraft(recipeID: recipeID, date: "2026-08-17", mealSlot: .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+        XCTAssertFalse(budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:]).isComplete)
+
+        // 1) 사용자가 확인한 판매 단위를 넣는다.
+        var overrides: [String: PackageSize] = [:]
+        for line in budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:]).lineItems
+        where line.shoppingItem.precision == .manual {
+            overrides[line.shoppingItem.ingredientID] = PackageSize(amount: 100, unit: line.shoppingItem.unit, label: "100 포장")
+        }
+
+        // 2) 그 포장 그대로의 가격을 넣는다. 화면이 저장하는 값과 같은 조합이다.
+        var prices: [String: IngredientPrice] = [:]
+        for line in budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: [:], packageOverrides: overrides).lineItems {
+            let item = line.shoppingItem
+            prices[item.ingredientID] = IngredientPrice(price: 1000, packageAmount: item.packageSize.amount, unit: item.unit, confirmedAt: "2026-08-17T00:00:00Z", source: "user")
+        }
+
+        let completed = budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: prices, packageOverrides: overrides)
+        XCTAssertTrue(completed.isComplete, "판매 단위와 가격을 다 확인했는데 예산이 미확정입니다")
+        XCTAssertNotNil(completed.remainingBudget)
+
+        // 포장 크기가 어긋난 가격은 금액으로 쓰지 않는다. 화면도 그래서 따로 알려 준다.
+        let drifted = prices.mapValues { IngredientPrice(price: $0.price, packageAmount: $0.packageAmount + 7, unit: $0.unit, confirmedAt: $0.confirmedAt, source: $0.source) }
+        XCTAssertFalse(budgetEstimate(drafts: [draft], targetBudget: 30000, inventory: [], prices: drifted, packageOverrides: overrides).isComplete)
+    }
+
+    /// F25 도보 시간. 좌표가 없으면 표시하지 않고, 있으면 직선 거리 ÷ 75m/분으로 센다.
+    func testWalkingMinutesNeedsBothCoordinates() {
+        let seongsu = ShareCoordinate(latitude: 37.544, longitude: 127.056)
+        let nearby = ShareCoordinate(latitude: 37.548, longitude: 127.056) // 약 445m 북쪽
+
+        XCTAssertNil(walkingMinutes(from: seongsu, to: nil))
+        XCTAssertNil(walkingMinutes(from: nil, to: nearby))
+
+        XCTAssertEqual(walkingMinutes(from: seongsu, to: nearby), 6, "445m면 도보 6분이어야 합니다")
+        XCTAssertEqual(walkingText(from: seongsu, to: nearby), "도보 약 6분")
+
+        // 같은 자리여도 0분이 아니라 최소 1분으로 보여준다.
+        XCTAssertEqual(walkingMinutes(from: seongsu, to: seongsu), 1)
+    }
+
+    /// 좌표는 약 100m 격자로만 저장한다. 집 주소가 그대로 남으면 안 된다.
+    func testCoordinateIsRoundedAndValidated() {
+        let rounded = ShareCoordinate.rounded(latitude: 37.5442891, longitude: 127.0563123)
+        XCTAssertEqual(rounded?.latitude, 37.544)
+        XCTAssertEqual(rounded?.longitude, 127.056)
+
+        XCTAssertNil(ShareCoordinate.rounded(latitude: 91, longitude: 127))
+        XCTAssertNil(ShareCoordinate.rounded(latitude: .nan, longitude: 127))
+    }
+
+    /// 좌표 필드가 없던 예전 글도 그대로 읽혀야 한다.
+    func testSharePostDecodesWithoutCoordinate() throws {
+        let json = Data(#"{"id":"p1","kind":"split","ingredientID":"egg","ingredientName":"계란","amount":5,"unit":"개","neighborhood":"성수동","meetupNote":"","authorID":"u1","authorNickname":"퍼핌","participantIDs":[],"capacity":2,"status":"open","createdAt":0,"expiresAt":1}"#.utf8)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .secondsSince1970
+        let post = try decoder.decode(SharePost.self, from: json)
+        XCTAssertNil(post.coordinate)
+        XCTAssertEqual(post.ingredientName, "계란")
     }
 
     func testDislikedRecipeIsExcludedFromAutoRecommendationOnly() {
@@ -327,6 +422,7 @@ final class OneLogDomainTests: XCTestCase {
         let drafts = shareDrafts(from: [
             planItem("onion", needed: 1, remaining: 3),
             planItem("egg", needed: 10, remaining: 2),
+            planItem("carrot", needed: 1, remaining: 3, precision: .estimated),
             planItem("tofu", needed: 1, remaining: 5, precision: .manual),
             planItem("milk", needed: 1, remaining: 0),
         ])
@@ -372,5 +468,17 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertTrue(target.isMember("author"))
         XCTAssertTrue(target.isMember("joined"))
         XCTAssertFalse(target.isMember("stranger"))
+    }
+
+    func testMeetupPreservesScheduledDateAndPlaceThroughCodable() throws {
+        let meetup = ShareMeetup(
+            scheduledAt: Date(timeIntervalSince1970: 1_800_000_000),
+            placeNote: "성수역 2번 출구 앞",
+            updatedBy: "member-1",
+            updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
+        )
+
+        let decoded = try JSONDecoder().decode(ShareMeetup.self, from: JSONEncoder().encode(meetup))
+        XCTAssertEqual(decoded, meetup)
     }
 }

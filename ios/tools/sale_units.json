@@ -24,7 +24,11 @@
   "청경채": {
    "amount": 200,
    "unit": "g",
-   "label": "청경채 200g"
+   "label": "청경채 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 80.0
+   }
   },
   "적양배추": {
    "amount": 200,
@@ -34,7 +38,11 @@
   "샐러리": {
    "amount": 200,
    "unit": "g",
-   "label": "샐러리 200g"
+   "label": "샐러리 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 80.0
+   }
   },
   "쪽파": {
    "amount": 200,
@@ -101,7 +109,11 @@
   "치즈": {
    "amount": 200,
    "unit": "g",
-   "label": "치즈 200g"
+   "label": "치즈 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 18.0
+   }
   },
   "파마산치즈": {
    "amount": 200,
@@ -126,7 +138,11 @@
   "베이컨": {
    "amount": 200,
    "unit": "g",
-   "label": "베이컨 200g"
+   "label": "베이컨 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 20.0
+   }
   },
   "메추리알": {
    "amount": 200,
@@ -174,7 +190,11 @@
   "상추": {
    "amount": 150,
    "unit": "g",
-   "label": "상추 150g"
+   "label": "상추 150g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 5.0
+   }
   },
   "영양부추": {
    "amount": 150,
@@ -201,7 +221,8 @@
    "label": "표고버섯 150g",
    "unitGrams": {
     "g": 1.0,
-    "개": 20.0
+    "개": 20.0,
+    "장": 20.0
    }
   },
   "양송이버섯": {
@@ -225,7 +246,11 @@
   "팽이버섯": {
    "amount": 150,
    "unit": "g",
-   "label": "팽이버섯 150g"
+   "label": "팽이버섯 150g",
+   "unitGrams": {
+    "g": 1.0,
+    "봉": 150.0
+   }
   },
   "느타리버섯": {
    "amount": 150,
@@ -265,7 +290,11 @@
   "바질": {
    "amount": 100,
    "unit": "g",
-   "label": "바질 100g"
+   "label": "바질 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 0.5
+   }
   },
   "파슬리": {
    "amount": 100,
@@ -304,7 +333,11 @@
   "다시마": {
    "amount": 100,
    "unit": "g",
-   "label": "다시마 100g"
+   "label": "다시마 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 5.0
+   }
   },
   "건새우": {
    "amount": 100,
@@ -367,7 +400,11 @@
   "수삼": {
    "amount": 100,
    "unit": "g",
-   "label": "수삼 100g"
+   "label": "수삼 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 40.0
+   }
   },
   "함초": {
    "amount": 100,
@@ -551,7 +588,7 @@
    "label": "양상추 500g",
    "unitGrams": {
     "g": 1.0,
-    "개": 500.0
+    "장": 20.0
    }
   },
   "된장": {
@@ -648,7 +685,7 @@
    "label": "배추 1000g",
    "unitGrams": {
     "g": 1.0,
-    "개": 2000.0
+    "장": 50.0
    }
   },
   "우유": {
@@ -682,7 +719,7 @@
    "label": "알배추 800g",
    "unitGrams": {
     "g": 1.0,
-    "개": 800.0
+    "장": 30.0
    }
   },
   "홍고추": {
@@ -825,12 +862,20 @@
   "바지락": {
    "amount": 250,
    "unit": "g",
-   "label": "바지락 250g"
+   "label": "바지락 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 5.0
+   }
   },
   "전복": {
    "amount": 250,
    "unit": "g",
-   "label": "전복 250g"
+   "label": "전복 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 60.0
+   }
   },
   "관자": {
    "amount": 250,
@@ -1117,6 +1162,2603 @@
     "g": 1.0,
     "장": 0.2
    }
+  },
+  "삼겹살": {
+   "amount": 400,
+   "unit": "g",
+   "label": "삼겹살 400g"
+  },
+  "통삼겹": {
+   "amount": 400,
+   "unit": "g",
+   "label": "통삼겹 400g"
+  },
+  "돼지목살": {
+   "amount": 400,
+   "unit": "g",
+   "label": "돼지목살 400g"
+  },
+  "돼지갈비": {
+   "amount": 400,
+   "unit": "g",
+   "label": "돼지갈비 400g"
+  },
+  "등갈비": {
+   "amount": 400,
+   "unit": "g",
+   "label": "등갈비 400g"
+  },
+  "쪽갈비": {
+   "amount": 400,
+   "unit": "g",
+   "label": "쪽갈비 400g"
+  },
+  "차돌박이": {
+   "amount": 400,
+   "unit": "g",
+   "label": "차돌박이 400g"
+  },
+  "돼지고기사태": {
+   "amount": 400,
+   "unit": "g",
+   "label": "돼지고기사태 400g"
+  },
+  "소불고기": {
+   "amount": 400,
+   "unit": "g",
+   "label": "소불고기 400g"
+  },
+  "소등심": {
+   "amount": 400,
+   "unit": "g",
+   "label": "소등심 400g"
+  },
+  "쇠고기안심": {
+   "amount": 400,
+   "unit": "g",
+   "label": "쇠고기안심 400g"
+  },
+  "소고기양지": {
+   "amount": 400,
+   "unit": "g",
+   "label": "소고기양지 400g"
+  },
+  "쇠고기양지": {
+   "amount": 400,
+   "unit": "g",
+   "label": "쇠고기양지 400g"
+  },
+  "우목심": {
+   "amount": 400,
+   "unit": "g",
+   "label": "우목심 400g"
+  },
+  "닭": {
+   "amount": 400,
+   "unit": "g",
+   "label": "닭 400g"
+  },
+  "닭다릿살": {
+   "amount": 400,
+   "unit": "g",
+   "label": "닭다릿살 400g"
+  },
+  "닭안심살": {
+   "amount": 400,
+   "unit": "g",
+   "label": "닭안심살 400g"
+  },
+  "닭봉": {
+   "amount": 400,
+   "unit": "g",
+   "label": "닭봉 400g"
+  },
+  "닭날개": {
+   "amount": 400,
+   "unit": "g",
+   "label": "닭날개 400g"
+  },
+  "닭살": {
+   "amount": 400,
+   "unit": "g",
+   "label": "닭살 400g"
+  },
+  "오리고기": {
+   "amount": 400,
+   "unit": "g",
+   "label": "오리고기 400g"
+  },
+  "훈제오리": {
+   "amount": 400,
+   "unit": "g",
+   "label": "훈제오리 400g"
+  },
+  "양고기": {
+   "amount": 400,
+   "unit": "g",
+   "label": "양고기 400g"
+  },
+  "족발": {
+   "amount": 400,
+   "unit": "g",
+   "label": "족발 400g"
+  },
+  "햄": {
+   "amount": 200,
+   "unit": "g",
+   "label": "햄 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 20.0
+   }
+  },
+  "슬라이스햄": {
+   "amount": 200,
+   "unit": "g",
+   "label": "슬라이스햄 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 20.0
+   }
+  },
+  "소시지": {
+   "amount": 200,
+   "unit": "g",
+   "label": "소시지 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 40.0
+   }
+  },
+  "통조림햄": {
+   "amount": 200,
+   "unit": "g",
+   "label": "통조림햄 200g"
+  },
+  "어묵": {
+   "amount": 200,
+   "unit": "g",
+   "label": "어묵 200g"
+  },
+  "게맛살": {
+   "amount": 200,
+   "unit": "g",
+   "label": "게맛살 200g"
+  },
+  "맛살": {
+   "amount": 200,
+   "unit": "g",
+   "label": "맛살 200g"
+  },
+  "크래미": {
+   "amount": 200,
+   "unit": "g",
+   "label": "크래미 200g"
+  },
+  "유부": {
+   "amount": 200,
+   "unit": "g",
+   "label": "유부 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 10.0
+   }
+  },
+  "두부": {
+   "amount": 200,
+   "unit": "g",
+   "label": "두부 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "콩비지": {
+   "amount": 200,
+   "unit": "g",
+   "label": "콩비지 200g"
+  },
+  "청포묵": {
+   "amount": 200,
+   "unit": "g",
+   "label": "청포묵 200g"
+  },
+  "메밀묵": {
+   "amount": 200,
+   "unit": "g",
+   "label": "메밀묵 200g"
+  },
+  "도토리묵": {
+   "amount": 200,
+   "unit": "g",
+   "label": "도토리묵 200g"
+  },
+  "치즈슬라이스": {
+   "amount": 200,
+   "unit": "g",
+   "label": "치즈슬라이스 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 18.0
+   }
+  },
+  "치즈가루": {
+   "amount": 200,
+   "unit": "g",
+   "label": "치즈가루 200g"
+  },
+  "파마산가루": {
+   "amount": 200,
+   "unit": "g",
+   "label": "파마산가루 200g"
+  },
+  "사워크림": {
+   "amount": 200,
+   "unit": "g",
+   "label": "사워크림 200g"
+  },
+  "케일": {
+   "amount": 200,
+   "unit": "g",
+   "label": "케일 200g"
+  },
+  "취나물": {
+   "amount": 200,
+   "unit": "g",
+   "label": "취나물 200g"
+  },
+  "적채": {
+   "amount": 200,
+   "unit": "g",
+   "label": "적채 200g"
+  },
+  "셀러리": {
+   "amount": 200,
+   "unit": "g",
+   "label": "셀러리 200g"
+  },
+  "도라지": {
+   "amount": 200,
+   "unit": "g",
+   "label": "도라지 200g"
+  },
+  "더덕": {
+   "amount": 200,
+   "unit": "g",
+   "label": "더덕 200g"
+  },
+  "콜리플라워": {
+   "amount": 200,
+   "unit": "g",
+   "label": "콜리플라워 200g"
+  },
+  "컬리플라워": {
+   "amount": 200,
+   "unit": "g",
+   "label": "컬리플라워 200g"
+  },
+  "꽈리고추": {
+   "amount": 200,
+   "unit": "g",
+   "label": "꽈리고추 200g"
+  },
+  "아욱": {
+   "amount": 200,
+   "unit": "g",
+   "label": "아욱 200g"
+  },
+  "근대": {
+   "amount": 200,
+   "unit": "g",
+   "label": "근대 200g"
+  },
+  "열무": {
+   "amount": 200,
+   "unit": "g",
+   "label": "열무 200g"
+  },
+  "달래": {
+   "amount": 200,
+   "unit": "g",
+   "label": "달래 200g"
+  },
+  "냉이": {
+   "amount": 200,
+   "unit": "g",
+   "label": "냉이 200g"
+  },
+  "두릅": {
+   "amount": 200,
+   "unit": "g",
+   "label": "두릅 200g"
+  },
+  "죽순": {
+   "amount": 200,
+   "unit": "g",
+   "label": "죽순 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 100.0
+   }
+  },
+  "마늘종": {
+   "amount": 200,
+   "unit": "g",
+   "label": "마늘종 200g"
+  },
+  "마늘쫑": {
+   "amount": 200,
+   "unit": "g",
+   "label": "마늘쫑 200g"
+  },
+  "시래기": {
+   "amount": 200,
+   "unit": "g",
+   "label": "시래기 200g"
+  },
+  "무청시래기": {
+   "amount": 200,
+   "unit": "g",
+   "label": "무청시래기 200g"
+  },
+  "곤드레나물": {
+   "amount": 200,
+   "unit": "g",
+   "label": "곤드레나물 200g"
+  },
+  "호박잎": {
+   "amount": 200,
+   "unit": "g",
+   "label": "호박잎 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 5.0
+   }
+  },
+  "고구마순": {
+   "amount": 200,
+   "unit": "g",
+   "label": "고구마순 200g"
+  },
+  "매생이": {
+   "amount": 200,
+   "unit": "g",
+   "label": "매생이 200g"
+  },
+  "톳": {
+   "amount": 200,
+   "unit": "g",
+   "label": "톳 200g"
+  },
+  "미역": {
+   "amount": 200,
+   "unit": "g",
+   "label": "미역 200g"
+  },
+  "로메인": {
+   "amount": 200,
+   "unit": "g",
+   "label": "로메인 200g"
+  },
+  "래디쉬": {
+   "amount": 200,
+   "unit": "g",
+   "label": "래디쉬 200g"
+  },
+  "래디시": {
+   "amount": 200,
+   "unit": "g",
+   "label": "래디시 200g"
+  },
+  "레디쉬": {
+   "amount": 200,
+   "unit": "g",
+   "label": "레디쉬 200g"
+  },
+  "워터크레스": {
+   "amount": 200,
+   "unit": "g",
+   "label": "워터크레스 200g"
+  },
+  "베이비채소": {
+   "amount": 200,
+   "unit": "g",
+   "label": "베이비채소 200g"
+  },
+  "어린채소": {
+   "amount": 200,
+   "unit": "g",
+   "label": "어린채소 200g"
+  },
+  "루꼴라": {
+   "amount": 200,
+   "unit": "g",
+   "label": "루꼴라 200g"
+  },
+  "루콜라": {
+   "amount": 200,
+   "unit": "g",
+   "label": "루콜라 200g"
+  },
+  "비타민": {
+   "amount": 200,
+   "unit": "g",
+   "label": "비타민 200g"
+  },
+  "식용꽃": {
+   "amount": 200,
+   "unit": "g",
+   "label": "식용꽃 200g"
+  },
+  "그린빈": {
+   "amount": 200,
+   "unit": "g",
+   "label": "그린빈 200g"
+  },
+  "그린빈스": {
+   "amount": 200,
+   "unit": "g",
+   "label": "그린빈스 200g"
+  },
+  "영콘": {
+   "amount": 200,
+   "unit": "g",
+   "label": "영콘 200g"
+  },
+  "할라피뇨": {
+   "amount": 200,
+   "unit": "g",
+   "label": "할라피뇨 200g"
+  },
+  "오이고추": {
+   "amount": 200,
+   "unit": "g",
+   "label": "오이고추 200g"
+  },
+  "아삭이고추": {
+   "amount": 200,
+   "unit": "g",
+   "label": "아삭이고추 200g"
+  },
+  "고추": {
+   "amount": 200,
+   "unit": "g",
+   "label": "고추 200g"
+  },
+  "피클": {
+   "amount": 200,
+   "unit": "g",
+   "label": "피클 200g"
+  },
+  "오이피클": {
+   "amount": 200,
+   "unit": "g",
+   "label": "오이피클 200g"
+  },
+  "쌈무": {
+   "amount": 200,
+   "unit": "g",
+   "label": "쌈무 200g"
+  },
+  "깻잎장아찌": {
+   "amount": 200,
+   "unit": "g",
+   "label": "깻잎장아찌 200g"
+  },
+  "무장아찌": {
+   "amount": 200,
+   "unit": "g",
+   "label": "무장아찌 200g"
+  },
+  "락교": {
+   "amount": 200,
+   "unit": "g",
+   "label": "락교 200g"
+  },
+  "동치미": {
+   "amount": 200,
+   "unit": "g",
+   "label": "동치미 200g"
+  },
+  "열무김치": {
+   "amount": 200,
+   "unit": "g",
+   "label": "열무김치 200g"
+  },
+  "김치": {
+   "amount": 200,
+   "unit": "g",
+   "label": "김치 200g"
+  },
+  "돼지호박": {
+   "amount": 500,
+   "unit": "g",
+   "label": "돼지호박 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "주키니호박": {
+   "amount": 500,
+   "unit": "g",
+   "label": "주키니호박 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "쥬키니호박": {
+   "amount": 500,
+   "unit": "g",
+   "label": "쥬키니호박 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "호박": {
+   "amount": 500,
+   "unit": "g",
+   "label": "호박 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 400.0
+   }
+  },
+  "옥수수": {
+   "amount": 500,
+   "unit": "g",
+   "label": "옥수수 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 250.0
+   }
+  },
+  "깐양파": {
+   "amount": 500,
+   "unit": "g",
+   "label": "깐양파 500g"
+  },
+  "적양파": {
+   "amount": 500,
+   "unit": "g",
+   "label": "적양파 500g"
+  },
+  "순무": {
+   "amount": 500,
+   "unit": "g",
+   "label": "순무 500g"
+  },
+  "조선무": {
+   "amount": 500,
+   "unit": "g",
+   "label": "조선무 500g"
+  },
+  "무우": {
+   "amount": 500,
+   "unit": "g",
+   "label": "무우 500g"
+  },
+  "콜라비": {
+   "amount": 500,
+   "unit": "g",
+   "label": "콜라비 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 800.0
+   }
+  },
+  "간장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "간장 500g"
+  },
+  "저염진간장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "저염진간장 500g"
+  },
+  "고추장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "고추장 500g"
+  },
+  "쌈장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "쌈장 500g"
+  },
+  "청국장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "청국장 500g"
+  },
+  "두반장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "두반장 500g"
+  },
+  "해선장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "해선장 500g"
+  },
+  "칠리소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "칠리소스 500g"
+  },
+  "스위트칠리": {
+   "amount": 500,
+   "unit": "g",
+   "label": "스위트칠리 500g"
+  },
+  "스리라차소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "스리라차소스 500g"
+  },
+  "우스터소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "우스터소스 500g"
+  },
+  "돈가스소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "돈가스소스 500g"
+  },
+  "데리야키소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "데리야키소스 500g"
+  },
+  "발사믹소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "발사믹소스 500g"
+  },
+  "발사믹크림": {
+   "amount": 500,
+   "unit": "g",
+   "label": "발사믹크림 500g"
+  },
+  "크림소스": {
+   "amount": 500,
+   "unit": "g",
+   "label": "크림소스 500g"
+  },
+  "머스타드": {
+   "amount": 500,
+   "unit": "g",
+   "label": "머스타드 500g"
+  },
+  "홀그레인": {
+   "amount": 500,
+   "unit": "g",
+   "label": "홀그레인 500g"
+  },
+  "케찹": {
+   "amount": 500,
+   "unit": "g",
+   "label": "케찹 500g"
+  },
+  "타바스코": {
+   "amount": 500,
+   "unit": "g",
+   "label": "타바스코 500g"
+  },
+  "요구르트": {
+   "amount": 500,
+   "unit": "g",
+   "label": "요구르트 500g"
+  },
+  "요플레": {
+   "amount": 500,
+   "unit": "g",
+   "label": "요플레 500g"
+  },
+  "연유": {
+   "amount": 500,
+   "unit": "g",
+   "label": "연유 500g"
+  },
+  "휘핑크림": {
+   "amount": 500,
+   "unit": "g",
+   "label": "휘핑크림 500g"
+  },
+  "크림": {
+   "amount": 500,
+   "unit": "g",
+   "label": "크림 500g"
+  },
+  "코코넛밀크": {
+   "amount": 500,
+   "unit": "g",
+   "label": "코코넛밀크 500g"
+  },
+  "키위": {
+   "amount": 600,
+   "unit": "g",
+   "label": "키위 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 100.0
+   }
+  },
+  "단감": {
+   "amount": 600,
+   "unit": "g",
+   "label": "단감 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 200.0
+   }
+  },
+  "홍시": {
+   "amount": 600,
+   "unit": "g",
+   "label": "홍시 600g"
+  },
+  "참외": {
+   "amount": 600,
+   "unit": "g",
+   "label": "참외 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 400.0
+   }
+  },
+  "멜론": {
+   "amount": 600,
+   "unit": "g",
+   "label": "멜론 600g"
+  },
+  "수박": {
+   "amount": 600,
+   "unit": "g",
+   "label": "수박 600g"
+  },
+  "딸기": {
+   "amount": 600,
+   "unit": "g",
+   "label": "딸기 600g"
+  },
+  "포도": {
+   "amount": 600,
+   "unit": "g",
+   "label": "포도 600g"
+  },
+  "청포도": {
+   "amount": 600,
+   "unit": "g",
+   "label": "청포도 600g"
+  },
+  "체리": {
+   "amount": 600,
+   "unit": "g",
+   "label": "체리 600g"
+  },
+  "망고": {
+   "amount": 600,
+   "unit": "g",
+   "label": "망고 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "무화과": {
+   "amount": 600,
+   "unit": "g",
+   "label": "무화과 600g"
+  },
+  "복숭아": {
+   "amount": 600,
+   "unit": "g",
+   "label": "복숭아 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 200.0
+   }
+  },
+  "황도": {
+   "amount": 600,
+   "unit": "g",
+   "label": "황도 600g"
+  },
+  "석류": {
+   "amount": 600,
+   "unit": "g",
+   "label": "석류 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "귤": {
+   "amount": 600,
+   "unit": "g",
+   "label": "귤 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 90.0
+   }
+  },
+  "감귤": {
+   "amount": 600,
+   "unit": "g",
+   "label": "감귤 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 90.0
+   }
+  },
+  "라임": {
+   "amount": 600,
+   "unit": "g",
+   "label": "라임 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 70.0
+   }
+  },
+  "곶감": {
+   "amount": 600,
+   "unit": "g",
+   "label": "곶감 600g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 30.0
+   }
+  },
+  "블루베리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "블루베리 100g"
+  },
+  "크랜베리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "크랜베리 100g"
+  },
+  "크렌베리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "크렌베리 100g"
+  },
+  "건포도": {
+   "amount": 100,
+   "unit": "g",
+   "label": "건포도 100g"
+  },
+  "깐밤": {
+   "amount": 100,
+   "unit": "g",
+   "label": "깐밤 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 15.0
+   }
+  },
+  "견과류": {
+   "amount": 100,
+   "unit": "g",
+   "label": "견과류 100g"
+  },
+  "혼합견과류": {
+   "amount": 100,
+   "unit": "g",
+   "label": "혼합견과류 100g"
+  },
+  "캐슈넛": {
+   "amount": 100,
+   "unit": "g",
+   "label": "캐슈넛 100g"
+  },
+  "호박씨": {
+   "amount": 100,
+   "unit": "g",
+   "label": "호박씨 100g"
+  },
+  "해바라기씨": {
+   "amount": 100,
+   "unit": "g",
+   "label": "해바라기씨 100g"
+  },
+  "은행": {
+   "amount": 100,
+   "unit": "g",
+   "label": "은행 100g"
+  },
+  "마카다미아": {
+   "amount": 100,
+   "unit": "g",
+   "label": "마카다미아 100g"
+  },
+  "아몬드슬라이스": {
+   "amount": 100,
+   "unit": "g",
+   "label": "아몬드슬라이스 100g"
+  },
+  "건미역": {
+   "amount": 100,
+   "unit": "g",
+   "label": "건미역 100g"
+  },
+  "마른미역": {
+   "amount": 100,
+   "unit": "g",
+   "label": "마른미역 100g"
+  },
+  "가쓰오부시": {
+   "amount": 100,
+   "unit": "g",
+   "label": "가쓰오부시 100g"
+  },
+  "가츠오부시": {
+   "amount": 100,
+   "unit": "g",
+   "label": "가츠오부시 100g"
+  },
+  "가쯔오부시": {
+   "amount": 100,
+   "unit": "g",
+   "label": "가쯔오부시 100g"
+  },
+  "디포리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "디포리 100g"
+  },
+  "뒤포리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "뒤포리 100g"
+  },
+  "북어채": {
+   "amount": 100,
+   "unit": "g",
+   "label": "북어채 100g"
+  },
+  "황태채": {
+   "amount": 100,
+   "unit": "g",
+   "label": "황태채 100g"
+  },
+  "황태포": {
+   "amount": 100,
+   "unit": "g",
+   "label": "황태포 100g"
+  },
+  "황태": {
+   "amount": 100,
+   "unit": "g",
+   "label": "황태 100g"
+  },
+  "북어": {
+   "amount": 100,
+   "unit": "g",
+   "label": "북어 100g"
+  },
+  "진미채": {
+   "amount": 100,
+   "unit": "g",
+   "label": "진미채 100g"
+  },
+  "실고추": {
+   "amount": 100,
+   "unit": "g",
+   "label": "실고추 100g"
+  },
+  "건고추": {
+   "amount": 100,
+   "unit": "g",
+   "label": "건고추 100g"
+  },
+  "마른고추": {
+   "amount": 100,
+   "unit": "g",
+   "label": "마른고추 100g"
+  },
+  "무말랭이": {
+   "amount": 100,
+   "unit": "g",
+   "label": "무말랭이 100g"
+  },
+  "생김": {
+   "amount": 100,
+   "unit": "g",
+   "label": "생김 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 2.0
+   }
+  },
+  "파래김": {
+   "amount": 100,
+   "unit": "g",
+   "label": "파래김 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 2.0
+   }
+  },
+  "김": {
+   "amount": 100,
+   "unit": "g",
+   "label": "김 100g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 2.0
+   }
+  },
+  "낙지": {
+   "amount": 250,
+   "unit": "g",
+   "label": "낙지 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 200.0
+   }
+  },
+  "쭈꾸미": {
+   "amount": 250,
+   "unit": "g",
+   "label": "쭈꾸미 250g"
+  },
+  "새우살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "새우살 250g"
+  },
+  "꽃게": {
+   "amount": 250,
+   "unit": "g",
+   "label": "꽃게 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 200.0
+   }
+  },
+  "문어": {
+   "amount": 250,
+   "unit": "g",
+   "label": "문어 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 500.0
+   }
+  },
+  "모시조개": {
+   "amount": 250,
+   "unit": "g",
+   "label": "모시조개 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 15.0
+   }
+  },
+  "조개": {
+   "amount": 250,
+   "unit": "g",
+   "label": "조개 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 20.0
+   }
+  },
+  "조갯살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "조갯살 250g"
+  },
+  "바지락살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "바지락살 250g"
+  },
+  "골뱅이": {
+   "amount": 250,
+   "unit": "g",
+   "label": "골뱅이 250g"
+  },
+  "굴": {
+   "amount": 250,
+   "unit": "g",
+   "label": "굴 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 10.0
+   }
+  },
+  "소라": {
+   "amount": 250,
+   "unit": "g",
+   "label": "소라 250g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 100.0
+   }
+  },
+  "소라살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "소라살 250g"
+  },
+  "게살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "게살 250g"
+  },
+  "홍합살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "홍합살 250g"
+  },
+  "패주": {
+   "amount": 250,
+   "unit": "g",
+   "label": "패주 250g"
+  },
+  "미더덕": {
+   "amount": 250,
+   "unit": "g",
+   "label": "미더덕 250g"
+  },
+  "우렁": {
+   "amount": 250,
+   "unit": "g",
+   "label": "우렁 250g"
+  },
+  "다슬기살": {
+   "amount": 250,
+   "unit": "g",
+   "label": "다슬기살 250g"
+  },
+  "대구살": {
+   "amount": 300,
+   "unit": "g",
+   "label": "대구살 300g"
+  },
+  "도미살": {
+   "amount": 300,
+   "unit": "g",
+   "label": "도미살 300g"
+  },
+  "도미": {
+   "amount": 300,
+   "unit": "g",
+   "label": "도미 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 500.0
+   }
+  },
+  "동태포": {
+   "amount": 300,
+   "unit": "g",
+   "label": "동태포 300g"
+  },
+  "동태살": {
+   "amount": 300,
+   "unit": "g",
+   "label": "동태살 300g"
+  },
+  "가자미": {
+   "amount": 300,
+   "unit": "g",
+   "label": "가자미 300g"
+  },
+  "갈치": {
+   "amount": 300,
+   "unit": "g",
+   "label": "갈치 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 150.0
+   }
+  },
+  "고등어": {
+   "amount": 300,
+   "unit": "g",
+   "label": "고등어 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 400.0
+   }
+  },
+  "삼치": {
+   "amount": 300,
+   "unit": "g",
+   "label": "삼치 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 300.0
+   }
+  },
+  "장어": {
+   "amount": 300,
+   "unit": "g",
+   "label": "장어 300g"
+  },
+  "광어": {
+   "amount": 300,
+   "unit": "g",
+   "label": "광어 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 500.0
+   }
+  },
+  "명태": {
+   "amount": 300,
+   "unit": "g",
+   "label": "명태 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 400.0
+   }
+  },
+  "꽁치": {
+   "amount": 300,
+   "unit": "g",
+   "label": "꽁치 300g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 120.0
+   }
+  },
+  "흰살생선": {
+   "amount": 300,
+   "unit": "g",
+   "label": "흰살생선 300g"
+  },
+  "생선살": {
+   "amount": 300,
+   "unit": "g",
+   "label": "생선살 300g"
+  },
+  "연어필레": {
+   "amount": 300,
+   "unit": "g",
+   "label": "연어필레 300g"
+  },
+  "코다리": {
+   "amount": 300,
+   "unit": "g",
+   "label": "코다리 300g"
+  },
+  "명란젓": {
+   "amount": 300,
+   "unit": "g",
+   "label": "명란젓 300g"
+  },
+  "새우젓": {
+   "amount": 300,
+   "unit": "g",
+   "label": "새우젓 300g"
+  },
+  "젓갈": {
+   "amount": 300,
+   "unit": "g",
+   "label": "젓갈 300g"
+  },
+  "콩가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "콩가루 300g"
+  },
+  "날콩가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "날콩가루 300g"
+  },
+  "청국장가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "청국장가루 300g"
+  },
+  "쌀가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "쌀가루 300g"
+  },
+  "멥쌀가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "멥쌀가루 300g"
+  },
+  "메밀가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "메밀가루 300g"
+  },
+  "전분가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "전분가루 300g"
+  },
+  "옥수수전분": {
+   "amount": 300,
+   "unit": "g",
+   "label": "옥수수전분 300g"
+  },
+  "감자녹말가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "감자녹말가루 300g"
+  },
+  "도토리가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "도토리가루 300g"
+  },
+  "미숫가루": {
+   "amount": 300,
+   "unit": "g",
+   "label": "미숫가루 300g"
+  },
+  "오트밀": {
+   "amount": 300,
+   "unit": "g",
+   "label": "오트밀 300g"
+  },
+  "그라놀라": {
+   "amount": 300,
+   "unit": "g",
+   "label": "그라놀라 300g"
+  },
+  "황설탕": {
+   "amount": 300,
+   "unit": "g",
+   "label": "황설탕 300g"
+  },
+  "흑설탕": {
+   "amount": 300,
+   "unit": "g",
+   "label": "흑설탕 300g"
+  },
+  "알룰로스": {
+   "amount": 300,
+   "unit": "g",
+   "label": "알룰로스 300g"
+  },
+  "조청": {
+   "amount": 300,
+   "unit": "g",
+   "label": "조청 300g"
+  },
+  "요리당": {
+   "amount": 300,
+   "unit": "g",
+   "label": "요리당 300g"
+  },
+  "메이플시럽": {
+   "amount": 300,
+   "unit": "g",
+   "label": "메이플시럽 300g"
+  },
+  "딸기잼": {
+   "amount": 300,
+   "unit": "g",
+   "label": "딸기잼 300g"
+  },
+  "블루베리잼": {
+   "amount": 300,
+   "unit": "g",
+   "label": "블루베리잼 300g"
+  },
+  "땅콩잼": {
+   "amount": 300,
+   "unit": "g",
+   "label": "땅콩잼 300g"
+  },
+  "강황가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "강황가루 50g"
+  },
+  "울금가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "울금가루 50g"
+  },
+  "파프리카가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "파프리카가루 50g"
+  },
+  "겨자가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "겨자가루 50g"
+  },
+  "겨잣가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "겨잣가루 50g"
+  },
+  "겨자분말": {
+   "amount": 50,
+   "unit": "g",
+   "label": "겨자분말 50g"
+  },
+  "겨자": {
+   "amount": 50,
+   "unit": "g",
+   "label": "겨자 50g"
+  },
+  "계피가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "계피가루 50g"
+  },
+  "통계피": {
+   "amount": 50,
+   "unit": "g",
+   "label": "통계피 50g"
+  },
+  "백년초가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "백년초가루 50g"
+  },
+  "함초가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "함초가루 50g"
+  },
+  "치자가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "치자가루 50g"
+  },
+  "치자": {
+   "amount": 50,
+   "unit": "g",
+   "label": "치자 50g"
+  },
+  "마늘가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "마늘가루 50g"
+  },
+  "양파가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "양파가루 50g"
+  },
+  "호박가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "호박가루 50g"
+  },
+  "단호박가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "단호박가루 50g"
+  },
+  "시금치가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "시금치가루 50g"
+  },
+  "뽕잎가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "뽕잎가루 50g"
+  },
+  "녹차가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "녹차가루 50g"
+  },
+  "새우가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "새우가루 50g"
+  },
+  "표고버섯가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "표고버섯가루 50g"
+  },
+  "타임": {
+   "amount": 50,
+   "unit": "g",
+   "label": "타임 50g"
+  },
+  "민트": {
+   "amount": 50,
+   "unit": "g",
+   "label": "민트 50g"
+  },
+  "애플민트": {
+   "amount": 50,
+   "unit": "g",
+   "label": "애플민트 50g"
+  },
+  "딜": {
+   "amount": 50,
+   "unit": "g",
+   "label": "딜 50g"
+  },
+  "정향": {
+   "amount": 50,
+   "unit": "g",
+   "label": "정향 50g"
+  },
+  "로즈메리": {
+   "amount": 50,
+   "unit": "g",
+   "label": "로즈메리 50g"
+  },
+  "고수": {
+   "amount": 50,
+   "unit": "g",
+   "label": "고수 50g"
+  },
+  "차이브": {
+   "amount": 50,
+   "unit": "g",
+   "label": "차이브 50g"
+  },
+  "이태리시즈닝": {
+   "amount": 50,
+   "unit": "g",
+   "label": "이태리시즈닝 50g"
+  },
+  "피클링스파이스": {
+   "amount": 50,
+   "unit": "g",
+   "label": "피클링스파이스 50g"
+  },
+  "케이퍼": {
+   "amount": 50,
+   "unit": "g",
+   "label": "케이퍼 50g"
+  },
+  "올리브": {
+   "amount": 50,
+   "unit": "g",
+   "label": "올리브 50g"
+  },
+  "블랙올리브": {
+   "amount": 50,
+   "unit": "g",
+   "label": "블랙올리브 50g"
+  },
+  "레몬제스트": {
+   "amount": 50,
+   "unit": "g",
+   "label": "레몬제스트 50g"
+  },
+  "레몬껍질": {
+   "amount": 50,
+   "unit": "g",
+   "label": "레몬껍질 50g"
+  },
+  "카엔페퍼": {
+   "amount": 50,
+   "unit": "g",
+   "label": "카엔페퍼 50g"
+  },
+  "큐민파우더": {
+   "amount": 50,
+   "unit": "g",
+   "label": "큐민파우더 50g"
+  },
+  "머스터드씨드": {
+   "amount": 50,
+   "unit": "g",
+   "label": "머스터드씨드 50g"
+  },
+  "코리앤더씨드": {
+   "amount": 50,
+   "unit": "g",
+   "label": "코리앤더씨드 50g"
+  },
+  "백후추": {
+   "amount": 50,
+   "unit": "g",
+   "label": "백후추 50g"
+  },
+  "흰후춧가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "흰후춧가루 50g"
+  },
+  "백미": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "백미 1000g"
+  },
+  "멥쌀": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "멥쌀 1000g"
+  },
+  "현미쌀": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "현미쌀 1000g"
+  },
+  "흑미": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "흑미 1000g"
+  },
+  "보리": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "보리 1000g"
+  },
+  "보리쌀": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "보리쌀 1000g"
+  },
+  "찰보리": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "찰보리 1000g"
+  },
+  "귀리": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "귀리 1000g"
+  },
+  "수수": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "수수 1000g"
+  },
+  "율무": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "율무 1000g"
+  },
+  "조": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "조 1000g"
+  },
+  "좁쌀": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "좁쌀 1000g"
+  },
+  "잡곡": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "잡곡 1000g"
+  },
+  "오곡": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "오곡 1000g"
+  },
+  "퀴노아": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "퀴노아 1000g"
+  },
+  "콩": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "콩 1000g"
+  },
+  "검은콩": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "검은콩 1000g"
+  },
+  "검정콩": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "검정콩 1000g"
+  },
+  "서리태": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "서리태 1000g"
+  },
+  "강낭콩": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "강낭콩 1000g"
+  },
+  "병아리콩": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "병아리콩 1000g"
+  },
+  "팥": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "팥 1000g"
+  },
+  "대두": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "대두 1000g"
+  },
+  "콩기름": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "콩기름 1000g"
+  },
+  "식물성기름": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "식물성기름 1000g"
+  },
+  "현미유": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "현미유 1000g"
+  },
+  "땅콩기름": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "땅콩기름 1000g"
+  },
+  "참기름": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "참기름 1000g"
+  },
+  "포도주스": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "포도주스 1000g"
+  },
+  "사과주스": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "사과주스 1000g"
+  },
+  "당근주스": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "당근주스 1000g"
+  },
+  "석류주스": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "석류주스 1000g"
+  },
+  "탄산수": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "탄산수 1000g"
+  },
+  "사이다": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "사이다 1000g"
+  },
+  "맥주": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "맥주 1000g"
+  },
+  "막걸리": {
+   "amount": 1000,
+   "unit": "g",
+   "label": "막걸리 1000g"
+  },
+  "소주": {
+   "amount": 360,
+   "unit": "g",
+   "label": "소주 360g"
+  },
+  "와인": {
+   "amount": 360,
+   "unit": "g",
+   "label": "와인 360g"
+  },
+  "포도주": {
+   "amount": 360,
+   "unit": "g",
+   "label": "포도주 360g"
+  },
+  "요리술": {
+   "amount": 360,
+   "unit": "g",
+   "label": "요리술 360g"
+  },
+  "조미술": {
+   "amount": 360,
+   "unit": "g",
+   "label": "조미술 360g"
+  },
+  "미향": {
+   "amount": 360,
+   "unit": "g",
+   "label": "미향 360g"
+  },
+  "매실엑기스": {
+   "amount": 360,
+   "unit": "g",
+   "label": "매실엑기스 360g"
+  },
+  "매실농축액": {
+   "amount": 360,
+   "unit": "g",
+   "label": "매실농축액 360g"
+  },
+  "오미자청": {
+   "amount": 360,
+   "unit": "g",
+   "label": "오미자청 360g"
+  },
+  "홍초": {
+   "amount": 360,
+   "unit": "g",
+   "label": "홍초 360g"
+  },
+  "감식초": {
+   "amount": 360,
+   "unit": "g",
+   "label": "감식초 360g"
+  },
+  "포도식초": {
+   "amount": 360,
+   "unit": "g",
+   "label": "포도식초 360g"
+  },
+  "레드와인식초": {
+   "amount": 360,
+   "unit": "g",
+   "label": "레드와인식초 360g"
+  },
+  "화이트와인식초": {
+   "amount": 360,
+   "unit": "g",
+   "label": "화이트와인식초 360g"
+  },
+  "허브식초": {
+   "amount": 360,
+   "unit": "g",
+   "label": "허브식초 360g"
+  },
+  "사과즙": {
+   "amount": 360,
+   "unit": "g",
+   "label": "사과즙 360g"
+  },
+  "배즙": {
+   "amount": 360,
+   "unit": "g",
+   "label": "배즙 360g"
+  },
+  "양파즙": {
+   "amount": 360,
+   "unit": "g",
+   "label": "양파즙 360g"
+  },
+  "마늘즙": {
+   "amount": 360,
+   "unit": "g",
+   "label": "마늘즙 360g"
+  },
+  "석류즙": {
+   "amount": 360,
+   "unit": "g",
+   "label": "석류즙 360g"
+  },
+  "레몬쥬스": {
+   "amount": 360,
+   "unit": "g",
+   "label": "레몬쥬스 360g"
+  },
+  "라임주스": {
+   "amount": 360,
+   "unit": "g",
+   "label": "라임주스 360g"
+  },
+  "다시마국물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "다시마국물 360g"
+  },
+  "다시물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "다시물 360g"
+  },
+  "다시마물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "다시마물 360g"
+  },
+  "쌀뜨물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "쌀뜨물 360g"
+  },
+  "야채국물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "야채국물 360g"
+  },
+  "달걀물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "달걀물 360g"
+  },
+  "녹말물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "녹말물 360g"
+  },
+  "전분물": {
+   "amount": 360,
+   "unit": "g",
+   "label": "전분물 360g"
+  },
+  "치킨스톡": {
+   "amount": 360,
+   "unit": "g",
+   "label": "치킨스톡 360g"
+  },
+  "천연다시다": {
+   "amount": 360,
+   "unit": "g",
+   "label": "천연다시다 360g"
+  },
+  "다시팩": {
+   "amount": 360,
+   "unit": "g",
+   "label": "다시팩 360g"
+  },
+  "밀가루": {
+   "amount": 500,
+   "unit": "g",
+   "label": "밀가루 500g"
+  },
+  "우리밀가루": {
+   "amount": 500,
+   "unit": "g",
+   "label": "우리밀가루 500g"
+  },
+  "통밀가루": {
+   "amount": 500,
+   "unit": "g",
+   "label": "통밀가루 500g"
+  },
+  "덧밀가루": {
+   "amount": 500,
+   "unit": "g",
+   "label": "덧밀가루 500g"
+  },
+  "중력분": {
+   "amount": 500,
+   "unit": "g",
+   "label": "중력분 500g"
+  },
+  "강력분": {
+   "amount": 500,
+   "unit": "g",
+   "label": "강력분 500g"
+  },
+  "메밀면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "메밀면 500g"
+  },
+  "소면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "소면 500g"
+  },
+  "국수": {
+   "amount": 500,
+   "unit": "g",
+   "label": "국수 500g"
+  },
+  "우동면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "우동면 500g"
+  },
+  "우동": {
+   "amount": 500,
+   "unit": "g",
+   "label": "우동 500g"
+  },
+  "쌀국수": {
+   "amount": 500,
+   "unit": "g",
+   "label": "쌀국수 500g"
+  },
+  "칼국수면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "칼국수면 500g"
+  },
+  "스파게티면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "스파게티면 500g"
+  },
+  "파스타면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "파스타면 500g"
+  },
+  "파스타": {
+   "amount": 500,
+   "unit": "g",
+   "label": "파스타 500g"
+  },
+  "펜네": {
+   "amount": 500,
+   "unit": "g",
+   "label": "펜네 500g"
+  },
+  "푸실리": {
+   "amount": 500,
+   "unit": "g",
+   "label": "푸실리 500g"
+  },
+  "라면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "라면 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "봉": 120.0
+   }
+  },
+  "쫄면사리": {
+   "amount": 500,
+   "unit": "g",
+   "label": "쫄면사리 500g"
+  },
+  "곤약면": {
+   "amount": 500,
+   "unit": "g",
+   "label": "곤약면 500g"
+  },
+  "곤약국수": {
+   "amount": 500,
+   "unit": "g",
+   "label": "곤약국수 500g"
+  },
+  "만두피": {
+   "amount": 500,
+   "unit": "g",
+   "label": "만두피 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 5.0
+   }
+  },
+  "춘권피": {
+   "amount": 500,
+   "unit": "g",
+   "label": "춘권피 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 8.0
+   }
+  },
+  "또띠아": {
+   "amount": 500,
+   "unit": "g",
+   "label": "또띠아 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 40.0
+   }
+  },
+  "식빵": {
+   "amount": 500,
+   "unit": "g",
+   "label": "식빵 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 35.0
+   }
+  },
+  "버거빵": {
+   "amount": 500,
+   "unit": "g",
+   "label": "버거빵 500g"
+  },
+  "바케트": {
+   "amount": 500,
+   "unit": "g",
+   "label": "바케트 500g"
+  },
+  "떡": {
+   "amount": 500,
+   "unit": "g",
+   "label": "떡 500g"
+  },
+  "가래떡": {
+   "amount": 500,
+   "unit": "g",
+   "label": "가래떡 500g"
+  },
+  "떡국떡": {
+   "amount": 500,
+   "unit": "g",
+   "label": "떡국떡 500g"
+  },
+  "조랭이떡": {
+   "amount": 500,
+   "unit": "g",
+   "label": "조랭이떡 500g"
+  },
+  "누룽지": {
+   "amount": 500,
+   "unit": "g",
+   "label": "누룽지 500g"
+  },
+  "현미밥": {
+   "amount": 500,
+   "unit": "g",
+   "label": "현미밥 500g"
+  },
+  "귀리밥": {
+   "amount": 500,
+   "unit": "g",
+   "label": "귀리밥 500g"
+  },
+  "잡곡밥": {
+   "amount": 500,
+   "unit": "g",
+   "label": "잡곡밥 500g"
+  },
+  "찬밥": {
+   "amount": 500,
+   "unit": "g",
+   "label": "찬밥 500g"
+  },
+  "불린쌀": {
+   "amount": 500,
+   "unit": "g",
+   "label": "불린쌀 500g"
+  },
+  "달걀": {
+   "amount": 500,
+   "unit": "g",
+   "label": "달걀 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 50.0
+   }
+  },
+  "멸치액젓": {
+   "amount": 500,
+   "unit": "g",
+   "label": "멸치액젓 500g"
+  },
+  "액젓": {
+   "amount": 500,
+   "unit": "g",
+   "label": "액젓 500g"
+  },
+  "어간장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "어간장 500g"
+  },
+  "간편어간장": {
+   "amount": 500,
+   "unit": "g",
+   "label": "간편어간장 500g"
+  },
+  "까나리액젓": {
+   "amount": 500,
+   "unit": "g",
+   "label": "까나리액젓 500g"
+  },
+  "새우젓국": {
+   "amount": 500,
+   "unit": "g",
+   "label": "새우젓국 500g"
+  },
+  "마늘": {
+   "amount": 100,
+   "unit": "g",
+   "label": "마늘 100g"
+  },
+  "알마늘": {
+   "amount": 100,
+   "unit": "g",
+   "label": "알마늘 100g"
+  },
+  "깐마늘": {
+   "amount": 100,
+   "unit": "g",
+   "label": "깐마늘 100g"
+  },
+  "편마늘": {
+   "amount": 100,
+   "unit": "g",
+   "label": "편마늘 100g"
+  },
+  "날치알": {
+   "amount": 100,
+   "unit": "g",
+   "label": "날치알 100g"
+  },
+  "해초": {
+   "amount": 100,
+   "unit": "g",
+   "label": "해초 100g"
+  },
+  "황태머리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "황태머리 100g"
+  },
+  "쑥": {
+   "amount": 100,
+   "unit": "g",
+   "label": "쑥 100g"
+  },
+  "건조미역줄기": {
+   "amount": 100,
+   "unit": "g",
+   "label": "건조미역줄기 100g"
+  },
+  "마른미역줄기": {
+   "amount": 100,
+   "unit": "g",
+   "label": "마른미역줄기 100g"
+  },
+  "오징어몸통": {
+   "amount": 100,
+   "unit": "g",
+   "label": "오징어몸통 100g"
+  },
+  "낙지다리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "낙지다리 100g"
+  },
+  "닭뼈": {
+   "amount": 100,
+   "unit": "g",
+   "label": "닭뼈 100g"
+  },
+  "대파뿌리": {
+   "amount": 100,
+   "unit": "g",
+   "label": "대파뿌리 100g"
+  },
+  "배춧잎": {
+   "amount": 200,
+   "unit": "g",
+   "label": "배춧잎 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 50.0
+   }
+  },
+  "배추잎": {
+   "amount": 200,
+   "unit": "g",
+   "label": "배추잎 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 50.0
+   }
+  },
+  "깻잎순": {
+   "amount": 200,
+   "unit": "g",
+   "label": "깻잎순 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "장": 3.0
+   }
+  },
+  "쌈추": {
+   "amount": 200,
+   "unit": "g",
+   "label": "쌈추 200g"
+  },
+  "쌈채": {
+   "amount": 200,
+   "unit": "g",
+   "label": "쌈채 200g"
+  },
+  "봄동": {
+   "amount": 200,
+   "unit": "g",
+   "label": "봄동 200g"
+  },
+  "포항초": {
+   "amount": 200,
+   "unit": "g",
+   "label": "포항초 200g"
+  },
+  "참취": {
+   "amount": 200,
+   "unit": "g",
+   "label": "참취 200g"
+  },
+  "비름나물": {
+   "amount": 200,
+   "unit": "g",
+   "label": "비름나물 200g"
+  },
+  "돌나물": {
+   "amount": 200,
+   "unit": "g",
+   "label": "돌나물 200g"
+  },
+  "세발나물": {
+   "amount": 200,
+   "unit": "g",
+   "label": "세발나물 200g"
+  },
+  "머윗대": {
+   "amount": 200,
+   "unit": "g",
+   "label": "머윗대 200g"
+  },
+  "머위대": {
+   "amount": 200,
+   "unit": "g",
+   "label": "머위대 200g"
+  },
+  "무청": {
+   "amount": 200,
+   "unit": "g",
+   "label": "무청 200g"
+  },
+  "알토란": {
+   "amount": 200,
+   "unit": "g",
+   "label": "알토란 200g"
+  },
+  "토란": {
+   "amount": 200,
+   "unit": "g",
+   "label": "토란 200g"
+  },
+  "연근조림": {
+   "amount": 200,
+   "unit": "g",
+   "label": "연근조림 200g"
+  },
+  "인삼": {
+   "amount": 50,
+   "unit": "g",
+   "label": "인삼 50g"
+  },
+  "구기자": {
+   "amount": 50,
+   "unit": "g",
+   "label": "구기자 50g"
+  },
+  "오미자": {
+   "amount": 50,
+   "unit": "g",
+   "label": "오미자 50g"
+  },
+  "라면스프": {
+   "amount": 50,
+   "unit": "g",
+   "label": "라면스프 50g"
+  },
+  "검정깨": {
+   "amount": 50,
+   "unit": "g",
+   "label": "검정깨 50g"
+  },
+  "흰깨": {
+   "amount": 50,
+   "unit": "g",
+   "label": "흰깨 50g"
+  },
+  "잣가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "잣가루 50g"
+  },
+  "땅콩가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "땅콩가루 50g"
+  },
+  "실치": {
+   "amount": 50,
+   "unit": "g",
+   "label": "실치 50g"
+  },
+  "앤쵸비": {
+   "amount": 50,
+   "unit": "g",
+   "label": "앤쵸비 50g"
+  },
+  "버섯": {
+   "amount": 150,
+   "unit": "g",
+   "label": "버섯 150g"
+  },
+  "새송이": {
+   "amount": 150,
+   "unit": "g",
+   "label": "새송이 150g"
+  },
+  "미니새송이": {
+   "amount": 150,
+   "unit": "g",
+   "label": "미니새송이 150g"
+  },
+  "백일송이": {
+   "amount": 150,
+   "unit": "g",
+   "label": "백일송이 150g"
+  },
+  "만송이": {
+   "amount": 150,
+   "unit": "g",
+   "label": "만송이 150g"
+  },
+  "백만송이": {
+   "amount": 150,
+   "unit": "g",
+   "label": "백만송이 150g"
+  },
+  "느타리": {
+   "amount": 150,
+   "unit": "g",
+   "label": "느타리 150g"
+  },
+  "팽이": {
+   "amount": 150,
+   "unit": "g",
+   "label": "팽이 150g"
+  },
+  "표고": {
+   "amount": 150,
+   "unit": "g",
+   "label": "표고 150g"
+  },
+  "당근": {
+   "amount": 200,
+   "unit": "g",
+   "label": "당근 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 150.0
+   }
+  },
+  "오이": {
+   "amount": 200,
+   "unit": "g",
+   "label": "오이 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 200.0
+   }
+  },
+  "대파": {
+   "amount": 200,
+   "unit": "g",
+   "label": "대파 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 100.0
+   }
+  },
+  "깐대파": {
+   "amount": 200,
+   "unit": "g",
+   "label": "깐대파 200g"
+  },
+  "파": {
+   "amount": 200,
+   "unit": "g",
+   "label": "파 200g"
+  },
+  "토마토콩카세": {
+   "amount": 200,
+   "unit": "g",
+   "label": "토마토콩카세 200g"
+  },
+  "캔참치": {
+   "amount": 200,
+   "unit": "g",
+   "label": "캔참치 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 150.0
+   }
+  },
+  "참치캔": {
+   "amount": 200,
+   "unit": "g",
+   "label": "참치캔 200g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 150.0
+   }
+  },
+  "꼬치": {
+   "amount": 200,
+   "unit": "g",
+   "label": "꼬치 200g"
+  },
+  "양파": {
+   "amount": 500,
+   "unit": "g",
+   "label": "양파 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 200.0
+   }
+  },
+  "양배추": {
+   "amount": 500,
+   "unit": "g",
+   "label": "양배추 500g",
+   "unitGrams": {
+    "g": 1.0,
+    "개": 1000.0
+   }
+  },
+  "고기": {
+   "amount": 400,
+   "unit": "g",
+   "label": "고기 400g"
+  },
+  "갈비": {
+   "amount": 400,
+   "unit": "g",
+   "label": "갈비 400g"
+  },
+  "생선": {
+   "amount": 300,
+   "unit": "g",
+   "label": "생선 300g"
+  },
+  "살코기": {
+   "amount": 300,
+   "unit": "g",
+   "label": "살코기 300g"
+  },
+  "다짐육": {
+   "amount": 300,
+   "unit": "g",
+   "label": "다짐육 300g"
+  },
+  "분쇄육": {
+   "amount": 300,
+   "unit": "g",
+   "label": "분쇄육 300g"
+  },
+  "나물": {
+   "amount": 200,
+   "unit": "g",
+   "label": "나물 200g"
+  },
+  "채소": {
+   "amount": 200,
+   "unit": "g",
+   "label": "채소 200g"
+  },
+  "야채": {
+   "amount": 200,
+   "unit": "g",
+   "label": "야채 200g"
+  },
+  "가루": {
+   "amount": 50,
+   "unit": "g",
+   "label": "가루 50g"
   }
  }
 }

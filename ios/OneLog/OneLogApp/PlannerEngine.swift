@@ -254,11 +254,25 @@ func budgetEstimate(
     var lines: [BudgetLineItem] = []
 
     for item in items {
-        guard let price = prices[item.ingredientID], price.unit == item.unit, price.packageAmount.isFinite, price.packageAmount > 0, price.price >= 0, abs(price.packageAmount - item.packageSize.amount) < epsilon, item.precision != .manual else {
+        let matchingPrice: IngredientPrice?
+        if let candidate = prices[item.ingredientID],
+           candidate.unit == item.unit,
+           candidate.packageAmount.isFinite,
+           candidate.packageAmount > 0,
+           candidate.price >= 0,
+           abs(candidate.packageAmount - item.packageSize.amount) < epsilon {
+            matchingPrice = candidate
+        } else {
+            matchingPrice = nil
+        }
+
+        // 수량 미상 재고(`.estimated`)로 계산한 구매 포장은 예상값일 뿐이다.
+        // 가격이 확인되어도 확정 잔여 예산으로 승격하지 않는다.
+        guard let price = matchingPrice, item.precision == .exact else {
             // 판매 단위·단위 충돌로 구매량을 못 낸 품목도 금액 미산정으로 잡아야
             // 잔여 예산을 `확정`처럼 보여주지 않는다(AGENTS 8절).
-            if item.purchaseQuantity > 0 || item.precision == .manual { unknownIDs.append(item.ingredientID) }
-            lines.append(BudgetLineItem(shoppingItem: item, price: prices[item.ingredientID], knownCost: nil, avoidedPackageCount: 0))
+            if item.purchaseQuantity > 0 || item.precision != .exact { unknownIDs.append(item.ingredientID) }
+            lines.append(BudgetLineItem(shoppingItem: item, price: matchingPrice ?? prices[item.ingredientID], knownCost: nil, avoidedPackageCount: 0))
             continue
         }
 
@@ -291,6 +305,7 @@ func isRecommendable(_ recipe: Recipe, preferences: AppPreferences) -> Bool {
     let IDs = Set(recipe.ingredients.map(\.ingredientID))
     guard !preferences.dislikedRecipeIDs.contains(recipe.id) else { return false }
     guard preferences.dislikedIngredientIDs.isDisjoint(with: IDs) else { return false }
+    guard preferences.allergyIngredientIDs.isDisjoint(with: IDs) else { return false }
     guard recipe.requiredTools.isSubset(of: preferences.availableTools) else { return false }
     return true
 }
@@ -338,8 +353,29 @@ private func recipeCostScore(_ recipe: Recipe, request: PlanRequest) -> Int {
     // 가격이 하나라도 없으면 어차피 미산정(0)이다. 무거운 계산을 돌리지 않는다.
     guard hasPriceForEveryIngredient(recipe, prices: request.prices) else { return 0 }
     let draft = PlannedMealDraft(recipeID: recipe.id, date: request.startDate, mealSlot: recipe.mealSlots.first ?? .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
-    let estimate = budgetEstimate(drafts: [draft], targetBudget: request.targetBudget, inventory: request.inventory, prices: request.prices)
+    let estimate = budgetEstimate(drafts: [draft], targetBudget: request.targetBudget, inventory: request.inventory, prices: request.prices, packageOverrides: request.packageOverrides)
     return estimate.isComplete ? estimate.knownPurchaseCost : 0
+}
+
+/// 가격 근거가 완전한 경우에만 목표 예산을 강제한다. 가격이 비어 있거나
+/// 수량 미상·판매 단위 확인 전이면 추측으로 후보를 탈락시키지 않고 화면에서
+/// 사용자가 확인할 수 있게 둔다.
+private func candidateFitsBudget(
+    _ candidate: Recipe,
+    date: String,
+    slot: MealSlot,
+    existing: [PlannedMealDraft],
+    request: PlanRequest
+) -> Bool {
+    let draft = PlannedMealDraft(recipeID: candidate.id, date: date, mealSlot: slot, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+    let estimate = budgetEstimate(
+        drafts: existing + [draft],
+        targetBudget: request.targetBudget,
+        inventory: request.inventory,
+        prices: request.prices,
+        packageOverrides: request.packageOverrides
+    )
+    return !estimate.isComplete || estimate.knownPurchaseCost <= max(request.targetBudget, 0)
 }
 
 private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOption {
@@ -353,7 +389,9 @@ private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOp
     for date in orderedDates {
         let slots = MealSlot.allCases.filter { request.slotsByDate[date]?.contains($0) == true }
         for (slotIndex, slot) in slots.enumerated() {
-            let candidates = candidateRecipes(for: slot, request: request)
+            let candidates = candidateRecipes(for: slot, request: request).filter {
+                candidateFitsBudget($0, date: date, slot: slot, existing: picks, request: request)
+            }
             guard !candidates.isEmpty else {
                 unfilled += 1
                 continue
@@ -406,7 +444,10 @@ private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOp
 }
 
 func generateMealPlanOptions(request: PlanRequest) -> [MealPlanOption] {
-    guard request.days > 0, request.days <= 7, request.slotsByDate.values.contains(where: { !$0.isEmpty }) else { return [] }
+    guard request.days > 0,
+          request.days <= 7,
+          request.targetBudget > 0,
+          request.slotsByDate.values.contains(where: { !$0.isEmpty }) else { return [] }
     return (0..<3).map { generatedPlan(for: request, variant: $0) }
 }
 
@@ -441,7 +482,7 @@ func leftoverRecommendations(inventory: [InventoryItem], preferences: AppPrefere
 }
 
 func upgradeSuggestions(for option: MealPlanOption, request: PlanRequest) -> [UpgradeSuggestion] {
-    let current = budgetEstimate(drafts: option.drafts, targetBudget: request.targetBudget, inventory: request.inventory, prices: request.prices)
+    let current = budgetEstimate(drafts: option.drafts, targetBudget: request.targetBudget, inventory: request.inventory, prices: request.prices, packageOverrides: request.packageOverrides)
     guard let remaining = current.remainingBudget else { return [] }
     var suggestions: [UpgradeSuggestion] = []
 
@@ -453,7 +494,7 @@ func upgradeSuggestions(for option: MealPlanOption, request: PlanRequest) -> [Up
             var replacement = option.drafts
             guard let index = replacement.firstIndex(where: { $0.id == draft.id }) else { continue }
             replacement[index] = PlannedMealDraft(recipeID: candidate.id, date: draft.date, mealSlot: draft.mealSlot, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
-            let estimate = budgetEstimate(drafts: replacement, targetBudget: request.targetBudget, inventory: request.inventory, prices: request.prices)
+            let estimate = budgetEstimate(drafts: replacement, targetBudget: request.targetBudget, inventory: request.inventory, prices: request.prices, packageOverrides: request.packageOverrides)
             guard estimate.isComplete else { continue }
             let delta = estimate.knownPurchaseCost - current.knownPurchaseCost
             guard delta > 0, delta <= remaining else { continue }
