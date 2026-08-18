@@ -3,13 +3,14 @@ import SwiftUI
 /// F03·F08·F22 식단관리. 피그마 `식단 관리 1 / 메인`(454:29) 좌표를 그대로 옮긴다.
 /// 시안 프레임은 393x852이고 본문은 좌우 20, 폭 353, 상태바(34) 아래 18에서 시작한다.
 ///
-/// 시안 3~5(레시피 상세·일정 변경·요리 완료)는 아직 없어서 기존 시트를 그대로 쓴다.
+/// 이어지는 화면도 시안대로다: 식단 변경(467:117), 요리 완료(467:161), 남은 재료 활용(467:205),
+/// 지난 식단 기록(467:249).
 struct MealsView: View {
     @EnvironmentObject private var store: AppStore
     @State private var selectedDate: String?
     @State private var cookingMeal: PlannedMeal?
-    @State private var movingMeal: PlannedMeal?
-    @State private var replacingMeal: PlannedMeal?
+    @State private var changingMeal: PlannedMeal?
+    @State private var isLeftoverPresented = false
 
     private var planned: [PlannedMeal] { store.plannedMeals.filter { $0.status == .planned } }
     private var cooked: [PlannedMeal] { store.plannedMeals.filter { $0.status == .cooked } }
@@ -73,11 +74,11 @@ struct MealsView: View {
             .sheet(item: $cookingMeal) { meal in
                 CookingView(meal: meal).environmentObject(store)
             }
-            .sheet(item: $movingMeal) { meal in
-                MealMoveView(meal: meal).environmentObject(store)
+            .sheet(item: $changingMeal) { meal in
+                MealChangeView(meal: meal).environmentObject(store)
             }
-            .sheet(item: $replacingMeal) { meal in
-                MealReplaceView(meal: meal).environmentObject(store)
+            .navigationDestination(isPresented: $isLeftoverPresented) {
+                LeftoverUseView().environmentObject(store)
             }
         }
     }
@@ -315,7 +316,7 @@ struct MealsView: View {
 
                 HStack(spacing: 8) {
                     Button {
-                        movingMeal = meal
+                        changingMeal = meal
                     } label: {
                         Text("일정 변경")
                             .figmaText(11, .medium)
@@ -348,14 +349,10 @@ struct MealsView: View {
         }
         // 시안에 없는 메뉴 교체·삭제(F22)는 길게 눌러 쓴다.
         .contextMenu {
-            if meal.status == .planned {
-                Button("메뉴 바꾸기") { replacingMeal = meal }
-                Button("먹지 않았어요 — 삭제", role: .destructive) { store.removeMeal(meal.id) }
-            } else {
-                Button("기록 삭제", role: .destructive) { store.removeMeal(meal.id) }
-            }
+            Button("식단 변경") { changingMeal = meal }
+            Button("삭제", role: .destructive) { store.removeMeal(meal.id) }
         }
-        .accessibilityAction(named: "메뉴 바꾸기") { if meal.status == .planned { replacingMeal = meal } }
+        .accessibilityAction(named: "식단 변경") { changingMeal = meal }
         .accessibilityAction(named: "식사 삭제") { store.removeMeal(meal.id) }
     }
 
@@ -525,77 +522,6 @@ struct CareCard<Content: View>: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(fill, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
             .oneLogCardShadow()
-    }
-}
-
-// MARK: - 지난 식단 기록 (시안 `식단 관리 7`은 아직 없어 최소 화면으로 둔다)
-
-private struct MealHistoryView: View {
-    @EnvironmentObject private var store: AppStore
-    @Environment(\.dismiss) private var dismiss
-
-    private var cooked: [PlannedMeal] { store.plannedMeals.filter { $0.status == .cooked } }
-
-    var body: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 12) {
-                CareHeader(title: "지난 식단 기록", trailing: "\(cooked.count)끼") { dismiss() }
-
-                CareCard(padding: EdgeInsets(top: 12, leading: 14, bottom: 12, trailing: 14)) {
-                    VStack(alignment: .leading, spacing: 5) {
-                        Text("이번 달 아낀 금액")
-                            .figmaText(11, .medium)
-                            .foregroundStyle(CarePalette.muted)
-                        Text(won(store.monthlyConfirmedSavings))
-                            .figmaText(16, .bold)
-                            .foregroundStyle(CarePalette.ink)
-                        Text("확인한 가격이 있는 품목만 셌어요.")
-                            .figmaText(11, .medium)
-                            .foregroundStyle(CarePalette.muted)
-                    }
-                }
-
-                if cooked.isEmpty {
-                    CareCard(padding: EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16)) {
-                        Text("아직 완료한 식사가 없어요.")
-                            .figmaText(13, .medium)
-                            .foregroundStyle(CarePalette.muted)
-                    }
-                } else {
-                    CareCard {
-                        VStack(spacing: 0) {
-                            ForEach(Array(cooked.enumerated()), id: \.element.id) { index, meal in
-                                HStack(spacing: 8) {
-                                    Text(shortWeekdayDay(meal.date))
-                                        .figmaText(16, .bold)
-                                        .foregroundStyle(CarePalette.ink)
-                                    Text("\(meal.mealSlot.rawValue) · \(recipe(for: meal.recipeID)?.title ?? "삭제된 메뉴")")
-                                        .figmaText(13, .medium)
-                                        .foregroundStyle(CarePalette.muted)
-                                        .lineLimit(1)
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                    Text("완료")
-                                        .figmaText(11, .medium)
-                                        .foregroundStyle(CarePalette.muted)
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 10)
-                                .frame(height: 40)
-
-                                if index < cooked.count - 1 {
-                                    Rectangle().fill(CarePalette.divider).frame(height: 1)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            .padding(.horizontal, 20)
-            .padding(.top, 8)
-            .padding(.bottom, 24)
-        }
-        .background(CarePalette.canvas)
-        .toolbar(.hidden, for: .navigationBar)
     }
 }
 
@@ -771,11 +697,30 @@ private struct CookingView: View {
     @State private var actualQuantities: [String: String] = [:]
     @State private var remainingQuantities: [String: String] = [:]
     @State private var recordsRemaining: Set<String> = []
+    /// 완료하면 시안 `식단 관리 5 / 요리 완료`로 넘어간다.
+    @State private var doneConsumptions: [CookingConsumption]?
+    @State private var showsLeftovers = false
 
     private var recipeModel: Recipe? { recipe(for: meal.recipeID) }
 
     var body: some View {
         NavigationStack {
+            Group {
+                if let doneConsumptions {
+                    if showsLeftovers {
+                        LeftoverUseView().environmentObject(store)
+                    } else {
+                        CookingDoneView(consumptions: doneConsumptions) { showsLeftovers = true }
+                            .environmentObject(store)
+                    }
+                } else {
+                    cookingForm
+                }
+            }
+        }
+    }
+
+    private var cookingForm: some View {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
                     if let recipeModel {
@@ -868,7 +813,6 @@ private struct CookingView: View {
                     if actualQuantities[key] == nil { actualQuantities[key] = formatQuantity(item.quantity) }
                 }
             }
-        }
     }
 
     private func actualBinding(for key: String, defaultValue: Double) -> Binding<String> {
@@ -899,11 +843,551 @@ private struct CookingView: View {
             let remaining = recordsRemaining.contains(key) ? Double(remainingQuantities[key] ?? "") : nil
             return CookingConsumption(ingredientID: item.ingredientID, unit: item.unit, expectedQuantity: item.quantity, actualQuantity: max(actual, 0), remainingQuantity: remaining)
         }
-        if store.completeMeal(meal.id, consumptions: consumptions) { dismiss() }
+        if store.completeMeal(meal.id, consumptions: consumptions) { doneConsumptions = consumptions }
     }
 }
 
 private func dateFromISO(_ value: String) -> Date {
+    let formatter = DateFormatter()
+    formatter.calendar = Calendar(identifier: .gregorian)
+    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.timeZone = TimeZone(identifier: "Asia/Seoul")
+    formatter.dateFormat = "yyyy-MM-dd"
+    return formatter.date(from: value) ?? Date()
+}
+
+// MARK: - 식단 변경 (467:117)
+
+/// 시안 `식단 관리 4 / 일정 변경`. 네 갈래를 한 화면에서 고른다.
+private struct MealChangeView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    let meal: PlannedMeal
+
+    @State private var isMovePresented = false
+    @State private var isReplacePresented = false
+    @State private var isDeleteConfirmPresented = false
+
+    private var title: String { recipe(for: meal.recipeID)?.title ?? "이 메뉴" }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 12) {
+                    CareHeader(title: "식단 변경") { dismiss() }
+
+                    HStack {
+                        Text(meal.status.label)
+                            .figmaText(11, .medium)
+                            .foregroundStyle(CarePalette.muted)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .frame(height: 82)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 18, style: .continuous)
+                            .strokeBorder(style: StrokeStyle(lineWidth: 1, dash: [4, 4]))
+                            .foregroundStyle(CarePalette.line)
+                    }
+                    .overlay(alignment: .center) {
+                        Text("\(displayDate(meal.date)) · \(meal.mealSlot.rawValue)")
+                            .figmaText(11, .medium)
+                            .foregroundStyle(CarePalette.muted)
+                    }
+
+                    Text("\(title)을(를) 어떻게 할까요?")
+                        .figmaText(24, .bold)
+                        .foregroundStyle(CarePalette.ink)
+
+                    Text("재료와 남은 예산은 선택에 맞춰 다시 계산돼요.")
+                        .figmaText(13, .medium)
+                        .foregroundStyle(CarePalette.muted)
+
+                    VStack(spacing: 8) {
+                        option("다른 날로 미루기", "식단 안의 다른 날짜·끼니로 이동") { isMovePresented = true }
+                        option("다른 메뉴로 바꾸기", "같은 끼니에 올 수 있는 메뉴로 교체") { isReplacePresented = true }
+                        option(meal.status == .skipped ? "다시 예정으로 되돌리기" : "오늘만 비활성화",
+                               "재료는 차감하지 않고 그대로 보관") {
+                            store.setMealSkipped(meal.id, skipped: meal.status != .skipped)
+                            dismiss()
+                        }
+                        option("식단에서 삭제", "남은 예산과 장보기 목록 다시 계산") { isDeleteConfirmPresented = true }
+                    }
+
+                    Button { dismiss() } label: {
+                        Text("변경 완료")
+                            .figmaText(16, .bold)
+                            .foregroundStyle(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(Color(hex: 0x12120F), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .padding(.top, 4)
+                }
+                .padding(.horizontal, 20)
+                .padding(.top, 8)
+                .padding(.bottom, 24)
+            }
+            .background(CarePalette.canvas)
+            .toolbar(.hidden, for: .navigationBar)
+            .sheet(isPresented: $isMovePresented) {
+                MealMoveView(meal: meal).environmentObject(store)
+            }
+            .sheet(isPresented: $isReplacePresented) {
+                MealReplaceView(meal: meal).environmentObject(store)
+            }
+            .confirmationDialog("이 식사를 삭제할까요?", isPresented: $isDeleteConfirmPresented, titleVisibility: .visible) {
+                Button("삭제", role: .destructive) {
+                    store.removeMeal(meal.id)
+                    dismiss()
+                }
+                Button("취소", role: .cancel) {}
+            } message: {
+                Text("남은 예산과 장보기 목록을 다시 계산해요.")
+            }
+        }
+    }
+
+    private func option(_ title: String, _ caption: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack {
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(title).figmaText(16, .bold).foregroundStyle(CarePalette.ink)
+                    Text(caption).figmaText(11, .medium).foregroundStyle(CarePalette.muted)
+                }
+                Spacer(minLength: 8)
+                Text("›").figmaText(24, .bold).foregroundStyle(CarePalette.ink)
+            }
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .frame(height: 56)
+            .background(.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .overlay {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .strokeBorder(CarePalette.line, lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+// MARK: - 요리 완료 (467:161)
+
+/// 시안 `식단 관리 5 / 요리 완료`. 조리 후 재고가 얼마나 남았는지 보여준다.
+struct CookingDoneView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    let consumptions: [CookingConsumption]
+    let onUseLeftovers: () -> Void
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                CareHeader(title: "요리 완료") { dismiss() }
+
+                VStack(spacing: 6) {
+                    Text("✓")
+                        .figmaText(16, .bold)
+                        .foregroundStyle(CarePalette.ink)
+                        .frame(width: 54, height: 54)
+                        .background(CarePalette.brand, in: Circle())
+                    Text("한 끼를 완성했어요!")
+                        .figmaText(24, .bold)
+                        .foregroundStyle(CarePalette.ink)
+                    Text("사용한 재료를 냉장고에서 자동으로 차감했어요.")
+                        .figmaText(11, .medium)
+                        .foregroundStyle(CarePalette.muted)
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 130)
+
+                CareCard(padding: EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 16)) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("재료 사용 결과")
+                            .figmaText(16, .bold)
+                            .foregroundStyle(CarePalette.ink)
+
+                        ForEach(Array(consumptions.enumerated()), id: \.offset) { index, consumption in
+                            HStack {
+                                Text("\(ingredient(for: consumption.ingredientID)?.name ?? "재료") \(formatQuantity(consumption.actualQuantity, unit: consumption.unit))")
+                                    .figmaText(13, .medium)
+                                    .foregroundStyle(CarePalette.itemText)
+                                Spacer(minLength: 8)
+                                Text(remainingText(consumption))
+                                    .figmaText(16, .bold)
+                                    .foregroundStyle(CarePalette.ink)
+                            }
+                            .padding(.vertical, 11)
+                            .frame(height: 44)
+
+                            if index < consumptions.count - 1 {
+                                Rectangle().fill(CarePalette.divider).frame(height: 1)
+                            }
+                        }
+                    }
+                }
+
+                Button(action: onUseLeftovers) {
+                    Text("남은 재료 활용하기")
+                        .figmaText(16, .bold)
+                        .foregroundStyle(CarePalette.onDark)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(CarePalette.dark, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("cooking.useLeftovers")
+
+                Button { dismiss() } label: {
+                    Text("식단관리로 돌아가기")
+                        .figmaText(16, .bold)
+                        .foregroundStyle(CarePalette.itemText)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .overlay {
+                            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                .strokeBorder(CarePalette.line, lineWidth: 1)
+                        }
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+        .background(CarePalette.canvas)
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    /// 남은 양은 냉장고에 실제로 기록된 값만 보여준다. 없으면 지어내지 않는다.
+    private func remainingText(_ consumption: CookingConsumption) -> String {
+        let stock = store.state.inventory.first {
+            $0.ingredientID == consumption.ingredientID && $0.unit == consumption.unit && $0.quantityStatus == .exact
+        }
+        guard let quantity = stock?.quantity else { return "남은 양 미확인" }
+        return "\(formatQuantity(quantity, unit: consumption.unit)) 남음"
+    }
+}
+
+// MARK: - 남은 재료 활용 (467:205)
+
+/// 시안 `식단 관리 6 / 남은 재료 활용`.
+struct LeftoverUseView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    @State private var addingRecipe: Recipe?
+
+    private var leftovers: [InventoryItem] {
+        store.state.inventory
+            .filter { ($0.quantity ?? 0) > 0 || $0.quantityStatus == .unknown }
+            .sorted { ($0.quantity ?? 0) > ($1.quantity ?? 0) }
+    }
+
+    private var recommendations: [LeftoverRecommendation] {
+        Array(leftoverRecommendations(inventory: store.state.inventory, preferences: store.state.preferences).prefix(5))
+    }
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                CareHeader(title: "남은 재료 활용") { dismiss() }
+
+                CareCard(padding: EdgeInsets(top: 14, leading: 16, bottom: 14, trailing: 16)) {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("먼저 사용하면 좋은 재료")
+                            .figmaText(16, .bold)
+                            .foregroundStyle(CarePalette.ink)
+
+                        if leftovers.isEmpty {
+                            Text("냉장고에 기록된 재료가 없어요.")
+                                .figmaText(11, .medium)
+                                .foregroundStyle(CarePalette.muted)
+                                .padding(.vertical, 12)
+                        }
+
+                        ForEach(Array(leftovers.prefix(6).enumerated()), id: \.element.id) { index, item in
+                            HStack {
+                                Text(ingredient(for: item.ingredientID)?.name ?? item.ingredientID)
+                                    .figmaText(13, .medium)
+                                    .foregroundStyle(CarePalette.itemText)
+                                Spacer(minLength: 8)
+                                Text(leftoverText(item))
+                                    .figmaText(16, .bold)
+                                    .foregroundStyle(CarePalette.ink)
+                            }
+                            .padding(.vertical, 10)
+                            .frame(height: 42)
+
+                            if index < min(leftovers.count, 6) - 1 {
+                                Rectangle().fill(CarePalette.divider).frame(height: 1)
+                            }
+                        }
+                    }
+                }
+
+                HStack {
+                    Text("다음 한 끼 추천").figmaText(16, .bold).foregroundStyle(CarePalette.ink)
+                    Spacer(minLength: 8)
+                    Text("남은 재료 기준").figmaText(11, .medium).foregroundStyle(CarePalette.muted)
+                }
+                .frame(height: 22)
+
+                if recommendations.isEmpty {
+                    CareCard(padding: EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)) {
+                        Text("추천할 메뉴가 아직 없어요. 냉장고에 남은 재료를 기록해 보세요.")
+                            .figmaText(11, .medium)
+                            .foregroundStyle(CarePalette.muted)
+                    }
+                }
+
+                ForEach(recommendations, id: \.recipe.id) { recommendation in
+                    recommendationCard(recommendation)
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+        .background(CarePalette.canvas)
+        .toolbar(.hidden, for: .navigationBar)
+        .sheet(item: $addingRecipe) { recipe in
+            LeftoverAddView(recipe: recipe).environmentObject(store)
+        }
+    }
+
+    private func leftoverText(_ item: InventoryItem) -> String {
+        guard item.quantityStatus == .exact, let quantity = item.quantity else { return "수량 미상" }
+        var text = formatQuantity(quantity, unit: item.unit)
+        if let note = ingredient(for: item.ingredientID)?.storageNote { text += " · \(note)" }
+        return text
+    }
+
+    private func recommendationCard(_ recommendation: LeftoverRecommendation) -> some View {
+        CareCard(padding: EdgeInsets(top: 12, leading: 12, bottom: 12, trailing: 12)) {
+            HStack(spacing: 12) {
+                Text(recommendation.recipe.symbolName)
+                    .figmaText(24)
+                    .frame(width: 80, height: 72)
+                    .background(CarePalette.thumb, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(recommendation.additionalPurchaseItems.isEmpty ? "추가 구매 없음" : "\(recommendation.additionalPurchaseItems.count)가지만 더 사면 돼요")
+                        .figmaText(11, .medium)
+                        .foregroundStyle(CarePalette.itemText)
+                        .padding(.horizontal, 7)
+                        .padding(.vertical, 3)
+                        .background(CarePalette.daySelected, in: Capsule())
+
+                    Text(recommendation.recipe.title)
+                        .figmaText(16, .bold)
+                        .foregroundStyle(CarePalette.ink)
+                        .lineLimit(1)
+
+                    Text(metaText(recommendation.recipe))
+                        .figmaText(11, .medium)
+                        .foregroundStyle(CarePalette.muted)
+
+                    HStack(spacing: 6) {
+                        NavigationLink {
+                            // 시안 `식단 관리 3 / 레시피 상세`는 레시피 탭 상세(391:598 계열)와 같은 화면을 쓴다.
+                            RecipeDetailView(recipeID: recommendation.recipe.id)
+                                .environmentObject(store)
+                        } label: {
+                            Text("레시피 보기")
+                                .figmaText(11, .medium)
+                                .foregroundStyle(CarePalette.itemText)
+                                .padding(.horizontal, 9)
+                                .padding(.vertical, 5)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 9, style: .continuous)
+                                        .strokeBorder(CarePalette.line, lineWidth: 1)
+                                }
+                        }
+                        .buttonStyle(.plain)
+
+                        Button {
+                            addingRecipe = recommendation.recipe
+                        } label: {
+                            Text("식단에 추가")
+                                .figmaText(11, .medium)
+                                .foregroundStyle(CarePalette.ink)
+                                .padding(.horizontal, 9)
+                                .padding(.vertical, 5)
+                                .background(CarePalette.brand, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
+    }
+
+    private func metaText(_ item: Recipe) -> String {
+        if let label = recipeDifficultyLabel(item) { return "\(label) · \(item.cookTimeText)" }
+        return item.cookTimeText
+    }
+}
+
+/// 남은 재료 추천을 실제 식단에 넣는 작은 시트. 날짜·끼니만 고른다.
+private struct LeftoverAddView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    let recipe: Recipe
+
+    @State private var date = Date()
+    @State private var slot: MealSlot = .dinner
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("메뉴") {
+                    LabeledContent(recipe.title, value: recipe.cookTimeText)
+                }
+                Section("언제 먹을까요?") {
+                    DatePicker("날짜", selection: $date, displayedComponents: .date)
+                        .environment(\.locale, Locale(identifier: "ko_KR"))
+                    Picker("끼니", selection: $slot) {
+                        ForEach(recipe.mealSlots) { slot in Text(slot.rawValue).tag(slot) }
+                    }
+                }
+            }
+            .navigationTitle("식단에 추가")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) { Button("취소") { dismiss() } }
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("추가") {
+                        _ = store.addPlannedMeal(recipeID: recipe.id, date: isoDateString(date), slot: slot)
+                        dismiss()
+                    }
+                }
+            }
+            .onAppear { slot = recipe.mealSlots.first ?? .dinner }
+        }
+    }
+}
+
+// MARK: - 지난 식단 기록 (467:249)
+
+/// 시안 `식단 관리 7 / 지난 식단 기록`. 연속된 날짜를 한 식단으로 묶는다.
+struct MealHistoryView: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+
+    private var cooked: [PlannedMeal] { store.plannedMeals.filter { $0.status == .cooked } }
+
+    /// 완료한 끼니를 날짜가 이어지는 덩어리로 묶는다(하루 이상 비면 다른 식단으로 본다).
+    private var periods: [(dates: [String], meals: [PlannedMeal])] {
+        let sorted = cooked.sorted { $0.date < $1.date }
+        var groups: [[PlannedMeal]] = []
+        for meal in sorted {
+            if var last = groups.last, let lastDate = last.last?.date, daysBetweenDates(lastDate, meal.date) <= 1 {
+                last.append(meal)
+                groups[groups.count - 1] = last
+            } else {
+                groups.append([meal])
+            }
+        }
+        return groups.reversed().map { group in
+            (Array(Set(group.map(\.date))).sorted(), group)
+        }
+    }
+
+    var body: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 12) {
+                CareHeader(title: "지난 식단 기록") { dismiss() }
+
+                HStack(spacing: 10) {
+                    CareCard(padding: EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14)) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("누적 완료").figmaText(11, .medium).foregroundStyle(CarePalette.muted)
+                            Text("\(cooked.count)끼").figmaText(24, .bold).foregroundStyle(CarePalette.ink)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    CareCard(padding: EdgeInsets(top: 14, leading: 14, bottom: 14, trailing: 14), fill: CarePalette.thumb) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("이번 달 절약").figmaText(11, .medium).foregroundStyle(CarePalette.muted)
+                            Text(won(store.monthlyConfirmedSavings))
+                                .figmaText(24, .bold)
+                                .foregroundStyle(CarePalette.ink)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.6)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                }
+                .frame(height: 82)
+
+                if periods.isEmpty {
+                    CareCard(padding: EdgeInsets(top: 20, leading: 16, bottom: 20, trailing: 16)) {
+                        Text("아직 완료한 식사가 없어요.")
+                            .figmaText(13, .medium)
+                            .foregroundStyle(CarePalette.muted)
+                    }
+                } else {
+                    CareCard(padding: EdgeInsets(top: 4, leading: 16, bottom: 4, trailing: 16)) {
+                        VStack(spacing: 0) {
+                            ForEach(Array(periods.enumerated()), id: \.offset) { index, period in
+                                HStack {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        Text(periodTitle(period.dates))
+                                            .figmaText(16, .bold)
+                                            .foregroundStyle(CarePalette.ink)
+                                        Text("\(period.dates.count)일 식단 · \(period.meals.count)끼 완료")
+                                            .figmaText(11, .medium)
+                                            .foregroundStyle(CarePalette.muted)
+                                    }
+                                    Spacer(minLength: 8)
+                                }
+                                .padding(.vertical, 12)
+                                .frame(height: 66)
+
+                                if index < periods.count - 1 {
+                                    Rectangle().fill(CarePalette.divider).frame(height: 1)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                Button { dismiss() } label: {
+                    Text("현재 식단으로 돌아가기")
+                        .figmaText(16, .bold)
+                        .foregroundStyle(CarePalette.onDark)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 48)
+                        .background(CarePalette.dark, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                }
+                .buttonStyle(.plain)
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+            .padding(.bottom, 24)
+        }
+        .background(CarePalette.canvas)
+        .toolbar(.hidden, for: .navigationBar)
+    }
+
+    private func periodTitle(_ dates: [String]) -> String {
+        guard let first = dates.first, let last = dates.last else { return "" }
+        return first == last ? displayDate(first) : "\(displayDate(first)) - \(displayDate(last))"
+    }
+}
+
+func daysBetweenDates(_ from: String, _ to: String) -> Int {
+    var calendar = Calendar(identifier: .gregorian)
+    calendar.timeZone = TimeZone(identifier: "Asia/Seoul") ?? .current
+    let start = calendar.startOfDay(for: isoDate(from))
+    let end = calendar.startOfDay(for: isoDate(to))
+    return abs(calendar.dateComponents([.day], from: start, to: end).day ?? 0)
+}
+
+func isoDate(_ value: String) -> Date {
     let formatter = DateFormatter()
     formatter.calendar = Calendar(identifier: .gregorian)
     formatter.locale = Locale(identifier: "en_US_POSIX")

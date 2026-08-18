@@ -19,6 +19,8 @@ struct PlanView: View {
     @State private var optionBeingEditedID: String?
     @State private var swappingDraft: PlannedMealDraft?
     @State private var validationMessage: String?
+    /// 시안 `식단 만들기 11 / 계란 구매 단위 선택`(430:23)을 여는 품목.
+    @State private var unitPickerItem: ShoppingPlanItem?
 
     /// 시안 `n / 11`. 9·10단계 시안이 아직 없어 마지막 가격 확인을 9로 쓴다.
     private let totalSteps = 11
@@ -59,6 +61,9 @@ struct PlanView: View {
         .background(PlanPalette.canvas)
         // 홈에서는 시트, 내 식사에서는 푸시로 열린다. 두 경우 다 시안 헤더만 보여준다.
         .toolbar(.hidden, for: .navigationBar)
+        .sheet(item: $unitPickerItem) { item in
+            PurchaseUnitPicker(item: item).environmentObject(store)
+        }
         .sheet(item: $swappingDraft) { draft in
             RecipeSwapView(draft: draft, preferences: store.state.preferences) { recipe in
                 replaceDraft(draft.id, with: recipe.id)
@@ -683,7 +688,13 @@ struct PlanView: View {
 
                 VStack(alignment: .leading, spacing: 10) {
                     ForEach(estimate.lineItems) { line in
-                        BudgetLineRow(line: line)
+                        Button {
+                            unitPickerItem = line.shoppingItem
+                        } label: {
+                            BudgetLineRow(line: line)
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityHint("구매 단위를 비교해서 고를 수 있어요")
                         PriceEditorRow(item: line.shoppingItem, existingPrice: line.price)
                     }
                 }
@@ -1421,6 +1432,184 @@ private struct RecipeSwapView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) { Button("닫기") { dismiss() } }
             }
+        }
+    }
+}
+
+/// 피그마 `식단 만들기 11 / 계란 구매 단위 선택`(430:23).
+/// 대표 판매 단위와 `부족분만 딱 채우는 단위`를 나란히 놓고 고른다.
+/// 가격은 확인된 값이 있을 때만 총액·개당 단가를 보여준다(AGENTS 8절).
+private struct PurchaseUnitPicker: View {
+    @EnvironmentObject private var store: AppStore
+    @Environment(\.dismiss) private var dismiss
+    let item: ShoppingPlanItem
+
+    private var price: IngredientPrice? {
+        guard let price = store.state.prices[item.ingredientID], price.unit == item.unit else { return nil }
+        return price
+    }
+
+    /// 대표 단위: 시안의 `추천 구매 단위 · 장기 절약`.
+    private var recommended: (amount: Double, count: Int, remaining: Double) {
+        let amount = item.packageSize.amount
+        let count = max(item.purchaseQuantity, item.additionalNeeded > 0 ? 1 : 0)
+        let remaining = max(item.availableQuantity ?? 0 + Double(count) * amount - item.quantity, 0)
+        return (amount, count, remaining)
+    }
+
+    /// 부족분만 채우는 단위: 시안의 `예산 우선`.
+    private var budgetFirst: (amount: Double, count: Int, remaining: Double)? {
+        guard item.additionalNeeded > 0 else { return nil }
+        let amount = (item.additionalNeeded * 10).rounded(.up) / 10
+        guard amount > 0, abs(amount - item.packageSize.amount) > 0.000001 else { return nil }
+        return (amount, 1, 0)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView(showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 4) {
+                        HStack(spacing: 0) {
+                            Text("이번 식단 필요량 ")
+                                .figmaText(13, .medium)
+                                .foregroundStyle(PlanPalette.headerBody)
+                            Text(formatQuantity(item.quantity, unit: item.unit))
+                                .figmaText(15, .bold)
+                                .foregroundStyle(PlanPalette.listMuted)
+                        }
+                        Text("\(item.ingredientName)을(를) 어떤 단위로 살까요?")
+                            .figmaText(16, .bold, lineHeight: 22)
+                            .foregroundStyle(PlanPalette.ink)
+                    }
+                    .padding(.horizontal, 18)
+                    .padding(.vertical, 16)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(PlanPalette.listHeaderFill, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+                    unitCard(
+                        caption: "추천 구매 단위 · 장기 절약",
+                        title: "\(item.ingredientName) \(formatQuantity(recommended.amount, unit: item.unit)) \(recommended.count)개",
+                        detail: detailText(recommended),
+                        priceText: priceText(recommended),
+                        buttonTitle: "이 단위로 두기 ✓",
+                        isPrimary: true
+                    ) {
+                        store.setPackageOverride(
+                            ingredientID: item.ingredientID,
+                            package: PackageSize(amount: recommended.amount, unit: item.unit, label: item.packageSize.label)
+                        )
+                        dismiss()
+                    }
+
+                    if let budgetFirst {
+                        unitCard(
+                            caption: "예산 우선 · 남는 양 없음",
+                            title: "\(item.ingredientName) \(formatQuantity(budgetFirst.amount, unit: item.unit)) 1개",
+                            detail: detailText(budgetFirst),
+                            priceText: priceText(budgetFirst),
+                            buttonTitle: "\(formatQuantity(budgetFirst.amount, unit: item.unit))로 변경",
+                            isPrimary: false
+                        ) {
+                            store.setPackageOverride(
+                                ingredientID: item.ingredientID,
+                                package: PackageSize(amount: budgetFirst.amount, unit: item.unit, label: "\(formatQuantity(budgetFirst.amount))\(item.unit.rawValue) 포장")
+                            )
+                            dismiss()
+                        }
+                    }
+
+                    if let unitPrice = unitPriceText() {
+                        Text(unitPrice)
+                            .figmaText(12, .medium)
+                            .foregroundStyle(PlanPalette.listMuted)
+                    }
+                }
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+            }
+            .background(PlanPalette.canvas)
+            .navigationTitle("구매 단위 선택")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("닫기") { dismiss() } } }
+        }
+    }
+
+    private func detailText(_ option: (amount: Double, count: Int, remaining: Double)) -> String {
+        let have = item.availableQuantity ?? 0
+        let havePart = have > 0 ? "보유 \(formatQuantity(have, unit: item.unit)) + " : ""
+        let remaining = option.remaining > 0 ? "\(formatQuantity(option.remaining, unit: item.unit)) 남음" : "남는 양 없음"
+        return "\(havePart)구매 \(formatQuantity(Double(option.count) * option.amount, unit: item.unit)) · \(remaining)"
+    }
+
+    private func priceText(_ option: (amount: Double, count: Int, remaining: Double)) -> String {
+        guard let price, abs(price.packageAmount - option.amount) < 0.000001 else { return "가격 확인 전" }
+        return won(price.price * option.count)
+    }
+
+    private func unitPriceText() -> String? {
+        guard let price, price.packageAmount > 0 else { return nil }
+        let perUnit = Int((Double(price.price) / price.packageAmount).rounded())
+        return "\(formatQuantity(price.packageAmount, unit: item.unit)) 기준 \(item.unit.rawValue)당 약 \(won(perUnit))이에요."
+    }
+
+    private func unitCard(
+        caption: String,
+        title: String,
+        detail: String,
+        priceText: String,
+        buttonTitle: String,
+        isPrimary: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text(caption)
+                .figmaText(12, .medium)
+                .foregroundStyle(PlanPalette.listMuted)
+            Text(title)
+                .figmaText(13, .medium)
+                .foregroundStyle(PlanPalette.listMuted)
+
+            HStack(spacing: 8) {
+                HStack(spacing: 6) {
+                    Text(isPrimary ? "✓" : "↔")
+                        .figmaText(14, .bold)
+                        .foregroundStyle(PlanPalette.yellow)
+                    Text(detail)
+                        .figmaText(15, .bold)
+                        .foregroundStyle(PlanPalette.ink)
+                        .lineLimit(2)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                Text(priceText)
+                    .figmaText(12, .bold)
+                    .foregroundStyle(PlanPalette.listName)
+                    .padding(.horizontal, 10)
+                    .padding(.vertical, 5)
+                    .background(PlanPalette.badgeFill, in: Capsule())
+            }
+
+            Button(action: action) {
+                Text(buttonTitle)
+                    .figmaText(13, .bold)
+                    .foregroundStyle(isPrimary ? Color(hex: 0xF5F5F5) : PlanPalette.ink)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 9)
+                    .background(isPrimary ? PlanPalette.ink : .white, in: Capsule())
+                    .overlay {
+                        if !isPrimary { Capsule().strokeBorder(PlanPalette.cardBorderStrong, lineWidth: 1) }
+                    }
+            }
+            .buttonStyle(.plain)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 14)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .strokeBorder(isPrimary ? PlanPalette.yellow : PlanPalette.cardBorderStrong, lineWidth: isPrimary ? 1.5 : 1)
         }
     }
 }

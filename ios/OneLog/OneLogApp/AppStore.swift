@@ -478,6 +478,14 @@ final class AppStore: ObservableObject {
     }
 
     @discardableResult
+    /// F22 `오늘만 비활성화`. 재료는 그대로 두고 상태만 바꾼다. 되돌릴 수 있다.
+    func setMealSkipped(_ mealID: String, skipped: Bool) {
+        guard let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }),
+              state.plannedMeals[index].status != .cooked else { return }
+        update { $0.plannedMeals[index].status = skipped ? .skipped : .planned }
+        notice = skipped ? "이 끼니를 건너뛰었어요. 재료는 그대로 남아 있어요." : "다시 예정으로 되돌렸어요."
+    }
+
     func completeMeal(_ mealID: String, consumptions: [CookingConsumption]) -> Bool {
         guard let meal = state.plannedMeals.first(where: { $0.id == mealID }), meal.status == .planned else {
             notice = "이미 완료한 식사예요. 재고를 다시 차감하지 않았어요."

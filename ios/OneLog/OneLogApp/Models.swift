@@ -37,6 +37,16 @@ enum QuantityStatus: String, Codable, Hashable {
 enum MealStatus: String, Codable, Hashable {
     case planned
     case cooked
+    /// F22 미취식. 재료를 차감하지 않고 그 끼니만 쉬어 간다(피그마 `식단 관리 4`의 `오늘만 비활성화`).
+    case skipped
+
+    var label: String {
+        switch self {
+        case .planned: return "예정"
+        case .cooked: return "완료"
+        case .skipped: return "건너뜀"
+        }
+    }
 }
 
 enum CookingTool: String, CaseIterable, Codable, Identifiable, Hashable {
