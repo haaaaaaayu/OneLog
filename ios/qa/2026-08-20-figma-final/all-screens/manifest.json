@@ -1,0 +1,275 @@
+[
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "6159307E-E580-4E9E-8B3F-7C60820303B8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "24-notification-settings_0_53731EDE-E543-43AE-9179-A8BC6021C99C.png",
+        "timestamp" : 1787151627.52
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "70AB7EED-BCAC-4984-B9AF-D5DEDA910687.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "23-settings_0_1C11EB38-D64C-4B30-8394-394DE4DFAF15.png",
+        "timestamp" : 1787151623.924
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "F149A487-913C-46CA-A9BF-7D3216C39964.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "22-profile-edit_0_D1CA9C7E-3FF1-4B07-9373-0E1061CF742D.png",
+        "timestamp" : 1787151620.374
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "58BCF768-8863-47AA-B489-44610585D0F8.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "21-sheet-taste_0_7FDA3E2F-B844-47AE-9FB9-5BFB26A0BCB4.png",
+        "timestamp" : 1787151616.161
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "A42B2BF1-C0E6-4145-BC77-990BB5FD002C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "20-sheet-tools_0_0B9961FD-C78C-4443-9488-708576AFC4FD.png",
+        "timestamp" : 1787151611.995
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "4DD793A5-EA30-4F1C-9028-2BBA26EBAB93.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "19-sheet-cook-time_0_F62079AC-82DC-4AEE-844B-0E7AD838389E.png",
+        "timestamp" : 1787151607.762
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "4F2938F9-61A5-42F1-B5F0-05B27156260F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "18-sheet-skill_0_FA536F92-60BF-48BD-9908-E4A4EF01A536.png",
+        "timestamp" : 1787151603.522
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "2578768E-D32F-42AE-AA84-3A3E42C7E7D5.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "17-mypage_0_4EB30B35-FF5A-4D20-A8D1-40685CA2CC61.png",
+        "timestamp" : 1787151601.053
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "BCB6B411-00D0-46CA-A83C-75CE9629955F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "16-recipe-detail_0_93C79085-9201-4BD4-AA20-64E7EA88F07D.png",
+        "timestamp" : 1787151597.193
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "FEB12795-6D04-4569-92BD-2C4ADC7D436A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "15-recipe-favorites_0_6978815A-9994-427E-B956-82345B0338F0.png",
+        "timestamp" : 1787151591.675
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "D8682D3A-D689-4818-BB98-DF8CA14982BF.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "14-recipe-search-empty_0_8335CC4B-2EFF-46C1-805C-0C5693CD03B0.png",
+        "timestamp" : 1787151586.845
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "9DE3B87A-26A5-4E30-A57E-FC92EF0DB660.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "13-recipe-search-results_0_F998E586-677D-4860-8997-B5079D829407.png",
+        "timestamp" : 1787151582.823
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "3B660F8E-C345-4C4C-9E92-56E8DC41B10D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "12-recipe-explore_0_84B43099-20CB-457E-8EE1-22BE99E4A6FB.png",
+        "timestamp" : 1787151579.719
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "437494D9-982F-408C-8474-33F9AF111008.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "11-home-no-plan_0_CF837D90-8F32-4FB2-B4C8-A1C3BD2B456F.png",
+        "timestamp" : 1787151577.619
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "9111568D-D154-4C8D-B811-698E397B8413.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "10-onboarding-allergies_0_E8388E20-5779-4D62-87CF-D8B0C1A4F808.png",
+        "timestamp" : 1787151569.42
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "DA79A457-CF18-403C-9744-C285E16BA029.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "09-onboarding-dislikes_0_B4FB564D-F782-4496-8FCC-DE6E345FFA08.png",
+        "timestamp" : 1787151567.351
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "8B6CF0FE-00BF-43C6-B9D5-3ADAC212FF06.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "08-onboarding-tools_0_D0D78AE4-C8BF-4A1D-8904-5AC3D4513F51.png",
+        "timestamp" : 1787151565.287
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "B55BBDF5-5000-43A6-9848-F5A7D9DE7842.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "07-onboarding-basic-verified_0_A18A4CC6-8762-49BE-B1D1-86BB900E1838.png",
+        "timestamp" : 1787151563.222
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "CEC6799A-CBB2-427A-A970-62D8614137A3.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "06-onboarding-neighborhood-confirmation_0_61759D4E-A206-452C-BF70-3D3B55515E9B.png",
+        "timestamp" : 1787151559.703
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "0B8AC17B-FF42-4C7B-924B-BC7DD90BAE9A.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "05-onboarding-neighborhood-search_0_9FAB4F4D-53B0-4787-A066-EC11C2006CCA.png",
+        "timestamp" : 1787151557.563
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "2B8F2820-6BC7-45E0-B1EC-844544C08CE4.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "04-onboarding-basic-unverified_0_9F71F198-1948-46EA-BA89-4E00232A0005.png",
+        "timestamp" : 1787151552.881
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "584B750E-5474-4C1B-BBBB-97F488D9C7F0.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03-onboarding-login-error_0_11DB0A77-49C1-40D0-A826-A36D25889E70.png",
+        "timestamp" : 1787151549.721
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "25AD9DB4-C52D-4182-9850-5012A195006D.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02-onboarding-login_0_A6194C9F-3D42-464F-9846-3A03D5D18F78.png",
+        "timestamp" : 1787151547.645
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "CAE71187-425F-435A-97EE-DF7823F5B258.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "01-onboarding-welcome_0_C86F2633-99D0-4CFC-A08B-3CBCBA658222.png",
+        "timestamp" : 1787151545.369
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureAllFigmaScreens()",
+    "testIdentifierURL" : "test://com.apple.xcode/OneLog/OneLogUITests/ScreenshotTests/testCaptureAllFigmaScreens"
+  },
+  {
+    "attachments" : [
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "2973C45A-5FF5-4958-9218-8781518ADB70.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "05-share-meetup_0_5DD7B7C3-C748-4D27-BF5B-2621D71DB024.png",
+        "timestamp" : 1787151663.293
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "82E9F062-4CA6-4542-97F2-E7A6B3D42180.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "04-share-chat_0_9187762A-BC9A-4ACE-A4D5-A993F4F8E8FB.png",
+        "timestamp" : 1787151659.726
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "93AE50A5-059F-4141-8523-6AA80AF606AB.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "03-share-received-request_0_EA61DBB7-C4E6-4FE4-A8AD-B432B8278FB7.png",
+        "timestamp" : 1787151656.199
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "BA181DAD-D5AD-4367-BCA6-F82E69778C6C.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "02-notifications_0_FC3D9F84-A763-4474-9D30-F68CB9F4963F.png",
+        "timestamp" : 1787151650.876
+      },
+      {
+        "configurationName" : "Test Scheme Action",
+        "deviceId" : "2F6A0FB5-8790-4690-8CE3-0B8ED8A8B58F",
+        "deviceName" : "OneLog-Figma393",
+        "exportedFileName" : "D3ABA60E-F5A1-4AD7-A941-401AF737609F.png",
+        "isAssociatedWithFailure" : false,
+        "suggestedHumanReadableName" : "01-share-active_0_A30BA1CB-C659-4741-AF13-4266041B045B.png",
+        "timestamp" : 1787151647.354
+      }
+    ],
+    "testIdentifier" : "ScreenshotTests/testCaptureFinalSharingScreens()",
+    "testIdentifierURL" : "test://com.apple.xcode/OneLog/OneLogUITests/ScreenshotTests/testCaptureFinalSharingScreens"
+  }
+]

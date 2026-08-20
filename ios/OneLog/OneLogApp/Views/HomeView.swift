@@ -1,42 +1,60 @@
 import SwiftUI
 
-/// 피그마 `유진) 수정완료 / Home 화면_식단O`(383:236)과 `Home 화면_식단X`(383:86)를 그대로 옮긴 홈 탭.
+/// 피그마 `최종본` 캔버스의 `메인 - 1`(713:884) / `메인 - 2`(713:1044)를 그대로 옮긴 홈 탭.
 /// 좌표와 색은 디자인 값을 우선한다. 숫자는 저장된 상태에서만 계산하고 임의로 만들지 않는다(AGENTS 8절).
 struct HomeView: View {
     @EnvironmentObject private var store: AppStore
     @Binding var selectedTab: Int
     @State private var showingPlan = false
     @State private var showingMyPage = false
-    @State private var showingFridge = false
+    @State private var selectedDate: String?
 
     private var nickname: String {
         let value = store.state.profile.nickname.trimmingCharacters(in: .whitespacesAndNewlines)
         return value.isEmpty ? "회원" : value
     }
 
-    private var todaysMeals: [PlannedMeal] {
-        let today = isoDateString()
-        return store.plannedMeals.filter { $0.date == today }
+    /// 계획된 식사가 있는 날짜를 오름차순으로. 시안 `5일 날짜 선택`(713:924)의 데이터 소스.
+    private var planDates: [String] {
+        Array(Set(store.plannedMeals.map(\.date))).sorted()
+    }
+
+    private var currentDate: String {
+        selectedDate ?? (planDates.contains(isoDateString()) ? isoDateString() : planDates.first) ?? isoDateString()
+    }
+
+    private var mealsForCurrentDate: [PlannedMeal] {
+        store.plannedMeals.filter { $0.date == currentDate }
+    }
+
+    private var hasPlannedMealToday: Bool {
+        store.plannedMeals.contains { $0.date == isoDateString() && $0.status == .planned }
     }
 
     var body: some View {
-        // 히어로는 상태바 뒤까지 노란색을 깔되, 내용은 실제 safe area 아래로 내린다.
-        // 시안은 상태바를 34pt로 그렸는데 iPhone 16/17은 59pt라, 그대로 두면 워드마크가 상태바에 물린다.
         GeometryReader { proxy in
             ScrollView {
                 VStack(spacing: 0) {
-                    hero(topInset: proxy.safeAreaInsets.top)
+                    Color.clear.frame(height: proxy.safeAreaInsets.top)
+                    brandHeader
+                        .padding(.horizontal, 20)
+                        .padding(.top, 17)
+                    heroCard
+                        .padding(.horizontal, 20)
+                        .padding(.top, 5)
                     statsCard
                         .padding(.horizontal, 20)
-                        .padding(.top, -6)
+                        .padding(.top, 21)
                     todayHeader
                         .padding(.horizontal, 20)
-                        .padding(.top, 20)
-                    mealBand
-                        .padding(.top, 5)
-                    leftoverCard
-                        .padding(.horizontal, 20)
-                        .padding(.top, 7)
+                        .padding(.top, 21)
+                    if !planDates.isEmpty {
+                        dateStrip
+                            .padding(.horizontal, 20)
+                            .padding(.top, 21)
+                    }
+                    mealCardsRow
+                        .padding(.top, 21)
                     Color.clear.frame(height: 24)
                 }
             }
@@ -50,39 +68,27 @@ struct HomeView: View {
         .fullScreenCover(isPresented: $showingMyPage) {
             MyPageView().environmentObject(store)
         }
-        .sheet(isPresented: $showingFridge) {
-            FridgeView().environmentObject(store)
-        }
     }
 
-    // MARK: - 히어로 (383:239)
+    // MARK: - 브랜드 헤더 (713:894)
 
-    /// 시안 383:239. 좌표는 상태바(34pt) 아래 기준으로 다시 잡고, `topInset`으로 실기기 safe area에 맞춘다.
-    private func hero(topInset: CGFloat) -> some View {
-        let y: (CGFloat) -> CGFloat = { topInset + $0 - 34 }
-        return ZStack(alignment: .topLeading) {
-            Color.oneLogBrand
-
-            // 시안은 폭 215에 맞춰 늘린 뒤 위에서 168만 보여준다(h 135.12%).
-            Image("HomeMascot")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 215)
-                .frame(width: 215, height: 168, alignment: .top)
-                .clipped()
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .offset(x: 23, y: y(100))
+    /// 769:23. 워드마크(-2.03, 6.54, 93.318×32.834)와 태그라인(1.61, 35.99)은 시안에서 서로 겹쳐 있어
+    /// 스택 간격으로는 재현되지 않는다. 프로필 아이콘은 x318(오른쪽 여백 5).
+    private var brandHeader: some View {
+        ZStack(alignment: .topLeading) {
+            Color.clear
 
             Image("BrandWordmark")
                 .resizable()
                 .scaledToFit()
-                .frame(width: 93, height: 33)
-                .offset(x: 16, y: y(47))
+                .frame(width: 93.318, height: 32.834)
+                .offset(x: -2.026, y: 6.538)
 
             Text("내 취향 한끼부터, 남은 재료까지")
                 .figmaText(7)
                 .foregroundStyle(Color.oneLogMuted)
-                .offset(x: 20, y: y(76))
+                .fixedSize()
+                .offset(x: 1.609, y: 35.987)
 
             Button {
                 showingMyPage = true
@@ -91,46 +97,76 @@ struct HomeView: View {
                     .resizable()
                     .renderingMode(.template)
                     .scaledToFit()
-                    .frame(width: 38, height: 38)
+                    .frame(width: 30, height: 30)
                     .foregroundStyle(Color.oneLogInk)
             }
-            .frame(maxWidth: .infinity, alignment: .trailing)
-            .padding(.trailing, 19)
-            .offset(y: y(47))
             .accessibilityLabel("마이페이지")
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .offset(x: -5, y: 11)
+        }
+        .frame(height: 52) // 713:894
+    }
+
+    // MARK: - 히어로 카드 (713:904)
+
+    /// 713:904. 353×194, radius 24. 자식 좌표는 시안 절대값 그대로다.
+    /// eyebrow(20,18) · 타이틀(16.45,45,w222,lh30) · 설명(20,93,w220) · CTA(16,128,321×48,r15) · 마스코트(214.65,19.89).
+    private var heroCard: some View {
+        ZStack(alignment: .topLeading) {
+            Color.oneLogBrandDeep
+
+            Image("HomeMascot")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 138.355, height: 108.110, alignment: .top)
+                .clipped()
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .offset(y: 19.890)
+
+            Text("HANKKI LOG")
+                .figmaText(10, .bold)
+                .foregroundStyle(Color(hex: 0x403B2E))
+                .fixedSize()
+                .offset(x: 20, y: 18)
 
             (Text(nickname + "님").font(.figma(24, .bold))
                 + Text(", ").font(.figma(20, .bold))
                 + Text("안녕하세요.").font(.figma(20, .medium)))
                 .foregroundStyle(Color.oneLogInk)
-                .figmaLineHeight(30, size: 24, weight: .bold) // 383:248
+                .figmaLineHeight(30, size: 24, weight: .bold)
                 .frame(width: 222, alignment: .leading)
-                .offset(x: 20, y: y(122))
+                .offset(x: 16.447, y: 45)
 
             Text(heroSubtitle)
                 .figmaText(10)
                 .foregroundStyle(Color(hex: 0x403B2E))
                 .frame(width: 220, alignment: .leading)
-                .offset(x: 20, y: y(162))
+                .offset(x: 20, y: 93)
 
             Button {
-                if todaysMeals.isEmpty { showingPlan = true } else { selectedTab = 2 }
+                if hasPlannedMealToday { selectedTab = 2 } else { showingPlan = true }
             } label: {
-                Text(todaysMeals.isEmpty ? "새 식단 만들기" : "요리하러 가기")
+                Text(hasPlannedMealToday ? "요리 만들러 가기" : "새 식단 만들기")
                     .figmaText(15, .bold)
                     .foregroundStyle(.white)
-                    .frame(width: 199, height: 48)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 48)
                     .background(Color.oneLogInk, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
             }
             .accessibilityIdentifier("home.createPlan")
-            .offset(x: 16, y: y(195))
+            .padding(.horizontal, 16)
+            .offset(y: 128)
         }
-        .frame(height: topInset + 238) // 시안 272 = 상태바 34 + 내용 238
-        .clipped()
+        .frame(height: 194)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
     }
 
     private var heroSubtitle: String {
-        guard let next = todaysMeals.first(where: { $0.status == .planned }) ?? todaysMeals.first else {
+        let today = isoDateString()
+        let todaysMeals = store.plannedMeals.filter { $0.date == today }
+        guard let next = todaysMeals.first(where: { $0.status == .planned }) else {
+            if todaysMeals.contains(where: { $0.status == .cooked }) { return "오늘 식사를 완료했어요. 다음 한 끼를 계획해볼까요?" }
+            if todaysMeals.contains(where: { $0.status == .skipped }) { return "오늘은 건너뛴 끼니만 있어요. 새 식단을 계획할 수 있어요." }
             return "오늘은 어떤 한 끼를 계획해볼까요?"
         }
         let title = recipe(for: next.recipeID)?.title ?? "오늘의 메뉴"
@@ -152,34 +188,45 @@ struct HomeView: View {
         return nil
     }
 
-    // MARK: - 절약 요약 (383:328)
+    // MARK: - 절약 요약 (713:911)
 
+    /// 713:911. 353×85, radius 20. 내부 프레임(713:912)이 (14, 9)에서 시작하므로 자식 좌표에 그만큼 더한다.
+    /// 노랑 밑줄(713:914)은 시안에서 금액보다 좌우 7씩 넓고 금액 박스 상단에서 27 아래에 놓인다.
     private var statsCard: some View {
-        HStack(spacing: 0) {
-            VStack(alignment: .leading, spacing: 0) {
-                Text("이번 달 한끼로그로")
-                    .figmaText(13, .medium, lineHeight: 16)
-                    .foregroundStyle(Color.oneLogMuted)
-                HStack(alignment: .firstTextBaseline, spacing: 14) {
-                    Text(won(store.monthlyConfirmedSavings))
-                        .figmaText(29, .bold)
-                        .foregroundStyle(Color.oneLogInk)
-                        .background(alignment: .bottom) {
-                            Capsule()
-                                .fill(Color.oneLogBrand)
-                                .frame(height: 7)
-                                .padding(.horizontal, -4)
-                                .offset(y: -2)
-                        }
-                    Text("절약했어요")
-                        .figmaText(16, .bold)
-                        .foregroundStyle(Color.oneLogInk)
+        ZStack(alignment: .topLeading) {
+            Color.white
+
+            Text("이번 달 한끼로그로")
+                .figmaText(13, .medium, lineHeight: 16)
+                .foregroundStyle(Color.oneLogMuted)
+                .fixedSize()
+                .offset(x: 18, y: 13)
+
+            // 금액(713:915/1075)은 자리수와 무관하게 밑줄(135×7) 한가운데에 놓인다.
+            Text(won(store.monthlyConfirmedSavings))
+                .figmaText(29, .bold)
+                .foregroundStyle(Color.oneLogInk)
+                .frame(width: 135)
+                .background(alignment: .bottom) {
+                    Capsule()
+                        .fill(Color.oneLogBrand)
+                        .frame(width: 135, height: 7)
+                        .offset(y: -1)
                 }
-            }
-            Spacer(minLength: 8)
+                .offset(x: 14, y: 29)
+
+            Text("절약했어요")
+                .figmaText(16, .bold)
+                .foregroundStyle(Color.oneLogInk)
+                .fixedSize()
+                .offset(x: 157, y: 42)
+
             Rectangle()
                 .fill(Color(hex: 0xE5DECC))
                 .frame(width: 1, height: 34)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .offset(x: -101, y: 26)
+
             VStack(spacing: 5) {
                 Text("\(store.cookedMealsThisMonth)끼")
                     .figmaText(17, .bold)
@@ -188,15 +235,16 @@ struct HomeView: View {
                     .figmaText(11, .medium)
                     .foregroundStyle(Color.oneLogFaint)
             }
-            .frame(width: 84)
+            .frame(width: 83.75)
+            .frame(maxWidth: .infinity, alignment: .trailing)
+            .offset(x: -14.25, y: 22)
         }
-        .padding(.horizontal, 14)
         .frame(height: 85)
-        .background(.white, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         .oneLogCardShadow()
     }
 
-    // MARK: - 오늘 식단 (383:338 / 383:341)
+    // MARK: - 오늘 식단 (713:921)
 
     private var todayHeader: some View {
         HStack(spacing: 0) {
@@ -215,94 +263,107 @@ struct HomeView: View {
         .frame(height: 23, alignment: .bottom)
     }
 
-    private var mealBand: some View {
-        ZStack {
-            Color.oneLogBand
-            if todaysMeals.isEmpty {
+    // MARK: - 날짜 선택 (713:924)
+
+    private var dateStrip: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(planDates, id: \.self) { date in
+                    DateCell(date: date, count: store.plannedMeals.filter { $0.date == date }.count, isSelected: date == currentDate) {
+                        selectedDate = date
+                    }
+                }
+            }
+            // 시안 713:924는 좌우 4만 두고 높이는 칸(64)에 딱 맞춘다. 위아래로도 4를 주면 8pt 높아진다.
+            .padding(.horizontal, 4)
+        }
+        .frame(height: 64)
+        .background(.white, in: RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .oneLogCardShadow()
+    }
+
+    // MARK: - 오늘 식단 카드 (713:945)
+
+    private var mealCardsRow: some View {
+        Group {
+            if mealsForCurrentDate.isEmpty {
+                // 713:1105. 화면 가운데, 카드 자리보다 53 아래.
                 Text("아직 식단을 계획하지 않았어요!")
-                    .figmaText(15, .medium) // 384:14
-                    .foregroundStyle(Color(hex: 0xB3B3B3))
+                    .figmaText(15, .medium)
+                    .foregroundStyle(Color.oneLogFaint)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 53)
             } else {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 10) {
-                        ForEach(todaysMeals) { meal in
+                        ForEach(mealsForCurrentDate) { meal in
                             MealCard(meal: meal)
                         }
                     }
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, 20)
                 }
             }
         }
-        .frame(height: 186)
-    }
-
-    // MARK: - 남은 재료 (383:366)
-
-    private var leftoverCard: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            HStack(spacing: 0) {
-                Text("남은 재료")
-                    .figmaText(15, .bold)
-                    .foregroundStyle(Color.oneLogInk)
-                Spacer(minLength: 8)
-                Button {
-                    showingFridge = true
-                } label: {
-                    Text("전체 보기 ›")
-                        .figmaText(12, .medium)
-                        .foregroundStyle(Color.oneLogFaint)
-                }
-            }
-
-            if store.state.inventory.isEmpty {
-                Text("아직 기록한 재료가 없어요. 냉장고에서 남은 재료를 적어 주세요.")
-                    .figmaText(13, .medium)
-                    .foregroundStyle(Color.oneLogFaint)
-                    .padding(.vertical, 5)
-            } else {
-                VStack(spacing: 0) {
-                    ForEach(Array(store.state.inventory.prefix(3).enumerated()), id: \.element.id) { index, item in
-                        if index > 0 {
-                            Rectangle().fill(Color.oneLogDivider).frame(height: 1)
-                        }
-                        HStack(spacing: 10) {
-                            Text(ingredient(for: item.ingredientID)?.name ?? "재료")
-                                .figmaText(14, .medium)
-                                .foregroundStyle(Color.oneLogBody)
-                            Spacer(minLength: 10)
-                            Text(item.quantityStatus == .unknown ? "수량 미상" : formatQuantity(item.quantity, unit: item.unit))
-                                .figmaText(13, .medium)
-                                .foregroundStyle(Color.oneLogFaint)
-                        }
-                        .padding(.vertical, 5)
-                    }
-                }
-            }
-
-            Button {
-                selectedTab = 1
-            } label: {
-                HStack(spacing: 6) {
-                    Text("레시피 보러가기")
-                    Text("→")
-                }
-                .font(.figma(14, .bold))
-                .foregroundStyle(Color.oneLogInk)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 10)
-                .background(Color.oneLogPaleGreen, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .shadow(color: .black.opacity(0.25), radius: 3)
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.top, 14)
-        .padding(.bottom, 10)
-        .background(.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .oneLogCardShadow()
     }
 }
 
-/// 피그마 `Meal/아침·점심·저녁`(383:342) 카드.
+/// 시안 `5일 날짜 선택`(713:924)의 요일 칸.
+private struct DateCell: View {
+    let date: String
+    let count: Int
+    let isSelected: Bool
+    let action: () -> Void
+
+    private var weekday: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ko_KR")
+        formatter.dateFormat = "E"
+        let input = DateFormatter()
+        input.locale = Locale(identifier: "en_US_POSIX")
+        input.dateFormat = "yyyy-MM-dd"
+        guard let value = input.date(from: date) else { return "" }
+        return formatter.string(from: value)
+    }
+
+    private var day: String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "d"
+        let input = DateFormatter()
+        input.locale = Locale(identifier: "en_US_POSIX")
+        input.dateFormat = "yyyy-MM-dd"
+        guard let value = input.date(from: date) else { return "" }
+        return formatter.string(from: value)
+    }
+
+    var body: some View {
+        Button(action: action) {
+            VStack(spacing: 1) {
+                Text(weekday)
+                    .figmaText(11, .medium)
+                    .foregroundStyle(Color.oneLogFaint)
+                Text(day)
+                    .figmaText(16, .bold)
+                    .foregroundStyle(Color(hex: 0x14120D))
+                Text("\(count)끼")
+                    .figmaText(11, .medium)
+                    .foregroundStyle(Color.oneLogFaint)
+            }
+            .padding(.vertical, 7)
+            .padding(.horizontal, 3)
+            .frame(width: 64, height: 64)
+            .background(isSelected ? Color.oneLogBrandDeep : .clear, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay {
+                if isSelected {
+                    RoundedRectangle(cornerRadius: 18, style: .continuous).strokeBorder(.white, lineWidth: 1)
+                }
+            }
+        }
+        .buttonStyle(.plain)
+    }
+}
+
+/// 피그마 `Meal/아침·점심·저녁`(713:946) 카드.
 private struct MealCard: View {
     let meal: PlannedMeal
 
@@ -342,6 +403,8 @@ private struct MealCard: View {
                 Spacer(minLength: 4)
                 if meal.status == .cooked {
                     pill("완료", foreground: .oneLogSuccess, background: .oneLogSuccessBackground, border: nil)
+                } else if meal.status == .skipped {
+                    pill("건너뜀", foreground: .oneLogOrange, background: .oneLogChip, border: nil)
                 } else {
                     pill("예정", foreground: .oneLogFaint, background: .oneLogChip, border: nil)
                 }
@@ -350,7 +413,7 @@ private struct MealCard: View {
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(recipeValue?.title ?? "메뉴")
-                    .figmaText(13, .bold, lineHeight: 18) // 383:348
+                    .figmaText(13, .bold, lineHeight: 18) // 713:954
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .frame(width: 130, alignment: .leading)

@@ -10,6 +10,7 @@
 		A001 /* OneLogApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = S004 /* OneLogApp.swift */; };
 		A030 /* FigmaFont.swift in Sources */ = {isa = PBXBuildFile; fileRef = S010 /* FigmaFont.swift */; };
 		A031 /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = S011 /* LocationProvider.swift */; };
+		A032 /* NeighborhoodSearchService.swift in Sources */ = {isa = PBXBuildFile; fileRef = S013 /* NeighborhoodSearchService.swift */; };
 		R005 /* Fonts in Resources */ = {isa = PBXBuildFile; fileRef = FT001 /* Fonts */; };
 		A002 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = S003 /* Models.swift */; };
 		A003 /* SeedData.swift in Sources */ = {isa = PBXBuildFile; fileRef = S006 /* SeedData.swift */; };
@@ -29,12 +30,23 @@
 		A018 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V010 /* HomeView.swift */; };
 		A019 /* MyPageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V011 /* MyPageView.swift */; };
 		A017 /* ShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V009 /* ShareView.swift */; };
+		A020 /* AIChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = S012 /* AIChat.swift */; };
+		A021 /* AIChatView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V012 /* AIChatView.swift */; };
 		FB001 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRAUTH /* FirebaseAuth */; };
 		FB002 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRESTORE /* FirebaseFirestore */; };
+		FB003 /* FirebaseFunctions in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRFUNCTIONS /* FirebaseFunctions */; };
+		GSIN001 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_GOOGLE_SIGNIN /* GoogleSignIn */; };
 		R001 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = AS001 /* Assets.xcassets */; };
 		R002 /* imported_recipes.json in Resources */ = {isa = PBXBuildFile; fileRef = J001 /* imported_recipes.json */; };
 		R003 /* imported_ingredients.json in Resources */ = {isa = PBXBuildFile; fileRef = J002 /* imported_ingredients.json */; };
+		R007 /* ingredient_prices.json in Resources */ = {isa = PBXBuildFile; fileRef = J003 /* ingredient_prices.json */; };
 		R004 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = GS001 /* GoogleService-Info.plist */; };
+		R006 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = PR001 /* PrivacyInfo.xcprivacy */; };
+		A022 /* LegalDocumentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = V013 /* LegalDocumentsView.swift */; };
+		A023 /* NeighborhoodSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = V014 /* NeighborhoodSheet.swift */; };
+		A024 /* NotificationStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = S014 /* NotificationStore.swift */; };
+		FB004 /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRMESSAGING /* FirebaseMessaging */; };
+		FB005 /* FirebaseAppCheck in Frameworks */ = {isa = PBXBuildFile; productRef = PROD_FIRAPPCHECK /* FirebaseAppCheck */; };
 		T001 /* OneLogDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = TS001 /* OneLogDomainTests.swift */; };
 		U001 /* OneLogUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = US001 /* OneLogUITests.swift */; };
 		U002 /* ScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = US002 /* ScreenshotTests.swift */; };
@@ -61,8 +73,13 @@
 		AS001 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		GS001 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		IP001 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ENT001 /* OneLogDebug.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneLogDebug.entitlements; sourceTree = "<group>"; };
+		ENT002 /* OneLogRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneLogRelease.entitlements; sourceTree = "<group>"; };
+		ENT003 /* OneLogLocal.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneLogLocal.entitlements; sourceTree = "<group>"; };
+		PR001 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		J001 /* imported_recipes.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_recipes.json; sourceTree = "<group>"; };
 		J002 /* imported_ingredients.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = imported_ingredients.json; sourceTree = "<group>"; };
+		J003 /* ingredient_prices.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = ingredient_prices.json; sourceTree = "<group>"; };
 		FT001 /* Fonts */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Fonts; sourceTree = "<group>"; };
 		F001 /* OneLog.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneLog.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F002 /* OneLogTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneLogTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -71,12 +88,15 @@
 		S002 /* DesignSystem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystem.swift; sourceTree = "<group>"; };
 		S010 /* FigmaFont.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FigmaFont.swift; sourceTree = "<group>"; };
 		S011 /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		S013 /* NeighborhoodSearchService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborhoodSearchService.swift; sourceTree = "<group>"; };
+		S014 /* NotificationStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationStore.swift; sourceTree = "<group>"; };
 		S003 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		S004 /* OneLogApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogApp.swift; sourceTree = "<group>"; };
 		S005 /* PlannerEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlannerEngine.swift; sourceTree = "<group>"; };
 		S006 /* SeedData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SeedData.swift; sourceTree = "<group>"; };
 		S007 /* Sharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sharing.swift; sourceTree = "<group>"; };
 		S008 /* ShareStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareStore.swift; sourceTree = "<group>"; };
+		S012 /* AIChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChat.swift; sourceTree = "<group>"; };
 		V009 /* ShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareView.swift; sourceTree = "<group>"; };
 		TS001 /* OneLogDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogDomainTests.swift; sourceTree = "<group>"; };
 		US001 /* OneLogUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneLogUITests.swift; sourceTree = "<group>"; };
@@ -89,6 +109,9 @@
 		V006 /* ShoppingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingView.swift; sourceTree = "<group>"; };
 		V010 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		V011 /* MyPageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageView.swift; sourceTree = "<group>"; };
+		V012 /* AIChatView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AIChatView.swift; sourceTree = "<group>"; };
+		V013 /* LegalDocumentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalDocumentsView.swift; sourceTree = "<group>"; };
+		V014 /* NeighborhoodSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NeighborhoodSheet.swift; sourceTree = "<group>"; };
 		V007 /* FridgeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FridgeView.swift; sourceTree = "<group>"; };
 		V008 /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -100,6 +123,10 @@
 			files = (
 				FB001 /* FirebaseAuth in Frameworks */,
 				FB002 /* FirebaseFirestore in Frameworks */,
+				FB003 /* FirebaseFunctions in Frameworks */,
+				FB004 /* FirebaseMessaging in Frameworks */,
+				FB005 /* FirebaseAppCheck in Frameworks */,
+				GSIN001 /* GoogleSignIn in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +152,7 @@
 			children = (
 				J001 /* imported_recipes.json */,
 				J002 /* imported_ingredients.json */,
+				J003 /* ingredient_prices.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -136,16 +164,23 @@
 				S002 /* DesignSystem.swift */,
 				S010 /* FigmaFont.swift */,
 				S011 /* LocationProvider.swift */,
+				S013 /* NeighborhoodSearchService.swift */,
+				S014 /* NotificationStore.swift */,
 				S003 /* Models.swift */,
 				S004 /* OneLogApp.swift */,
 				S005 /* PlannerEngine.swift */,
 				S006 /* SeedData.swift */,
 				S007 /* Sharing.swift */,
 				S008 /* ShareStore.swift */,
+				S012 /* AIChat.swift */,
 				AS001 /* Assets.xcassets */,
 				FT001 /* Fonts */,
 				GS001 /* GoogleService-Info.plist */,
 				IP001 /* Info.plist */,
+				ENT001 /* OneLogDebug.entitlements */,
+				ENT002 /* OneLogRelease.entitlements */,
+				ENT003 /* OneLogLocal.entitlements */,
+				PR001 /* PrivacyInfo.xcprivacy */,
 				GRES /* Resources */,
 				GVIEWS /* Views */,
 			);
@@ -203,6 +238,9 @@
 				V009 /* ShareView.swift */,
 				V010 /* HomeView.swift */,
 				V011 /* MyPageView.swift */,
+				V012 /* AIChatView.swift */,
+				V013 /* LegalDocumentsView.swift */,
+				V014 /* NeighborhoodSheet.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -226,6 +264,10 @@
 			packageProductDependencies = (
 				PROD_FIRAUTH /* FirebaseAuth */,
 				PROD_FIRESTORE /* FirebaseFirestore */,
+				PROD_FIRFUNCTIONS /* FirebaseFunctions */,
+				PROD_FIRMESSAGING /* FirebaseMessaging */,
+				PROD_FIRAPPCHECK /* FirebaseAppCheck */,
+				PROD_GOOGLE_SIGNIN /* GoogleSignIn */,
 			);
 			productName = OneLog;
 			productReference = F001 /* OneLog.app */;
@@ -301,6 +343,7 @@
 			mainGroup = GROOT;
 			packageReferences = (
 				PKG_FIREBASE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				PKG_GOOGLE_SIGNIN /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = GPROD /* Products */;
 			projectDirPath = "";
@@ -321,8 +364,10 @@
 				R001 /* Assets.xcassets in Resources */,
 				R005 /* Fonts in Resources */,
 				R004 /* GoogleService-Info.plist in Resources */,
+				R006 /* PrivacyInfo.xcprivacy in Resources */,
 				R002 /* imported_recipes.json in Resources */,
 				R003 /* imported_ingredients.json in Resources */,
+				R007 /* ingredient_prices.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -353,6 +398,7 @@
 				A001 /* OneLogApp.swift in Sources */,
 				A030 /* FigmaFont.swift in Sources */,
 				A031 /* LocationProvider.swift in Sources */,
+				A032 /* NeighborhoodSearchService.swift in Sources */,
 				A004 /* PlannerEngine.swift in Sources */,
 				A003 /* SeedData.swift in Sources */,
 				A007 /* RootView.swift in Sources */,
@@ -368,6 +414,11 @@
 				A018 /* HomeView.swift in Sources */,
 				A019 /* MyPageView.swift in Sources */,
 				A017 /* ShareView.swift in Sources */,
+				A020 /* AIChat.swift in Sources */,
+				A021 /* AIChatView.swift in Sources */,
+				A022 /* LegalDocumentsView.swift in Sources */,
+				A023 /* NeighborhoodSheet.swift in Sources */,
+				A024 /* NotificationStore.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -408,9 +459,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = OneLogApp/OneLogLocal.entitlements;
+				MARKETING_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = 6PTCQH47A6;
 				ENABLE_PREVIEWS = YES;
 				ENABLE_TESTABILITY = YES;
@@ -425,6 +476,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -435,9 +487,9 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGNING_ALLOWED = NO;
-				CODE_SIGNING_REQUIRED = NO;
 				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_ENTITLEMENTS = OneLogApp/OneLogRelease.entitlements;
+				MARKETING_VERSION = 1.0.0;
 				DEVELOPMENT_TEAM = 6PTCQH47A6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -487,6 +539,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -521,6 +574,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.onelog.native.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_STRICT_CONCURRENCY = minimal;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -594,6 +648,14 @@
 				minimumVersion = 12.0.0;
 			};
 		};
+		PKG_GOOGLE_SIGNIN /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -606,6 +668,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = PKG_FIREBASE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		PROD_FIRFUNCTIONS /* FirebaseFunctions */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKG_FIREBASE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseFunctions;
+		};
+		PROD_FIRMESSAGING /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKG_FIREBASE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
+		};
+		PROD_FIRAPPCHECK /* FirebaseAppCheck */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKG_FIREBASE /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAppCheck;
+		};
+		PROD_GOOGLE_SIGNIN /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PKG_GOOGLE_SIGNIN /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

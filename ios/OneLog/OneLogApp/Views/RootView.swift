@@ -1,7 +1,15 @@
 import SwiftUI
 
+struct BottomNavigationHiddenPreferenceKey: PreferenceKey {
+    static var defaultValue = false
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = value || nextValue()
+    }
+}
+
 struct RootView: View {
     @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var notificationStore: NotificationStore
     @State private var selectedTab = 0
 
     var body: some View {
@@ -46,6 +54,26 @@ struct RootView: View {
             }
         }
         .background(Color.oneLogCream)
+        .task {
+            store.reconcileAccountSession()
+            await notificationStore.refreshAuthorization()
+            await rescheduleNotifications()
+        }
+        .onChange(of: store.state.plannedMeals) { _, _ in
+            Task { await rescheduleNotifications() }
+        }
+        .onChange(of: store.state.purchaseChecks) { _, _ in
+            Task { await rescheduleNotifications() }
+        }
+    }
+
+    private func rescheduleNotifications() async {
+        await notificationStore.reschedule(
+            plannedMeals: store.plannedMeals,
+            shoppingItems: store.currentShoppingItems,
+            purchaseChecks: store.state.purchaseChecks,
+            monthlySavings: store.monthlyConfirmedSavings
+        )
     }
 }
 
@@ -55,9 +83,10 @@ private struct MainTabView: View {
     @Binding var selectedTab: Int
     /// 이미 열린 탭을 다시 누르면 그 탭의 화면 스택을 처음으로 되돌린다(iOS 기본 동작).
     @State private var rootResetCount = [0, 0, 0, 0]
+    @State private var isBottomNavigationHidden = false
 
     var body: some View {
-        VStack(spacing: 0) {
+        ZStack(alignment: .bottom) {
             ZStack {
                 switch selectedTab {
                 case 1: RecipeHomeView()
@@ -69,14 +98,21 @@ private struct MainTabView: View {
             .id("\(selectedTab)-\(rootResetCount[min(max(selectedTab, 0), 3)])")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            BottomNavigation(selectedTab: selectedTab) { tag in
-                if tag == selectedTab {
-                    rootResetCount[tag] += 1
-                } else {
-                    selectedTab = tag
+            if !isBottomNavigationHidden {
+                BottomNavigation(selectedTab: selectedTab) { tag in
+                    if tag == selectedTab {
+                        rootResetCount[tag] += 1
+                    } else {
+                        selectedTab = tag
+                    }
                 }
+                // 707:966 — y778, h78. 프레임 바닥 4pt 밖까지 이어진 디자인을 클리핑한다.
+                .offset(y: 4)
             }
         }
+        .onPreferenceChange(BottomNavigationHiddenPreferenceKey.self) { isBottomNavigationHidden = $0 }
+        // Figma 393×852 프레임의 하단 내비게이션은 home indicator 영역까지 포함한다.
+        .ignoresSafeArea(edges: .bottom)
     }
 }
 

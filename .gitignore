@@ -9,6 +9,9 @@ __pycache__/
 node_modules/
 .next/
 tsconfig.tsbuildinfo
+/package-lock.json
+web/.env.local
+web/.env.*.local
 
 # Xcode
 xcuserdata/

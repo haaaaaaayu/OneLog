@@ -10,6 +10,18 @@ private struct ImportedIngredientFile: Decodable {
     let ingredients: [CanonicalIngredient]
 }
 
+private struct BundledIngredientPrice: Decodable {
+    let price: Int
+    let packageAmount: Double
+    let unit: Unit
+}
+
+private struct BundledIngredientPriceFile: Decodable {
+    let source: String
+    let updatedAt: String
+    let prices: [String: BundledIngredientPrice]
+}
+
 /// 번들에 구운 변환 결과를 읽는다. 파일이 없거나 깨져도 앱은 큐레이션 데이터로 동작한다.
 private func loadBundleFile<T: Decodable>(_ name: String) -> T? {
     guard let url = Bundle.main.url(forResource: name, withExtension: "json"),
@@ -19,6 +31,19 @@ private func loadBundleFile<T: Decodable>(_ name: String) -> T? {
 
 private let importedRecipeFile: ImportedRecipeFile? = loadBundleFile("imported_recipes")
 private let importedIngredientFile: ImportedIngredientFile? = loadBundleFile("imported_ingredients")
+private let bundledIngredientPriceFile: BundledIngredientPriceFile? = loadBundleFile("ingredient_prices")
+
+/// 식단 가격은 사용자 입력값이 아니라 앱과 함께 배포되는 가격 카탈로그에서 읽는다.
+/// 화면에는 이 값을 표시만 하며, 카탈로그에 가격이 없는 레시피는 예산 식단 후보로 내보내지 않는다.
+let bundledIngredientPrices: [String: IngredientPrice] = bundledIngredientPriceFile?.prices.mapValues { item in
+    IngredientPrice(
+        price: item.price,
+        packageAmount: item.packageAmount,
+        unit: item.unit,
+        confirmedAt: bundledIngredientPriceFile?.updatedAt ?? "",
+        source: bundledIngredientPriceFile?.source ?? "한끼로그 대표가격 카탈로그"
+    )
+} ?? [:]
 
 /// 외부 데이터 출처. 공공누리 출처 표시 의무가 있어 마이페이지에 노출한다.
 let externalDataSources: [String] = [importedRecipeFile?.source, importedIngredientFile?.source]
@@ -28,7 +53,7 @@ let externalDataSources: [String] = [importedRecipeFile?.source, importedIngredi
     }
 
 private let curatedIngredients: [CanonicalIngredient] = [
-    CanonicalIngredient(id: "egg", name: "계란", aliases: ["계란", "달걀", "계란 노른자", "달걀 노른자"], defaultUnit: .count, representativeSaleUnit: PackageSize(amount: 10, unit: .count, label: "계란 10구"), storageNote: "냉장 보관하고 깨진 계란은 먼저 사용하세요.", unitGrams: ["개": 50, "g": 1]),
+    CanonicalIngredient(id: "egg", name: "계란", aliases: ["계란", "달걀", "계란 노른자", "달걀 노른자"], defaultUnit: .count, representativeSaleUnit: PackageSize(amount: 12, unit: .count, label: "계란 12구"), storageNote: "냉장 보관하고 깨진 계란은 먼저 사용하세요.", unitGrams: ["개": 50, "g": 1]),
     CanonicalIngredient(id: "onion", name: "양파", aliases: ["양파", "채 썬 양파", "다진 양파"], defaultUnit: .count, representativeSaleUnit: PackageSize(amount: 3, unit: .count, label: "양파 3개 묶음"), storageNote: "손질한 양파는 밀폐해 냉장 보관하세요.", unitGrams: ["개": 200, "g": 1]),
     CanonicalIngredient(id: "green-onion", name: "대파", aliases: ["대파", "다진 대파", "송송 썬 대파", "파"], defaultUnit: .gram, representativeSaleUnit: PackageSize(amount: 300, unit: .gram, label: "대파 300g"), storageNote: "손질 후 키친타월과 함께 밀폐해 냉장 보관하세요.", unitGrams: nil),
     CanonicalIngredient(id: "chicken-thigh", name: "닭다리살", aliases: ["닭다리살", "닭고기", "닭 허벅지살"], defaultUnit: .gram, representativeSaleUnit: PackageSize(amount: 500, unit: .gram, label: "닭다리살 500g"), storageNote: "구매 후 1~2일 안에 사용하고 오래 둘 때는 냉동하세요.", unitGrams: nil),
@@ -115,9 +140,46 @@ private let curatedRecipes: [Recipe] = [
     ),
 ]
 
+/// 식약처 원본에는 2·4인분 기준으로 적힌 레시피가 섞여 있다(950건 중 27건).
+/// 앱은 `계획한 한 끼 = 1인분`으로 장보기·예산·재고 차감을 계산하는데 `servings`를 어디서도 보지 않아,
+/// 그 레시피만 삼겹살 900g처럼 인분수만큼 부풀려 사게 된다.
+///
+/// 담을 때 한 번만 1인분으로 환산해서 planner·요리 완료·레시피 상세가 모두 같은 양을 보게 한다.
+/// 원본 JSON은 출처(공공누리) 그대로 두고 여기서만 나눈다.
+private func normalizedToSingleServing(_ recipe: Recipe) -> Recipe {
+    guard recipe.servings > 1 else { return recipe }
+    let divisor = Double(recipe.servings)
+    return Recipe(
+        id: recipe.id,
+        title: recipe.title,
+        description: recipe.description,
+        mealSlots: recipe.mealSlots,
+        difficulty: recipe.difficulty,
+        cookTime: recipe.cookTime,
+        servings: 1,
+        symbolName: recipe.symbolName,
+        ingredients: recipe.ingredients.map {
+            RecipeIngredient(
+                ingredientID: $0.ingredientID,
+                rawName: $0.rawName,
+                quantity: ($0.quantity / divisor * 100).rounded() / 100,
+                unit: $0.unit,
+                preparation: $0.preparation
+            )
+        },
+        steps: recipe.steps,
+        tags: recipe.tags,
+        isLightBreakfast: recipe.isLightBreakfast,
+        requiredTools: recipe.requiredTools,
+        imageURL: recipe.imageURL
+    )
+}
+
 let recipes: [Recipe] = {
     var seen = Set(curatedRecipes.map(\.id))
-    return curatedRecipes + (importedRecipeFile?.recipes ?? []).filter { seen.insert($0.id).inserted }
+    return curatedRecipes + (importedRecipeFile?.recipes ?? [])
+        .filter { seen.insert($0.id).inserted }
+        .map(normalizedToSingleServing)
 }()
 
 // 950건 규모라 매번 선형 탐색하지 않는다.

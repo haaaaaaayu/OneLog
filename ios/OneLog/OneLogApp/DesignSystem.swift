@@ -19,8 +19,8 @@ extension Color {
     static let oneLogOrange = Color(hex: 0xC4761F)
     static let oneLogLine = Color(hex: 0xDED6C4)
 
-    static let oneLogBrand = Color(hex: 0xFFD62E)      // 히어로 노랑
-    static let oneLogBrandDeep = Color(hex: 0xFFC914)  // 탭 활성 노랑
+    static let oneLogBrand = Color(hex: 0xFFD62E)      // 절약 강조 노랑
+    static let oneLogBrandDeep = Color(hex: 0xFFDF5A)  // 히어로 카드 · 탭 활성 노랑
     static let oneLogBand = Color(hex: 0xFDFAEB)       // 식단 영역 띠
     static let oneLogBody = Color(hex: 0x2B2418)
     static let oneLogFaint = Color(hex: 0x998C78)
@@ -65,7 +65,7 @@ extension View {
 
 // MARK: - 피그마 공통 컴포넌트
 
-/// 피그마 `다음 버튼`(350:2302). 높이 50, radius 8, #FFC914 위에 16pt 볼드.
+/// 피그마 `다음 버튼`(707:657). 높이 50, radius 8, #FFDF5A 위에 16pt 볼드.
 struct FigmaPrimaryButton: View {
     let title: String
     var isEnabled: Bool = true
@@ -260,6 +260,27 @@ struct FigmaStepHeader: View {
         }
         // 피그마는 헤더/프로그레스만 오른쪽 34pt를 비운다(본문은 24pt). 바깥에서 준 24pt에 10pt를 더한다.
         .padding(.trailing, 10)
+        // 707:593 뒤로 ‹는 시안 상태바(34) 아래 11에서 시작한다.
+        .padding(.top, 10)
+    }
+}
+
+/// 프로필 사진. 사용자가 고른 사진이 있으면 그걸, 없으면 기본 마스코트를 쓴다.
+struct ProfileAvatarView: View {
+    let data: Data?
+    let size: CGFloat
+
+    var body: some View {
+        Group {
+            if let data, let image = UIImage(data: data) {
+                Image(uiImage: image).resizable().scaledToFill()
+            } else {
+                Image("ProfileAvatar").resizable().scaledToFill()
+            }
+        }
+        .frame(width: size, height: size)
+        .background(Color.oneLogPaleGreen, in: Circle())
+        .clipShape(Circle())
     }
 }
 

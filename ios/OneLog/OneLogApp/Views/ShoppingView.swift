@@ -2,14 +2,14 @@ import SwiftUI
 import UIKit
 
 /// F07·F14 장보기. 피그마 `식단 관리 2 / 장보기 리스트`(467:29) 좌표를 그대로 옮긴다.
-/// 시안에 없는 실행 보조(실제 구매량·판매 단위 수정, 복사·공유, 냉장고·동네 나눔)는
-/// 기능이 사라지지 않게 항목 시트와 카드 아래 보조 버튼으로 옮겼다.
+/// 실제 구매량·판매 단위 수정은 품목 탭으로, 복사·공유는 완료 버튼의 컨텍스트 메뉴와
+/// VoiceOver 사용자 동작으로 제공한다. Figma에 없는 보조 버튼은 본 화면에 만들지 않는다.
 struct ShoppingView: View {
     @EnvironmentObject private var store: AppStore
-    @EnvironmentObject private var shareStore: ShareStore
     @Environment(\.dismiss) private var dismiss
     @State private var isSharing = false
     @State private var editingItem: ShoppingPlanItem?
+    @State private var isFridgePresented = false
 
     private var items: [ShoppingPlanItem] { store.currentShoppingItems }
     private var checkedCount: Int { items.filter { store.state.purchaseChecks[$0.id] == true }.count }
@@ -53,7 +53,6 @@ struct ShoppingView: View {
                     }
                     budgetRow
                     completeButton
-                    secondaryActions
                 }
             }
             .padding(.horizontal, 20)
@@ -62,11 +61,15 @@ struct ShoppingView: View {
         }
         .background(CarePalette.canvas)
         .toolbar(.hidden, for: .navigationBar)
+        .preference(key: BottomNavigationHiddenPreferenceKey.self, value: true)
         .sheet(item: $editingItem) { item in
             ShoppingItemEditor(item: item).environmentObject(store)
         }
         .sheet(isPresented: $isSharing) {
             SystemShareSheet(items: [shoppingListText(items: purchasableItems, overrides: store.state.purchaseQuantityOverrides)])
+        }
+        .navigationDestination(isPresented: $isFridgePresented) {
+            FridgeView().environmentObject(store)
         }
     }
 
@@ -157,7 +160,7 @@ struct ShoppingView: View {
     private func priceText(_ item: ShoppingPlanItem) -> String {
         let count = resolvedPurchaseCount(for: item, overrides: store.state.purchaseQuantityOverrides)
         guard item.precision == .exact,
-              let price = store.state.prices[item.ingredientID],
+              let price = store.ingredientPrices[item.ingredientID],
               price.unit == item.unit,
               abs(price.packageAmount - item.packageSize.amount) < 0.000001 else {
             return "가격 확인 전"
@@ -222,68 +225,25 @@ struct ShoppingView: View {
         .buttonStyle(.plain)
         .disabled(purchasableItems.isEmpty)
         .accessibilityIdentifier("shopping.complete")
+        .contextMenu {
+            Button("목록 복사", systemImage: "doc.on.doc", action: copyList)
+            Button("목록 공유", systemImage: "square.and.arrow.up", action: shareList)
+            Button("보유 재료 수량 수정", systemImage: "refrigerator") { isFridgePresented = true }
+        }
+        .accessibilityAction(named: "목록 복사", copyList)
+        .accessibilityAction(named: "목록 공유", shareList)
+        .accessibilityAction(named: "보유 재료 수량 수정") { isFridgePresented = true }
     }
 
-    // MARK: - 시안에 없는 실행 보조 (F14·F26 유지)
-
-    private var secondaryActions: some View {
-        VStack(spacing: 8) {
-            HStack(spacing: 8) {
-                secondaryButton("목록 복사", systemImage: "doc.on.doc") {
-                    UIPasteboard.general.string = shoppingListText(items: purchasableItems, overrides: store.state.purchaseQuantityOverrides)
-                    store.recordShoppingEvent(.listCopied, itemIDs: purchasableItems.map(\.id))
-                    store.notice = "장보기 목록을 복사했어요."
-                }
-                .disabled(purchasableItems.isEmpty)
-
-                secondaryButton("목록 공유", systemImage: "square.and.arrow.up") {
-                    isSharing = true
-                    store.recordShoppingEvent(.listShared, itemIDs: purchasableItems.map(\.id))
-                }
-                .disabled(purchasableItems.isEmpty)
-            }
-
-            NavigationLink {
-                FridgeView().environmentObject(store)
-            } label: {
-                secondaryLabel("보유 재료 수량 수정", systemImage: "refrigerator")
-            }
-            .buttonStyle(.plain)
-            .accessibilityIdentifier("shopping.fridge")
-
-            NavigationLink {
-                ShareView()
-                    .environmentObject(store)
-                    .environmentObject(shareStore)
-            } label: {
-                secondaryLabel("동네에서 같이 사기 · 나눠 쓰기", systemImage: "person.2")
-            }
-            .buttonStyle(.plain)
-        }
+    private func copyList() {
+        UIPasteboard.general.string = shoppingListText(items: purchasableItems, overrides: store.state.purchaseQuantityOverrides)
+        store.recordShoppingEvent(.listCopied, itemIDs: purchasableItems.map(\.id))
+        store.notice = "장보기 목록을 복사했어요."
     }
 
-    private func secondaryButton(_ title: String, systemImage: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            secondaryLabel(title, systemImage: systemImage)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private func secondaryLabel(_ title: String, systemImage: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: systemImage)
-                .font(.figma(12, .medium))
-            Text(title)
-                .figmaText(12, .medium)
-        }
-        .foregroundStyle(CarePalette.ink)
-        .frame(maxWidth: .infinity)
-        .frame(height: 40)
-        .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .overlay {
-            RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(CarePalette.line, lineWidth: 1)
-        }
+    private func shareList() {
+        isSharing = true
+        store.recordShoppingEvent(.listShared, itemIDs: purchasableItems.map(\.id))
     }
 }
 

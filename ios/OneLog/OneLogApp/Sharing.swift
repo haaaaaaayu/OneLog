@@ -109,6 +109,58 @@ struct ShareMessage: Codable, Identifiable, Hashable {
     var createdAt: Date
 }
 
+enum ShareRequestStatus: String, Codable, Hashable {
+    case pending
+    case accepted
+    case rejected
+    case cancelled
+
+    var label: String {
+        switch self {
+        case .pending: return "응답 대기"
+        case .accepted: return "수락됨"
+        case .rejected: return "거절됨"
+        case .cancelled: return "취소됨"
+        }
+    }
+}
+
+/// 참여 의사와 실제 참여자를 분리한다. `participantIDs`에는 작성자가 수락한 사용자만 들어간다.
+struct ShareRequest: Codable, Identifiable, Hashable {
+    var id: String
+    var postID: String
+    var authorID: String
+    var requesterID: String
+    var requesterNickname: String
+    var message: String
+    var status: ShareRequestStatus
+    var createdAt: Date
+    var updatedAt: Date
+}
+
+enum ShareReportReason: String, CaseIterable, Identifiable {
+    case abuse = "욕설·괴롭힘"
+    case spam = "광고·도배"
+    case unsafe = "위험한 만남·거래"
+    case privacy = "개인정보 노출"
+    case other = "기타"
+
+    var id: String { rawValue }
+}
+
+enum CommunityContentPolicy {
+    /// 명백한 위해·욕설 표현을 전송 전에 차단한다. 서버도 같은 목록으로 다시 검사한다.
+    private static let blockedTerms = ["ㅅㅂ", "씨발", "병신", "죽여", "마약", "성매매"]
+
+    static func validate(_ value: String, maximumLength: Int) -> String? {
+        let trimmed = value.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed.count <= maximumLength else { return nil }
+        let normalized = trimmed.lowercased().replacingOccurrences(of: " ", with: "")
+        guard !blockedTerms.contains(where: normalized.contains) else { return nil }
+        return trimmed
+    }
+}
+
 struct ShareMatch: Identifiable, Hashable {
     let post: SharePost
     let score: Int

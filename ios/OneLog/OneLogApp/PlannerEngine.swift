@@ -17,10 +17,6 @@ private func safePackageSizeIfKnown(_ candidate: PackageSize?, fallback: Package
     return fallback
 }
 
-private func exactInventory(_ inventory: [InventoryItem], ingredientID: String, unit: Unit) -> InventoryItem? {
-    inventory.first(where: { $0.ingredientID == ingredientID && $0.unit == unit })
-}
-
 /// 재료에 명시된 단위별 무게가 있을 때만 환산한다. 근거가 없으면 nil을 돌려 수동 확인으로 보낸다.
 func convertQuantity(_ value: Double, from source: Unit, to target: Unit, using canonical: CanonicalIngredient?) -> Double? {
     if source == target { return value }
@@ -31,21 +27,28 @@ func convertQuantity(_ value: Double, from source: Unit, to target: Unit, using 
     return converted.isFinite ? converted : nil
 }
 
-/// 요구 단위로 환산 가능한 보유량을 찾는다. 같은 단위가 우선이다.
-private func availableQuantity(_ inventory: [InventoryItem], ingredientID: String, unit: Unit, canonical: CanonicalIngredient?) -> (quantity: Double?, isUnknown: Bool, converted: Bool)? {
-    if let exact = exactInventory(inventory, ingredientID: ingredientID, unit: unit) {
-        let unknown = exact.quantityStatus == .unknown || exact.quantity == nil
-        return (unknown ? nil : safeQuantity(exact.quantity), unknown, false)
-    }
-    for item in inventory where item.ingredientID == ingredientID {
-        if item.quantityStatus == .unknown || item.quantity == nil {
-            return (nil, true, false)
+/// 요구 단위로 환산 가능한 모든 보유량을 합산한다. 수량 미상·환산 불가 행은 정확도 상태에 남긴다.
+private func availableQuantity(_ inventory: [InventoryItem], ingredientID: String, unit: Unit, canonical: CanonicalIngredient?) -> (quantity: Double?, isUnknown: Bool, hasUnconvertible: Bool)? {
+    let matches = inventory.filter { $0.ingredientID == ingredientID }
+    guard !matches.isEmpty else { return nil }
+
+    var total = 0.0
+    var hasKnownQuantity = false
+    var isUnknown = false
+    var hasUnconvertible = false
+    for item in matches {
+        guard item.quantityStatus == .exact, let quantity = item.quantity, quantity.isFinite, quantity >= 0 else {
+            isUnknown = true
+            continue
         }
-        if let converted = convertQuantity(safeQuantity(item.quantity), from: item.unit, to: unit, using: canonical) {
-            return (converted, false, true)
+        guard let converted = convertQuantity(quantity, from: item.unit, to: unit, using: canonical) else {
+            hasUnconvertible = true
+            continue
         }
+        total += converted
+        hasKnownQuantity = true
     }
-    return nil
+    return (hasKnownQuantity ? total : nil, isUnknown, hasUnconvertible)
 }
 
 private func hasDifferentUnitInventory(_ inventory: [InventoryItem], ingredientID: String, unit: Unit) -> Bool {
@@ -140,7 +143,7 @@ func calculateShoppingPlan(
             return PackageSize(amount: amount, unit: requirement.unit, label: package.label)
         }
         let packageSize = knownPackage ?? declaredPackage ?? PackageSize(amount: 1, unit: requirement.unit, label: "판매 단위 확인 필요")
-        let unitMismatch = stock?.converted == false && hasDifferentUnitInventory(inventory, ingredientID: requirement.ingredientID, unit: requirement.unit)
+        let unitMismatch = stock?.hasUnconvertible == true || (stock == nil && hasDifferentUnitInventory(inventory, ingredientID: requirement.ingredientID, unit: requirement.unit))
         let manual = requirement.unitConflict || knownPackage == nil
         let additional = max(requirement.quantity - calculationAvailable, 0)
 
@@ -216,23 +219,43 @@ func applyConsumption(
 
     for consumption in consumptions {
         let actual = safeQuantity(consumption.actualQuantity)
+        let canonical = ingredient(for: consumption.ingredientID)
         if let remaining = consumption.remainingQuantity, remaining.isFinite, remaining >= 0 {
-            if let index = next.firstIndex(where: { $0.ingredientID == consumption.ingredientID && $0.unit == consumption.unit }) {
-                next[index].quantity = remaining
-                next[index].quantityStatus = .exact
-                next[index].updatedAt = now
-            } else {
-                next.append(InventoryItem(ingredientID: consumption.ingredientID, quantity: remaining, unit: consumption.unit, quantityStatus: .exact, updatedAt: now))
+            // 직접 입력한 남은 양은 이 재료의 환산 가능한 정확 재고 전체를 대표한다.
+            next.removeAll { item in
+                item.ingredientID == consumption.ingredientID
+                    && item.quantityStatus == .exact
+                    && convertQuantity(safeQuantity(item.quantity), from: item.unit, to: consumption.unit, using: canonical) != nil
             }
+            next.append(InventoryItem(ingredientID: consumption.ingredientID, quantity: remaining, unit: consumption.unit, quantityStatus: .exact, updatedAt: now))
             continue
         }
 
-        if let index = next.firstIndex(where: { $0.ingredientID == consumption.ingredientID && $0.unit == consumption.unit }) {
-            if next[index].quantityStatus == .exact, let quantity = next[index].quantity {
-                next[index].quantity = max(quantity - actual, 0)
-                next[index].updatedAt = now
+        var remainingToConsume = actual
+        let candidateIndexes = next.indices
+            .filter { index in
+                let item = next[index]
+                return item.ingredientID == consumption.ingredientID
+                    && item.quantityStatus == .exact
+                    && item.quantity != nil
+                    && convertQuantity(1, from: item.unit, to: consumption.unit, using: canonical) != nil
             }
-        } else {
+            .sorted { lhs, rhs in
+                let lhsExact = next[lhs].unit == consumption.unit
+                let rhsExact = next[rhs].unit == consumption.unit
+                return lhsExact && !rhsExact
+            }
+
+        for index in candidateIndexes where remainingToConsume > epsilon {
+            guard let quantity = next[index].quantity,
+                  let availableInConsumptionUnit = convertQuantity(quantity, from: next[index].unit, to: consumption.unit, using: canonical) else { continue }
+            let usedInConsumptionUnit = min(availableInConsumptionUnit, remainingToConsume)
+            guard let usedInInventoryUnit = convertQuantity(usedInConsumptionUnit, from: consumption.unit, to: next[index].unit, using: canonical) else { continue }
+            next[index].quantity = max(quantity - usedInInventoryUnit, 0)
+            next[index].updatedAt = now
+            remainingToConsume -= usedInConsumptionUnit
+        }
+        if candidateIndexes.isEmpty {
             next.append(InventoryItem(ingredientID: consumption.ingredientID, quantity: 0, unit: consumption.unit, quantityStatus: .exact, updatedAt: now))
         }
     }
@@ -288,12 +311,99 @@ func budgetEstimate(
     return BudgetEstimate(targetBudget: max(targetBudget, 0), lineItems: lines, knownPurchaseCost: knownCost, confirmedInventorySavings: savings, unknownCostIngredientIDs: Array(Set(unknownIDs)).sorted())
 }
 
-private func availableIngredientIDs(_ inventory: [InventoryItem]) -> Set<String> {
-    Set(inventory.filter { $0.quantityStatus == .exact && ($0.quantity ?? 0) > 0 }.map(\.ingredientID))
-}
-
 private func uniqueIngredientIDs(_ recipe: Recipe) -> [String] {
     Array(Set(recipe.ingredients.map(\.ingredientID))).sorted()
+}
+
+private struct RecipeReuseStats {
+    let reusedIngredientIDs: [String]
+    let newPurchaseIngredientIDs: [String]
+    let coverageScore: Int
+}
+
+/// 기존 재고와 앞선 끼니에서 산 포장의 잔량을 기준으로 후보 한 끼의 실제 재사용 비율을 계산한다.
+private func recipeReuseStats(_ recipe: Recipe, existingDrafts: [PlannedMealDraft], request: PlanRequest) -> RecipeReuseStats {
+    let existingRequirements = aggregateRequirements(for: existingDrafts)
+    let candidateDraft = PlannedMealDraft(recipeID: recipe.id, date: request.startDate, mealSlot: recipe.mealSlots.first ?? .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
+    let candidateRequirements = aggregateRequirements(for: [candidateDraft], recipes: [recipe])
+    let beforeItems = calculateShoppingPlan(requirements: existingRequirements, inventory: request.inventory, packageOverrides: request.packageOverrides)
+    let existingByKey = Dictionary(uniqueKeysWithValues: existingRequirements.map { ($0.key, $0) })
+    let beforeByKey = Dictionary(uniqueKeysWithValues: beforeItems.map { ($0.id, $0) })
+
+    var reused: Set<String> = []
+    var newPurchases: Set<String> = []
+    var coverageScore = 0
+    for requirement in candidateRequirements where requirement.quantity > epsilon {
+        let before = beforeByKey[requirement.key]
+        let existingNeed = existingByKey[requirement.key]?.quantity ?? 0
+        let available = before?.availableQuantity
+            ?? availableQuantity(request.inventory, ingredientID: requirement.ingredientID, unit: requirement.unit, canonical: ingredient(for: requirement.ingredientID))?.quantity
+            ?? 0
+        let supplyBefore = available + (before?.purchaseTotal ?? 0)
+        let reusableAmount = max(supplyBefore - existingNeed, 0)
+        let coverage = min(reusableAmount / requirement.quantity, 1)
+        coverageScore += Int((coverage * 100).rounded())
+        if reusableAmount > epsilon { reused.insert(requirement.ingredientID) }
+        if reusableAmount + epsilon < requirement.quantity {
+            newPurchases.insert(requirement.ingredientID)
+        }
+    }
+    return RecipeReuseStats(reusedIngredientIDs: reused.sorted(), newPurchaseIngredientIDs: newPurchases.sorted(), coverageScore: coverageScore)
+}
+
+private let avoidanceCategoryTerms: [String: [String]] = [
+    "해산물": ["새우", "꽃게", "게살", "대게", "랍스터", "바닷가재", "오징어", "문어", "낙지", "주꾸미", "쭈꾸미", "조개", "홍합", "굴", "전복", "소라", "가리비", "멸치", "참치", "고등어", "연어", "갈치", "꽁치", "생선", "명태", "대구", "도미", "광어", "우럭", "장어"],
+    "유제품": ["우유", "치즈", "버터", "생크림", "요거트", "요구르트", "연유", "크림치즈", "사워크림"],
+    "견과류": ["견과류", "호두", "땅콩", "아몬드", "잣", "캐슈", "피스타치오", "헤이즐넛", "마카다미아"],
+    "계란": ["계란", "달걀", "난백", "난황", "메추리알"],
+    "밀(글루텐)": ["밀가루", "중력분", "박력분", "강력분", "통밀", "식빵", "빵가루", "부침가루", "튀김가루", "소면", "칼국수", "우동면", "라면", "파스타면", "스파게티면", "또띠아", "수제비"],
+    "갑각류": ["새우", "꽃게", "게살", "대게", "랍스터", "바닷가재"]
+]
+
+func isGroupedAvoidanceName(_ value: String) -> Bool {
+    avoidanceCategoryTerms[value] != nil
+}
+
+private func normalizedAvoidanceName(_ value: String) -> String {
+    value.lowercased().filter { !$0.isWhitespace && $0 != "(" && $0 != ")" }
+}
+
+/// 재료 사전 ID로 만들 수 없는 분류형 알레르기·직접 입력 불호도 결정론적으로 검사한다.
+func customAvoidanceMatches(in recipe: Recipe, names: Set<String>) -> Set<String> {
+    guard !names.isEmpty else { return [] }
+    let ingredientNames = recipe.ingredients.flatMap { line -> [String] in
+        let canonical = ingredient(for: line.ingredientID)
+        return [line.rawName, canonical?.name].compactMap { $0 } + (canonical?.aliases ?? [])
+    }.map(normalizedAvoidanceName)
+
+    return Set(names.filter { avoidedName in
+        let terms = avoidanceCategoryTerms[avoidedName] ?? [avoidedName]
+        return terms.map(normalizedAvoidanceName).contains { term in
+            !term.isEmpty && ingredientNames.contains { candidate in candidate == term || candidate.contains(term) }
+        }
+    })
+}
+
+/// 조리 화면과 재고 차감은 같은 재료·단위 행을 하나로 합쳐 한 번만 처리한다.
+func mergedCookingIngredients(_ ingredients: [RecipeIngredient]) -> [RecipeIngredient] {
+    var order: [String] = []
+    var grouped: [String: RecipeIngredient] = [:]
+    for item in ingredients {
+        let key = ingredientKey(item.ingredientID, item.unit)
+        if let existing = grouped[key] {
+            grouped[key] = RecipeIngredient(
+                ingredientID: existing.ingredientID,
+                rawName: ingredient(for: existing.ingredientID)?.name ?? existing.rawName,
+                quantity: safeQuantity(existing.quantity) + safeQuantity(item.quantity),
+                unit: existing.unit,
+                preparation: nil
+            )
+        } else {
+            order.append(key)
+            grouped[key] = item
+        }
+    }
+    return order.compactMap { grouped[$0] }
 }
 
 private func validRecipe(_ recipe: Recipe, request: PlanRequest) -> Bool {
@@ -306,29 +416,79 @@ func isRecommendable(_ recipe: Recipe, preferences: AppPreferences) -> Bool {
     guard !preferences.dislikedRecipeIDs.contains(recipe.id) else { return false }
     guard preferences.dislikedIngredientIDs.isDisjoint(with: IDs) else { return false }
     guard preferences.allergyIngredientIDs.isDisjoint(with: IDs) else { return false }
+    guard customAvoidanceMatches(in: recipe, names: preferences.customDislikedNames).isEmpty else { return false }
+    guard customAvoidanceMatches(in: recipe, names: preferences.customAllergyNames).isEmpty else { return false }
     guard recipe.requiredTools.isSubset(of: preferences.availableTools) else { return false }
     return true
 }
 
+/// 온보딩에서 받은 `요리 숙련도`를 추천 점수에 반영한다.
+///
+/// 후보에서 아예 빼지 않고 가점·감점만 준다. 숙련도와 조리 시간까지 하드 필터로 걸면
+/// `하수 + 10분 이하`처럼 조건이 겹칠 때 끼니가 통째로 비어 버린다.
+func skillFitBonus(_ recipe: Recipe, preferences: AppPreferences) -> Int {
+    guard let skill = preferences.cookingSkill, let difficulty = recipe.difficulty else { return 0 }
+    switch skill {
+    case .beginner:
+        switch difficulty {
+        case ...1: return 120
+        case 2: return 40
+        case 3: return -60
+        default: return -160
+        }
+    case .intermediate:
+        switch difficulty {
+        case ...1: return 20
+        case 2...3: return 60
+        case 4: return -40
+        default: return -100
+        }
+    case .advanced:
+        switch difficulty {
+        case 4...: return 80
+        case 3: return 40
+        default: return 0
+        }
+    }
+}
+
+/// 온보딩에서 받은 `선호 조리 시간`을 추천 점수에 반영한다. 위와 같은 이유로 가감점만 준다.
+func cookTimeFitBonus(_ recipe: Recipe, preferences: AppPreferences) -> Int {
+    guard let preference = preferences.preferredCookTime, let minutes = recipe.cookTime else { return 0 }
+    switch preference {
+    case .under10:
+        if minutes <= 10 { return 140 }
+        if minutes <= 15 { return 60 }
+        return minutes <= 25 ? -40 : -140
+    case .under20:
+        if minutes <= 20 { return 120 }
+        return minutes <= 30 ? 20 : -100
+    case .over30:
+        return minutes >= 30 ? 80 : -30
+    case .any:
+        return 0
+    }
+}
+
 private func recomputeDrafts(_ drafts: [PlannedMealDraft], request: PlanRequest) -> (drafts: [PlannedMealDraft], shared: [String], unfilled: Int) {
     let recipeMap = Dictionary(uniqueKeysWithValues: recipes.map { ($0.id, $0) })
-    var available = availableIngredientIDs(request.inventory)
     var usage: [String: Int] = [:]
     var output: [PlannedMealDraft] = []
 
     for draft in drafts {
         guard let recipe = recipeMap[draft.recipeID] else { continue }
         let IDs = uniqueIngredientIDs(recipe)
-        let reused = IDs.filter { available.contains($0) }
-        let fresh = IDs.filter { !available.contains($0) }
-        IDs.forEach { usage[$0, default: 0] += 1; available.insert($0) }
+        let stats = recipeReuseStats(recipe, existingDrafts: output, request: request)
+        let reused = stats.reusedIngredientIDs
+        let fresh = stats.newPurchaseIngredientIDs
+        IDs.forEach { usage[$0, default: 0] += 1 }
         let reason: String
         if reused.isEmpty {
             reason = "새로 준비하는 메뉴예요."
-        } else if fresh.isEmpty {
-            reason = "가진 재료 \(reused.count)가지로 만들 수 있어요."
+        } else if fresh.isEmpty && stats.coverageScore >= IDs.count * 100 {
+            reason = "남은 재료와 앞서 산 포장 \(reused.count)가지로 만들 수 있어요."
         } else {
-            reason = "가진 재료 \(reused.count)가지와 새 재료 \(fresh.count)가지가 필요해요."
+            reason = "재료 \(reused.count)가지를 일부 다시 쓰고, \(fresh.count)가지는 추가 구매가 필요해요."
         }
         output.append(PlannedMealDraft(recipeID: recipe.id, date: draft.date, mealSlot: draft.mealSlot, reason: reason, reusedIngredientIDs: reused, newPurchaseCount: fresh.count))
     }
@@ -338,11 +498,21 @@ private func recomputeDrafts(_ drafts: [PlannedMealDraft], request: PlanRequest)
 }
 
 private func candidateRecipes(for slot: MealSlot, request: PlanRequest) -> [Recipe] {
-    recipes.filter { $0.mealSlots.contains(slot) && validRecipe($0, request: request) }
+    recipes.filter {
+        $0.mealSlots.contains(slot)
+            && validRecipe($0, request: request)
+            && fullyCalculableRecipeIDs.contains($0.id)
+            && hasPriceForEveryIngredient($0, prices: request.prices)
+    }
 }
 
-func planCandidates(for slot: MealSlot, preferences: AppPreferences) -> [Recipe] {
-    recipes.filter { $0.mealSlots.contains(slot) && isRecommendable($0, preferences: preferences) }
+func planCandidates(for slot: MealSlot, preferences: AppPreferences, prices: [String: IngredientPrice] = bundledIngredientPrices) -> [Recipe] {
+    recipes.filter {
+        $0.mealSlots.contains(slot)
+            && isRecommendable($0, preferences: preferences)
+            && fullyCalculableRecipeIDs.contains($0.id)
+            && hasPriceForEveryIngredient($0, prices: prices)
+    }
 }
 
 private func hasPriceForEveryIngredient(_ recipe: Recipe, prices: [String: IngredientPrice]) -> Bool {
@@ -380,7 +550,6 @@ private func candidateFitsBudget(
 
 private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOption {
     let days = min(max(request.days, 1), 7)
-    var available = availableIngredientIDs(request.inventory)
     var counts: [String: Int] = [:]
     var picks: [PlannedMealDraft] = []
     var unfilled = 0
@@ -400,9 +569,7 @@ private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOp
             var ranked: [(recipe: Recipe, score: Int, index: Int)] = []
             let recentIDs = picks.suffix(slots.count).map(\.recipeID)
             for (index, recipe) in candidates.enumerated() {
-                let IDs = uniqueIngredientIDs(recipe)
-                let reuse = IDs.filter { available.contains($0) }.count
-                let fresh = IDs.count - reuse
+                let reuse = recipeReuseStats(recipe, existingDrafts: picks, request: request)
                 let repeatPenalty = (counts[recipe.id] ?? 0) * (variant == 2 ? 30 : 60)
                 let recentPenalty = recentIDs.contains(recipe.id) ? 500 : 0
                 let favoriteBonus = request.favorites.contains(recipe.id) ? 260 : 0
@@ -413,7 +580,12 @@ private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOp
                 let freshWeight = variant == 1 ? 5 : 18
                 let varietyBonus = variant == 1 ? ((index + slotIndex) % 4) * 20 : 0
                 let costPenalty = variant == 2 ? recipeCostScore(recipe, request: request) / 10 : 0
-                let score = reuse * reuseWeight - fresh * freshWeight - repeatPenalty - recentPenalty + favoriteBonus + lightBonus + difficultyBonus + varietyBonus - costPenalty
+                let reusePoints = reuse.coverageScore * reuseWeight / 100
+                let freshPenalty = reuse.newPurchaseIngredientIDs.count * freshWeight
+                // 온보딩에서 받아 두고 쓰지 않던 숙련도·선호 조리 시간을 여기서 반영한다.
+                let skillBonus = skillFitBonus(recipe, preferences: request.preferences)
+                let timeBonus = cookTimeFitBonus(recipe, preferences: request.preferences)
+                let score = reusePoints - freshPenalty - repeatPenalty - recentPenalty + favoriteBonus + lightBonus + difficultyBonus + varietyBonus - costPenalty + skillBonus + timeBonus
 
                 ranked.append((recipe, score, index))
             }
@@ -429,8 +601,6 @@ private func generatedPlan(for request: PlanRequest, variant: Int) -> MealPlanOp
             // 첫 안은 최고 점수, 두 번째와 세 번째 안은 같은 유효 후보의 다음 순위를
             // 선택합니다. 후보가 하나뿐인 끼니는 안전하게 같은 메뉴를 사용합니다.
             let selected = ordered[min(variant, ordered.count - 1)].recipe
-            let IDs = uniqueIngredientIDs(selected)
-            IDs.forEach { available.insert($0) }
             counts[selected.id, default: 0] += 1
             picks.append(PlannedMealDraft(recipeID: selected.id, date: date, mealSlot: slot, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0))
         }
@@ -457,25 +627,44 @@ func recomputePlanOption(_ option: MealPlanOption, request: PlanRequest) -> Meal
 }
 
 func leftoverRecommendations(inventory: [InventoryItem], preferences: AppPreferences, recipes: [Recipe] = recipes) -> [LeftoverRecommendation] {
+    let urgentIngredientIDs = Set(inventory.compactMap { item -> String? in
+        guard let bestBefore = item.bestBefore,
+              bestBefore <= dateByAddingDays(isoDateString(), 3) else { return nil }
+        return item.ingredientID
+    })
     let candidates = recipes.filter { validRecipe($0, request: PlanRequest(startDate: isoDateString(), days: 1, slotsByDate: [:], targetBudget: 0, favorites: [], inventory: inventory, prices: [:], preferences: preferences)) }
-    return candidates.compactMap { recipe in
-        let used = recipe.ingredients.filter { ingredient in
-            guard let stock = exactInventory(inventory, ingredientID: ingredient.ingredientID, unit: ingredient.unit), stock.quantityStatus == .exact, let quantity = stock.quantity else { return false }
-            return quantity >= ingredient.quantity
+    var recommendations: [LeftoverRecommendation] = []
+    for recipe in candidates {
+        let used = recipe.ingredients.filter { recipeIngredient in
+            guard let canonical = ingredient(for: recipeIngredient.ingredientID),
+                  let stock = availableQuantity(inventory, ingredientID: recipeIngredient.ingredientID, unit: recipeIngredient.unit, canonical: canonical),
+                  !stock.isUnknown, !stock.hasUnconvertible, let quantity = stock.quantity else { return false }
+            return quantity >= recipeIngredient.quantity
         }.map(\.ingredientID)
         let items = calculateShoppingPlan(requirements: aggregateRequirements(for: [PlannedMealDraft(recipeID: recipe.id, date: isoDateString(), mealSlot: recipe.mealSlots.first ?? .dinner, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)], recipes: [recipe]), inventory: inventory)
         let missing = items.filter { $0.purchaseQuantity > 0 || $0.precision == .manual }
-        let score = used.count * 100 - missing.count * 12 - (recipe.difficulty ?? 0) * 3
+        let urgentUsed = used.filter { urgentIngredientIDs.contains($0) }
+        let score = used.count * 100 + urgentUsed.count * 40 - missing.count * 12 - (recipe.difficulty ?? 0) * 3
         let reason: String
-        if used.isEmpty {
+        if !urgentUsed.isEmpty {
+            let names = urgentUsed.compactMap { ingredient(for: $0)?.name }.prefix(2).joined(separator: ", ")
+            reason = "사용자가 기록한 표시 기한이 가까운 \(names)을 먼저 활용해요."
+        } else if used.isEmpty {
             reason = "현재 재고와 필요한 양을 확인하면 다음 장보기까지 함께 준비할 수 있어요."
         } else if missing.isEmpty {
             reason = "보유한 재료 \(used.count)가지를 추가 구매 없이 활용해요."
         } else {
             reason = "보유 재료 \(used.count)가지에 \(missing.count)개 품목만 더하면 만들 수 있어요."
         }
-        return LeftoverRecommendation(recipe: recipe, usedIngredientIDs: Array(Set(used)), additionalPurchaseItems: missing, reason: reason, score: score)
-    }.sorted {
+        recommendations.append(LeftoverRecommendation(
+            recipe: recipe,
+            usedIngredientIDs: Array(Set(used)),
+            additionalPurchaseItems: missing,
+            reason: reason,
+            score: score
+        ))
+    }
+    return recommendations.sorted {
         if $0.score != $1.score { return $0.score > $1.score }
         return $0.recipe.title.localizedCompare($1.recipe.title) == .orderedAscending
     }
@@ -515,9 +704,10 @@ func isFullyCalculable(_ recipe: Recipe) -> Bool {
 /// 목록 필터에서 매번 다시 계산하지 않도록 한 번만 판정한다.
 let fullyCalculableRecipeIDs: Set<String> = Set(recipes.filter(isFullyCalculable).map(\.id))
 
-func shoppingSignature(_ items: [ShoppingPlanItem], quantityOverrides: [String: Double] = [:]) -> String {
-    items.sorted { $0.id < $1.id }.map { item in
+func shoppingSignature(_ items: [ShoppingPlanItem], quantityOverrides: [String: Double] = [:], sessionID: String? = nil) -> String {
+    let itemSignature = items.sorted { $0.id < $1.id }.map { item in
         let count = purchasePackageCount(quantityOverrides[item.id], fallback: item.purchaseQuantity)
-        return "\(item.id)=\(count)"
+        return "\(item.id)=\(count)x\(item.packageSize.amount)\(item.packageSize.unit.rawValue)"
     }.joined(separator: "|")
+    return sessionID.map { "\($0)|\(itemSignature)" } ?? itemSignature
 }

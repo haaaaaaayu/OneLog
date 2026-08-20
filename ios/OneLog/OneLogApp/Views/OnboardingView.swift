@@ -14,6 +14,8 @@ struct OnboardingView: View {
     @State private var dislikedNames: Set<String> = []
     @State private var allergyNames: Set<String> = []
     @State private var isVerifyingNeighborhood = false
+    @State private var legalDocument: LegalDocumentKind?
+    @State private var hasAcceptedRequiredPolicies = false
 
     var body: some View {
         switch step {
@@ -38,6 +40,10 @@ struct OnboardingView: View {
         .ignoresSafeArea()
         .contentShape(Rectangle())
         .onTapGesture { step = 1 }
+        .task {
+            try? await Task.sleep(for: .seconds(2))
+            if step == 0 { step = 1 }
+        }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("한끼로그 시작 화면")
         .accessibilityHint("화면을 탭하면 시작 단계로 넘어갑니다.")
@@ -48,9 +54,10 @@ struct OnboardingView: View {
     // MARK: - Google 로그인 (350:1905)
 
     private var loginStep: some View {
-        // 피그마 350:1905는 마스코트를 위, 버튼·약관을 아래에 고정한다. 사이 여백(219pt)만 화면 높이에 따라 줄인다.
+        // 707:576은 852 프레임 맨 위를 기준으로 좌표를 잡는다(마스코트 229.76 · 제목 420 · 버튼 724 · 약관 795).
+        // 상태바 영역까지 포함한 좌표라 안전 영역을 무시하고 그대로 옮긴다. 사이 여백만 화면 높이에 따라 줄인다.
         VStack(spacing: 0) {
-            Color.clear.frame(height: 186)
+            Color.clear.frame(height: 229.76)
 
             Image("LoginMascot")
                 .resizable()
@@ -78,13 +85,11 @@ struct OnboardingView: View {
                     Text(error)
                         .figmaText(12)
                         .foregroundStyle(Color(hex: 0x9E2626))
-                    Button("이 기기에만 저장하고 시작하기") {
-                        store.useDeviceOnlyAccount()
-                        step = 2
+                    Button("Google 로그인 다시 시도") {
+                        Task { await store.signInWithGoogle() }
                     }
                     .font(.figma(13, .bold))
                     .foregroundStyle(Color.oneLogInk)
-                    .accessibilityIdentifier("onboarding.deviceOnly")
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(14)
@@ -92,24 +97,41 @@ struct OnboardingView: View {
                 .padding(.bottom, 14)
             }
 
+            policyConsent
+                .padding(.bottom, 12)
             googleButton
-            Text("계속하면 이용약관 및 개인정보처리방침에 동의하게 됩니다.")
-                .figmaText(10, lineHeight: 16)
-                .foregroundStyle(Color(hex: 0x61594A))
-                .multilineTextAlignment(.center)
-                .padding(.top, 17)
+            Button {
+                guard hasAcceptedRequiredPolicies else { return }
+                store.useDeviceOnlyAccount()
+                step = 2
+            } label: {
+                Text("이 기기에만 저장하고 시작하기")
+                    .figmaText(13, .bold)
+                    .foregroundStyle(Color.oneLogInk)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 44)
+            }
+            .disabled(!hasAcceptedRequiredPolicies)
+            .opacity(hasAcceptedRequiredPolicies ? 1 : 0.45)
+            .accessibilityIdentifier("onboarding.deviceOnly")
+
+            Color.clear.frame(height: 41) // 707:588 아래 852-811
         }
         .padding(.horizontal, 24)
-        .padding(.bottom, 29)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.white)
+        .ignoresSafeArea()
         .onChange(of: store.state.account) { _, account in
             if account != nil { step = 2 }
+        }
+        .fullScreenCover(item: $legalDocument) { kind in
+            LegalDocumentsView(kind: kind)
         }
     }
 
     private var googleButton: some View {
         Button {
+            guard hasAcceptedRequiredPolicies else { return }
             Task { await store.signInWithGoogle() }
         } label: {
             HStack(spacing: 10) {
@@ -130,7 +152,41 @@ struct OnboardingView: View {
             }
             .shadow(color: Color(red: 41 / 255, green: 31 / 255, blue: 10 / 255).opacity(0.1), radius: 4, y: 3)
         }
+        .disabled(!hasAcceptedRequiredPolicies)
+        .opacity(hasAcceptedRequiredPolicies ? 1 : 0.45)
         .accessibilityIdentifier("onboarding.google")
+    }
+
+    private var policyConsent: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Button {
+                hasAcceptedRequiredPolicies.toggle()
+            } label: {
+                Image(systemName: hasAcceptedRequiredPolicies ? "checkmark.square.fill" : "square")
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundStyle(hasAcceptedRequiredPolicies ? Color.oneLogSuccess : Color.oneLogFaint)
+                    .frame(width: 30, height: 30)
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("onboarding.requiredConsent")
+            .accessibilityLabel("필수 약관 동의")
+            .accessibilityValue(hasAcceptedRequiredPolicies ? "동의함" : "동의하지 않음")
+
+            VStack(alignment: .leading, spacing: 5) {
+                Text("필수 약관과 개인정보 처리방침에 동의합니다.")
+                    .figmaText(11, .medium, lineHeight: 17)
+                    .foregroundStyle(Color.oneLogBody)
+                HStack(spacing: 12) {
+                    Button("이용약관 보기") { legalDocument = .terms }
+                    Button("개인정보 처리방침 보기") { legalDocument = .privacy }
+                }
+                .font(.figma(10, .bold))
+                .foregroundStyle(Color.oneLogOrange)
+            }
+            Spacer(minLength: 0)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .accessibilityIdentifier("onboarding.policyConsent")
     }
 
     // MARK: - 1. 기본정보 (350:2256)
@@ -141,8 +197,9 @@ struct OnboardingView: View {
             primaryTitle: "다음",
             onBack: { step = 1 },
             onPrimary: {
-                store.setBasicProfile(nickname: nickname, birthDate: birthDateText, neighborhood: neighborhood, skill: skill, cookTime: cookTime, notify: false)
-                step = 3
+                if store.setBasicProfile(nickname: nickname, birthDate: birthDateText, neighborhood: neighborhood, skill: skill, cookTime: cookTime, notify: false) {
+                    step = 3
+                }
             },
             skipIdentifier: "onboarding.skipProfile",
             onSkip: { step = 3 }
@@ -171,7 +228,8 @@ struct OnboardingView: View {
                     }
                 }
                 FigmaField(label: "선호 조리 시간") {
-                    LazyVGrid(columns: [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)], spacing: 8) {
+                    // 707:786 — 칩 폭은 화면에 맞춰 늘리지 않고 170 고정, 두 칸씩 흘린다.
+                    LazyVGrid(columns: [GridItem(.fixed(170), spacing: 8), GridItem(.fixed(170), spacing: 8)], alignment: .leading, spacing: 8) {
                         ForEach(CookTimePreference.allCases) { value in
                             FigmaChip(title: value.rawValue, isSelected: cookTime == value) {
                                 cookTime = cookTime == value ? nil : value
@@ -181,8 +239,9 @@ struct OnboardingView: View {
                 }
             }
         }
-        .sheet(isPresented: $isVerifyingNeighborhood) {
+        .fullScreenCover(isPresented: $isVerifyingNeighborhood) {
             NeighborhoodSheet(neighborhood: $neighborhood)
+                .environmentObject(store)
         }
     }
 
@@ -309,33 +368,6 @@ struct OnboardingView: View {
     }
 }
 
-/// 거주지 행(445:49)을 탭하면 뜨는 동네 입력 시트. 입력값이 채워지면 `인증 완료` 상태가 된다.
-/// ponytail: 실제 GPS 인증 없이 입력만 받는다. CoreLocation 붙일 때 여기만 갈아끼우면 된다.
-private struct NeighborhoodSheet: View {
-    @Binding var neighborhood: String
-    @Environment(\.dismiss) private var dismiss
-    @State private var draft = ""
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("동네 인증")
-                .figmaText(18, .bold)
-                .foregroundStyle(Color.oneLogInk)
-            FigmaTextInput(placeholder: "동네를 검색해 주세요", text: $draft)
-                .accessibilityIdentifier("profile.neighborhoodInput")
-            Spacer(minLength: 0)
-            FigmaPrimaryButton(title: "인증하기", isEnabled: !draft.trimmingCharacters(in: .whitespaces).isEmpty) {
-                neighborhood = draft.trimmingCharacters(in: .whitespaces)
-                dismiss()
-            }
-        }
-        .padding(24)
-        .background(.white)
-        .presentationDetents([.height(260)])
-        .onAppear { draft = neighborhood }
-    }
-}
-
 /// 피그마 `도구 / 선택`(350:2316) 카드. 171x92.
 private struct ToolCard: View {
     let tool: CookingTool
@@ -361,31 +393,31 @@ private struct ToolCard: View {
                 .foregroundStyle(Color.oneLogBody)
                 .frame(width: 42, height: 42)
                 .background(Color.oneLogPaleGreen, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                .offset(x: 14, y: 14)
+                .offset(x: isSelected ? 12 : 13, y: isSelected ? 12 : 13)
 
                 Text(tool.rawValue)
                     .figmaText(12, .medium)
                     .foregroundStyle(Color.oneLogBody)
-                    .offset(x: 14, y: 62)
+                    .offset(x: isSelected ? 12 : 13, y: isSelected ? 60 : 61)
 
                 if isSelected {
                     ZStack {
-                        Circle().fill(Color.oneLogBrandDeep)
+                        Circle().fill(Color(hex: 0xFFC914)) // 707:608
                         Text("✓")
                             .figmaText(12, .bold)
                             .foregroundStyle(Color.oneLogBody)
                     }
                     .frame(width: 22, height: 22)
                     .frame(maxWidth: .infinity, alignment: .trailing)
-                    .padding(.trailing, 14)
-                    .offset(y: 14)
+                    .padding(.trailing, 16)
+                    .offset(y: 12)
                 }
             }
             .frame(height: 92)
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .strokeBorder(isSelected ? Color.oneLogBrandDeep : Color(hex: 0xECEBEB), lineWidth: isSelected ? 2 : 1)
+                    .strokeBorder(isSelected ? Color(hex: 0xFFC914) : Color(hex: 0xECEBEB), lineWidth: isSelected ? 2 : 1)
             }
         }
         .buttonStyle(.plain)

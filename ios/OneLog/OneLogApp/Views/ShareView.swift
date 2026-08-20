@@ -19,6 +19,18 @@ struct ShareView: View {
     @State private var draftForSheet: ShareDraft?
     @State private var neighborhoodInput = ""
     @State private var isEditingNeighborhood = false
+    @State private var showingMatch = false
+    @State private var showingMyPage = false
+    @State private var joiningPost: SharePost?
+
+    /// 탭 루트로 열 때는 시안 `재료 소분 1`(744:35) 대시보드부터 보여준다.
+    /// 장보기에서 이어질 때는 이미 바깥에 NavigationStack이 있고 나눌 재료도 정해져 있어
+    /// `재료 소분 2`(723:160)로 바로 연다. 스택을 중첩하면 뒤로가기가 두 겹이 된다.
+    private let isEmbedded: Bool
+
+    init(isEmbedded: Bool = false) {
+        self.isEmbedded = isEmbedded
+    }
 
     private var neighborhood: String { store.state.profile.neighborhood }
     private var drafts: [ShareDraft] { shareDrafts(from: store.currentShoppingItems) }
@@ -39,10 +51,27 @@ struct ShareView: View {
         return matches.map(\.post).filter { selected.contains($0.ingredientID) }
     }
 
+    /// 시안 `보리네에게 소분 요청 보내기`(723:199). 실제로 참여할 수 있는 겹치는 글 중 가장 가까운 하나를 고른다.
+    /// ponytail: 여러 명에게 동시에 요청을 보내는 건 지금 데이터 모델(글=1개 모집)에 없다. 하나만 고른다.
+    private var joinablePost: SharePost? {
+        guard let userID = shareStore.userID else { return nil }
+        let selected = Set(drafts.filter { selectedDraftIDs.contains($0.id) }.map(\.ingredientID))
+        let pendingPostIDs = Set(shareStore.requests.filter { $0.requesterID == userID && $0.status == .pending }.map(\.postID))
+        let candidates = matches.map(\.post).filter {
+            $0.canJoin(userID: userID) && !pendingPostIDs.contains($0.id) && (selected.isEmpty || selected.contains($0.ingredientID))
+        }
+        return candidates.min { a, b in
+            let da = walkingMinutes(from: myCoordinate, to: a.coordinate) ?? .max
+            let db = walkingMinutes(from: myCoordinate, to: b.coordinate) ?? .max
+            return da < db
+        }
+    }
+
     private var myPosts: [SharePost] {
         guard let userID = shareStore.userID else { return [] }
+        let pendingPostIDs = Set(shareStore.requests.filter { $0.requesterID == userID && $0.status == .pending }.map(\.postID))
         return shareStore.posts
-            .filter { $0.authorID == userID || $0.participantIDs.contains(userID) }
+            .filter { $0.authorID == userID || $0.participantIDs.contains(userID) || pendingPostIDs.contains($0.id) }
             .sorted { $0.createdAt > $1.createdAt }
     }
 
@@ -52,7 +81,7 @@ struct ShareView: View {
         let selected = drafts.filter { selectedDraftIDs.contains($0.id) }
         let known = selected.compactMap { draft -> Int? in
             guard let item = store.currentShoppingItems.first(where: { $0.ingredientID == draft.ingredientID && $0.unit == draft.unit }),
-                  let price = store.state.prices[draft.ingredientID],
+                  let price = store.ingredientPrices[draft.ingredientID],
                   price.unit == draft.unit,
                   price.packageAmount > 0,
                   abs(price.packageAmount - item.packageSize.amount) < 0.000001 else { return nil }
@@ -63,7 +92,258 @@ struct ShareView: View {
         return won(known.reduce(0, +))
     }
 
+    private var nickname: String {
+        let value = store.state.profile.nickname.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? "회원" : value
+    }
+
     var body: some View {
+        Group {
+            if isEmbedded {
+                matchScreen
+            } else {
+                NavigationStack {
+                    landing
+                        .navigationDestination(isPresented: $showingMatch) { matchScreen }
+                }
+            }
+        }
+        .task(id: neighborhood) {
+            guard !neighborhood.isEmpty else { return }
+            await shareStore.start(neighborhood: neighborhood)
+        }
+    }
+
+    // MARK: - 재료 소분 1 / 진입 (744:35)
+
+    private var landing: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
+                brandHeader
+                    .padding(.horizontal, 20)
+                    .padding(.top, 14)
+
+                shareHeroCard
+                    .padding(.horizontal, 20)
+                    .padding(.top, 15)
+
+                activeSharesCard
+                    .padding(.top, 20)
+
+                Color.clear.frame(height: 24)
+            }
+        }
+        // 시안 `Header Gradient`(759:575)는 캔버스 위에 얹힌다. 순서를 뒤집으면 캔버스가 덮어 버린다.
+        .background(alignment: .top) {
+            ZStack(alignment: .top) {
+                SharePalette.canvas
+                LinearGradient(
+                    stops: [
+                        .init(color: Color(hex: 0xFFDC4C), location: 0),
+                        .init(color: Color(hex: 0xFFE580), location: 0.5),
+                        .init(color: SharePalette.canvas.opacity(0), location: 1)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 187) // 759:575
+            }
+            .ignoresSafeArea()
+        }
+        .toolbar(.hidden, for: .navigationBar)
+        .fullScreenCover(isPresented: $showingMyPage) {
+            MyPageView().environmentObject(store)
+        }
+    }
+
+    private var brandHeader: some View {
+        HStack(alignment: .top, spacing: 0) {
+            VStack(alignment: .leading, spacing: 4) {
+                Image("BrandWordmark")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 93, height: 33)
+                Text("내 취향 한끼부터, 남은 재료까지")
+                    .figmaText(7)
+                    .foregroundStyle(SharePalette.muted)
+            }
+            Spacer(minLength: 8)
+            Button {
+                showingMyPage = true
+            } label: {
+                Image("IconProfile")
+                    .resizable()
+                    .renderingMode(.template)
+                    .scaledToFit()
+                    .frame(width: 30, height: 30)
+                    .foregroundStyle(SharePalette.ink)
+            }
+            .accessibilityLabel("마이페이지")
+        }
+    }
+
+    /// 시안 `759:190`. 위치는 실제 설정된 동네만, 도보 반경은 고정 문구(1km)로 둔다 — 실제 검색 반경 값이 없다.
+    private var shareHeroCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // 759:229 마스코트는 문구 오른쪽 위에 겹쳐 놓는다(x231.5, y78, 139x130).
+            ZStack(alignment: .topTrailing) {
+                Image("HomeMascot")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 139, height: 130)
+                    .accessibilityHidden(true)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(spacing: 5) {
+                        Text(neighborhood.isEmpty ? "동네 미설정" : neighborhood)
+                            .figmaText(13, .bold)
+                            .foregroundStyle(SharePalette.ink)
+                        Text("· 반경 1km 이웃")
+                            .figmaText(12, .medium)
+                            .foregroundStyle(SharePalette.muted)
+                    }
+
+                    (Text(nickname + "님").font(.figma(21, .bold))
+                        + Text(", ").font(.figma(17, .bold))
+                        + Text("이웃과 나눠보세요").font(.figma(17, .medium)))
+                        .foregroundStyle(SharePalette.ink)
+                        .padding(.top, 12)
+
+                    Text(planDayText)
+                        .figmaText(10)
+                        .foregroundStyle(Color(hex: 0x403B2E))
+                        .padding(.top, 8)
+                }
+                .padding(.top, 25)
+                .frame(maxWidth: .infinity, alignment: .leading)
+            }
+
+            Button {
+                showingMatch = true
+            } label: {
+                HStack(spacing: 7) {
+                    Text("＋")
+                    Text("소분·공동구매 시작하기")
+                }
+                .figmaText(15, .bold)
+                .foregroundStyle(SharePalette.ink)
+                .frame(width: 329) // 744:44
+                .padding(.vertical, 16)
+                .background(Color.oneLogBrandDeep, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+            }
+            .accessibilityIdentifier("share.start")
+            .frame(maxWidth: .infinity)
+            .padding(.top, 12)
+        }
+        .padding(.top, 8)
+    }
+
+    private var planDayText: String {
+        guard let cursor = store.plannedMeals.map(\.date).min() else { return "아직 계획한 식단이 없어요" }
+        let today = isoDateString()
+        var day = cursor
+        for count in 1...60 {
+            if day == today { return "오늘은 식단 \(count)일차 입니다!" }
+            day = dateByAddingDays(day, 1)
+        }
+        return "오늘은 어떤 재료를 나눠볼까요?"
+    }
+
+    /// 시안 `진행 중인 나눔`(759:190). 안 읽은 수·마지막 메시지는 지금 저장하지 않는 값이라 지어내지 않고,
+    /// 실제로 아는 것(상대 닉네임, 글 상태)만 보여준다.
+    private var activeSharesCard: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                Text("진행 중인 나눔")
+                    .figmaText(15, .bold)
+                    .foregroundStyle(SharePalette.ink)
+                Spacer(minLength: 8)
+                Text("\(myPosts.count)건")
+                    .figmaText(13)
+                    .foregroundStyle(SharePalette.muted)
+            }
+
+            if myPosts.isEmpty {
+                Text("아직 나누고 있는 이웃이 없어요.")
+                    .figmaText(12, .medium)
+                    .foregroundStyle(SharePalette.muted)
+                    .padding(.vertical, 16)
+            } else {
+                VStack(spacing: 0) {
+                    ForEach(Array(myPosts.enumerated()), id: \.element.id) { index, post in
+                        activeShareRow(post)
+                        if index < myPosts.count - 1 {
+                            Rectangle().fill(SharePalette.line).frame(height: 1)
+                        }
+                    }
+                }
+            }
+        }
+        // 759:190은 좌우로 4씩 흘러넘치는(w402) 흰 판이라 화면 끝까지 붙고 모서리도 각지다.
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.white)
+        .overlay(alignment: .top) {
+            Rectangle().fill(Color(hex: 0xEFE7D6)).frame(height: 2)
+        }
+        .oneLogCardShadow()
+    }
+
+    private func activeShareRow(_ post: SharePost) -> some View {
+        let isAuthor = post.authorID == shareStore.userID
+        let pending = shareStore.requests.first { $0.postID == post.id && $0.authorID == shareStore.userID && $0.status == .pending }
+        let myRequest = shareStore.requests.first { $0.postID == post.id && $0.requesterID == shareStore.userID && $0.status == .pending }
+        let counterpart = isAuthor ? (pending?.requesterNickname ?? "참여자 \(post.participantIDs.count)명") : post.authorNickname
+
+        return NavigationLink {
+            if isAuthor, let pending {
+                ReceivedShareRequestView(post: post, request: pending, myCoordinate: myCoordinate)
+                    .environmentObject(store)
+                    .environmentObject(shareStore)
+            } else {
+                SharePostDetailView(postID: post.id, myCoordinate: myCoordinate)
+                    .environmentObject(store)
+                    .environmentObject(shareStore)
+            }
+        } label: {
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(Color(hex: 0xFFEDB8))
+                    .frame(width: 46, height: 46)
+                    .overlay {
+                        Image(systemName: "person.fill")
+                            .foregroundStyle(SharePalette.ink.opacity(0.6))
+                    }
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(counterpart)
+                        .figmaText(14, .bold)
+                        .foregroundStyle(SharePalette.ink)
+                    Text("\(post.ingredientName) · \(pending?.status.label ?? myRequest?.status.label ?? post.status.label)")
+                        .figmaText(12, .medium)
+                        .foregroundStyle(SharePalette.muted)
+                        .lineLimit(1)
+                }
+                Spacer(minLength: 8)
+                HStack(spacing: 3) {
+                    Text(pending != nil ? "요청 확인" : (myRequest != nil ? "응답 대기" : "채팅"))
+                    Text("›")
+                }
+                .figmaText(12, .bold)
+                .foregroundStyle(SharePalette.ink)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Color.oneLogBrandDeep, in: Capsule())
+            }
+            .padding(.vertical, 12)
+        }
+        .buttonStyle(.plain)
+        .accessibilityIdentifier("share.activePost.\(post.id)")
+    }
+
+    // MARK: - 재료 소분 2 / 나눌 재료 고르기 (723:160)
+
+    private var matchScreen: some View {
         VStack(spacing: 0) {
             ScrollView(showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -136,15 +416,12 @@ struct ShareView: View {
         }
         .background(SharePalette.canvas)
         .toolbar(.hidden, for: .navigationBar)
+        .preference(key: BottomNavigationHiddenPreferenceKey.self, value: true)
         .onAppear { neighborhoodInput = neighborhood }
-        .task(id: neighborhood) {
-            guard !neighborhood.isEmpty else { return }
-            await shareStore.start(neighborhood: neighborhood)
-            // 도보 시간을 보여주려면 좌표가 필요하다. 거부하면 시간만 빠지고 나머지는 그대로 쓴다.
-            if store.state.profile.coordinate == nil,
-               let coordinate = await location.requestOnce() {
-                store.setNeighborhoodCoordinate(coordinate)
-            }
+        .navigationDestination(item: $joiningPost) { post in
+            SharePostDetailView(postID: post.id, myCoordinate: myCoordinate)
+                .environmentObject(store)
+                .environmentObject(shareStore)
         }
         .sheet(item: $draftForSheet) { draft in
             SharePostComposer(draft: draft, coordinate: myCoordinate)
@@ -309,8 +586,9 @@ struct ShareView: View {
                 .environmentObject(shareStore)
         } label: {
             HStack(spacing: 12) {
-                Text(post.kind == .groupBuy ? "🛒" : "🥕")
-                    .figmaText(18)
+                Image(systemName: post.kind.symbolName)
+                    .font(.figma(17, .medium))
+                    .foregroundStyle(SharePalette.ink)
                     .frame(width: 42, height: 42)
                     .background(SharePalette.chip, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
 
@@ -347,9 +625,9 @@ struct ShareView: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .strokeBorder(SharePalette.line, lineWidth: 1)
             }
+            }
+            .buttonStyle(.plain)
         }
-        .buttonStyle(.plain)
-    }
 
     private func headline(_ post: SharePost) -> String {
         guard let walking = walkingText(from: myCoordinate, to: post.coordinate) else {
@@ -367,7 +645,7 @@ struct ShareView: View {
     private func savingText(for draft: ShareDraft) -> String? {
         guard let item = store.currentShoppingItems.first(where: { $0.ingredientID == draft.ingredientID && $0.unit == draft.unit }),
               item.precision == .exact,
-              let price = store.state.prices[draft.ingredientID],
+              let price = store.ingredientPrices[draft.ingredientID],
               price.unit == draft.unit,
               price.packageAmount > 0,
               abs(price.packageAmount - item.packageSize.amount) < 0.000001 else { return nil }
@@ -394,7 +672,11 @@ struct ShareView: View {
             .padding(.top, 17)
 
             Button {
-                if let first = drafts.first(where: { selectedDraftIDs.contains($0.id) }) {
+                if let joinablePost {
+                    // 시안 `보리네에게 소분 요청 보내기`(723:199). 실제 참여 처리는 상세 화면의 `참여하기`가 한다 —
+                    // 이 버튼은 그 화면으로 데려가는 역할만 한다(AGENTS 8절: 없는 수락 대기 상태를 지어내지 않는다).
+                    joiningPost = joinablePost
+                } else if let first = drafts.first(where: { selectedDraftIDs.contains($0.id) }) {
                     draftForSheet = first
                 }
             } label: {
@@ -417,6 +699,7 @@ struct ShareView: View {
 
     private var ctaTitle: String {
         guard let first = drafts.first(where: { selectedDraftIDs.contains($0.id) }) else { return "나눌 재료를 골라주세요" }
+        if let joinablePost { return "\(joinablePost.authorNickname)에게 소분 요청 보내기" }
         return "\(first.ingredientName) 소분 글 올리기"
     }
 
@@ -566,7 +849,155 @@ private struct SharePostComposer: View {
     }
 }
 
-// MARK: - 글 상세 + 채팅 (350:1327, 350:1440)
+private struct ShareRequestComposer: View {
+    @EnvironmentObject private var shareStore: ShareStore
+    @Environment(\.dismiss) private var dismiss
+    let post: SharePost
+    let nickname: String
+    @State private var message: String
+    @State private var isSending = false
+
+    init(post: SharePost, nickname: String) {
+        self.post = post
+        self.nickname = nickname
+        _message = State(initialValue: "\(post.ingredientName)을 함께 나누고 싶어요. 시간과 장소는 채팅에서 정할게요.")
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section("요청할 재료") {
+                    Text("\(post.ingredientName) · \(post.amountText)")
+                    Text(post.pricePerShare.map { "표시 금액 \(won($0))" } ?? "금액은 채팅에서 확인")
+                        .foregroundStyle(Color.oneLogMuted)
+                }
+                Section("요청 메시지") {
+                    TextEditor(text: $message).frame(minHeight: 120)
+                    Text("\(message.count)/300").font(.caption).foregroundStyle(Color.oneLogFaint)
+                }
+                Section {
+                    Button(isSending ? "보내는 중…" : "작성자에게 요청 보내기") {
+                        Task {
+                            isSending = true
+                            let sent = await shareStore.requestJoin(post, message: message, nickname: nickname)
+                            isSending = false
+                            if sent { dismiss() }
+                        }
+                    }
+                    .disabled(isSending || message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || message.count > 300)
+                }
+            }
+            .navigationTitle("소분 요청")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar { ToolbarItem(placement: .topBarTrailing) { Button("닫기") { dismiss() } } }
+        }
+    }
+}
+
+// MARK: - 받은 요청 (795:26)
+
+private struct ReceivedShareRequestView: View {
+    @EnvironmentObject private var store: AppStore
+    @EnvironmentObject private var shareStore: ShareStore
+    @Environment(\.dismiss) private var dismiss
+    let post: SharePost
+    let request: ShareRequest
+    let myCoordinate: ShareCoordinate?
+
+    var body: some View {
+        VStack(spacing: 0) {
+            CareHeader(title: "받은 소분 요청") { dismiss() }
+
+            HStack(spacing: 12) {
+                Circle()
+                    .fill(Color(hex: 0xFFEDB8))
+                    .frame(width: 48, height: 48)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("\(request.requesterNickname)님이 소분을 요청했어요").figmaText(15, .bold).foregroundStyle(SharePalette.ink)
+                    Text([walkingText(from: myCoordinate, to: post.coordinate), "요청 확인 대기"].compactMap { $0 }.joined(separator: " · "))
+                        .figmaText(11, .medium).foregroundStyle(SharePalette.muted)
+                }
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .frame(height: 76)
+            .background(.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .oneLogCardShadow()
+            .padding(.horizontal, 20)
+            .padding(.top, 17)
+
+            VStack(spacing: 0) {
+                requestRow("재료", "\(post.ingredientName) · \(post.amountText) 소분")
+                requestDivider
+                requestRow("희망 시간", "채팅에서 조율")
+                requestDivider
+                requestRow("만남 장소", post.neighborhood)
+                requestDivider
+                requestRow("정산", post.pricePerShare.map { "각 \($0.formatted())원" } ?? "직접 정산")
+            }
+            .background(.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .oneLogCardShadow()
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text("요청 메시지").figmaText(12, .bold).foregroundStyle(Color(hex: 0x574F40))
+                Text(request.message)
+                    .figmaText(12, .medium, lineHeight: 19).foregroundStyle(Color.oneLogBody)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(16)
+            .background(Color.oneLogPaleGreen, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+
+            HStack(spacing: 10) {
+                Button("거절") {
+                    Task { await shareStore.reject(request); dismiss() }
+                }
+                .figmaText(15, .bold).foregroundStyle(SharePalette.ink)
+                .frame(maxWidth: .infinity).frame(height: 49)
+                .background(.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .overlay { RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(Color(hex: 0xE5DECC), lineWidth: 1.5) }
+
+                Button {
+                    Task {
+                        if await shareStore.accept(request) { dismiss() }
+                    }
+                } label: {
+                    Text("수락하고 채팅하기")
+                        .figmaText(15, .bold).foregroundStyle(.white)
+                        .frame(maxWidth: .infinity).frame(height: 49)
+                        .background(Color(hex: 0x2C2C2C), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                }
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+            Spacer()
+        }
+        .background(SharePalette.canvas)
+        .toolbar(.hidden, for: .navigationBar)
+        .preference(key: BottomNavigationHiddenPreferenceKey.self, value: true)
+        .accessibilityIdentifier("share.receivedRequest")
+    }
+
+    private func requestRow(_ label: String, _ value: String) -> some View {
+        HStack(spacing: 12) {
+            Text(label).figmaText(12, .medium).foregroundStyle(Color.oneLogFaint).frame(width: 69, alignment: .leading)
+            Text(value).figmaText(14, .bold).foregroundStyle(SharePalette.ink).lineLimit(1)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 47)
+    }
+
+    private var requestDivider: some View {
+        Rectangle().fill(Color.oneLogDivider).frame(height: 1).padding(.horizontal, 16)
+    }
+}
+
+// MARK: - 글 상세 + 채팅 (723:221, 723:263)
 
 private struct SharePostDetailView: View {
     @EnvironmentObject private var store: AppStore
@@ -577,6 +1008,9 @@ private struct SharePostDetailView: View {
 
     @State private var messageText = ""
     @State private var isMeetupEditorPresented = false
+    @State private var isMeetupDetailPresented = false
+    @State private var showingSafetyActions = false
+    @State private var requestPost: SharePost?
 
     private var post: SharePost? { shareStore.posts.first { $0.id == postID } }
     private var userID: String { shareStore.userID ?? "" }
@@ -599,11 +1033,44 @@ private struct SharePostDetailView: View {
             }
         }
         .toolbar(.hidden, for: .navigationBar)
+        .preference(key: BottomNavigationHiddenPreferenceKey.self, value: true)
         .task(id: membershipKey) { shareStore.startMemberDetails(postID: postID) }
         .onDisappear { shareStore.stopChat() }
         .sheet(isPresented: $isMeetupEditorPresented) {
             MeetupEditor(postID: postID, existing: shareStore.meetup, legacyPlaceNote: post?.meetupNote ?? "")
                 .environmentObject(shareStore)
+        }
+        .sheet(item: $requestPost) { post in
+            ShareRequestComposer(post: post, nickname: store.state.profile.nickname)
+                .environmentObject(shareStore)
+        }
+        .fullScreenCover(isPresented: $isMeetupDetailPresented) {
+            if let post, let meetup = shareStore.meetup {
+                ShareMeetupDetailView(post: post, meetup: meetup) {
+                    isMeetupDetailPresented = false
+                    isMeetupEditorPresented = true
+                }
+                .environmentObject(shareStore)
+            }
+        }
+        .confirmationDialog("글 관리", isPresented: $showingSafetyActions, titleVisibility: .visible) {
+            if let post, post.authorID == userID {
+                Button("글과 대화 삭제", role: .destructive) {
+                    Task { if await shareStore.deletePost(post) { dismiss() } }
+                }
+            } else if let post {
+                ForEach(ShareReportReason.allCases) { reason in
+                    Button("신고: \(reason.rawValue)") {
+                        Task { await shareStore.report(targetType: "post", targetID: post.id, targetUserID: post.authorID, reason: reason) }
+                    }
+                }
+                Button("작성자 차단", role: .destructive) {
+                    Task { await shareStore.block(userID: post.authorID); dismiss() }
+                }
+            }
+            Button("취소", role: .cancel) {}
+        } message: {
+            Text("신고 내용은 운영 확인용으로 저장되며, 차단하면 해당 사용자의 글과 메시지가 숨겨져요.")
         }
     }
 
@@ -661,10 +1128,9 @@ private struct SharePostDetailView: View {
             .buttonStyle(.plain)
             .accessibilityLabel("뒤로")
 
-            Text(post.kind == .groupBuy ? "🛒" : "🥕")
-                .figmaText(18)
+            Circle()
+                .fill(Color(hex: 0xFFF0C4))
                 .frame(width: 42, height: 42)
-                .background(SharePalette.chip, in: Circle())
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(post.authorNickname)
@@ -677,16 +1143,14 @@ private struct SharePostDetailView: View {
 
             Spacer(minLength: 8)
 
-            if post.authorID == userID, post.status != .closed {
-                Button {
-                    Task { await shareStore.close(post) }
-                } label: {
-                    Text("모집 닫기")
-                        .figmaText(10, .bold)
-                        .foregroundStyle(SharePalette.chatMeta)
-                }
-                .buttonStyle(.plain)
+            Button { showingSafetyActions = true } label: {
+                Image(systemName: "ellipsis")
+                    .foregroundStyle(SharePalette.chatMeta)
+                    .frame(width: 32, height: 36)
             }
+            .buttonStyle(.plain)
+            .accessibilityLabel(post.authorID == userID ? "글 관리" : "신고 또는 차단")
+
         }
         .padding(.horizontal, 18)
         .padding(.bottom, 12)
@@ -704,7 +1168,9 @@ private struct SharePostDetailView: View {
     // MARK: 매칭 알림 (350:1484)
 
     private func matchNotice(_ post: SharePost) -> some View {
-        Text("\(post.ingredientName) \(post.kind.label) 글이에요")
+        Text(post.status == .matched
+             ? "\(post.ingredientName) \(post.kind.label)이 매칭되었어요"
+             : "\(post.ingredientName) \(post.kind.label) 글이에요")
             .figmaText(9, .medium)
             .foregroundStyle(SharePalette.chatNoticeText)
             .padding(.horizontal, 19)
@@ -715,17 +1181,14 @@ private struct SharePostDetailView: View {
     // MARK: 요약 (350:1340 / 350:1460)
 
     private func summaryCard(_ post: SharePost) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 5) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text("\(post.ingredientName) \(post.amountText)")
-                        .figmaText(14, .bold)
-                        .foregroundStyle(Color(hex: 0x181714))
-                    Text(post.kind.explanation)
-                        .figmaText(10, lineHeight: 18)
-                        .foregroundStyle(Color(hex: 0x776F61))
-                        .lineLimit(2)
-                }
+                Text(post.kind == .groupBuy
+                     ? "우리동네 마트 · \(post.neighborhood)"
+                     : "\(post.authorNickname)님의 나눔 · \(post.neighborhood)")
+                    .figmaText(14, .bold)
+                    .foregroundStyle(Color(hex: 0x181714))
+                    .lineLimit(1)
                 Spacer(minLength: 8)
                 Text(post.status.label)
                     .figmaText(10, .bold)
@@ -734,40 +1197,22 @@ private struct SharePostDetailView: View {
                     .frame(height: 26)
                     .background(SharePalette.badgeFill, in: RoundedRectangle(cornerRadius: 9, style: .continuous))
             }
-            .padding(.horizontal, 17)
-            .padding(.top, 14)
-            .padding(.bottom, 12)
+            Text("\(post.ingredientName) \(post.amountText)" + (post.pricePerShare.map { " · 1인 \(won($0))" } ?? ""))
+                .figmaText(10)
+                .foregroundStyle(Color(hex: 0x776F61))
+                .lineLimit(1)
+            Text(post.pricePerShare.map { "각자 \(won($0))씩 · 만남 장소는 채팅에서 조율" } ?? "금액과 만남 장소는 채팅에서 조율")
+                .figmaText(10)
+                .foregroundStyle(Color(hex: 0x776F61))
+                .lineLimit(1)
 
-            Rectangle().fill(SharePalette.summaryLine).frame(height: 1)
-
-            HStack {
-                participant(post.authorNickname, share: post.capacity)
-                Text("1/\(post.capacity)")
-                    .figmaText(13, .medium)
-                    .foregroundStyle(Color(hex: 0x946B0D))
-                    .frame(width: 42, height: 42)
-                    .background(Color(hex: 0xFFF2C9), in: Circle())
-                participant(post.joinedCount > 1 ? "참여 \(post.joinedCount - 1)명" : "참여 대기", share: post.capacity)
+            if !post.isMember(userID) {
+                joinAction(post)
+                    .padding(.top, 8)
             }
-            .padding(.horizontal, 18)
-            .frame(height: 62)
-
-            Rectangle().fill(SharePalette.summaryLine).frame(height: 1)
-
-            HStack {
-                Text("각자 낼 돈")
-                    .figmaText(11)
-                    .foregroundStyle(SharePalette.summaryBody)
-                Spacer()
-                Text(post.pricePerShare.map { "\(won($0))씩" } ?? "정하지 않았어요")
-                    .figmaText(14, .bold)
-                    .foregroundStyle(SharePalette.ink)
-            }
-            .padding(.horizontal, 18)
-            .frame(height: 38)
-
-            joinAction(post)
         }
+        .padding(.horizontal, 17)
+        .padding(.vertical, 14)
         .background(.white, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
         .overlay {
             RoundedRectangle(cornerRadius: 18, style: .continuous)
@@ -775,27 +1220,19 @@ private struct SharePostDetailView: View {
         }
     }
 
-    private func participant(_ name: String, share: Int) -> some View {
-        VStack(spacing: 4) {
-            Text(name)
-                .figmaText(13, .bold)
-                .foregroundStyle(SharePalette.ink)
-                .lineLimit(1)
-            Text("\(share)명이 나눠요")
-                .figmaText(10)
-                .foregroundStyle(SharePalette.summaryBody)
-        }
-        .frame(width: 118)
-    }
-
     @ViewBuilder
     private func joinAction(_ post: SharePost) -> some View {
+        let pendingRequest = shareStore.requests.first {
+            $0.postID == post.id && $0.requesterID == userID && $0.status == .pending
+        }
         if post.authorID == userID {
             EmptyView()
         } else if post.participantIDs.contains(userID) {
             detailButton("참여 취소", filled: false) { Task { await shareStore.leave(post) } }
+        } else if let pendingRequest {
+            detailButton("요청 취소", filled: false) { Task { await shareStore.cancel(pendingRequest) } }
         } else if post.canJoin(userID: userID) {
-            detailButton("참여하기", filled: true) { Task { await shareStore.join(post) } }
+            detailButton("참여 요청 보내기", filled: true) { requestPost = post }
         } else {
             Text(post.isFull ? "인원이 다 찼어요." : "지금은 참여할 수 없는 글이에요.")
                 .figmaText(10)
@@ -861,7 +1298,22 @@ private struct SharePostDetailView: View {
                     in: RoundedRectangle(cornerRadius: isMine ? 18 : 16, style: .continuous)
                 )
                 .shadow(color: isMine ? .clear : Color(red: 86 / 255, green: 71 / 255, blue: 44 / 255).opacity(0.06), radius: 2, y: 2)
-            Text(message.createdAt.formatted(date: .omitted, time: .shortened))
+                .contextMenu {
+                    if !isMine {
+                        Button("메시지 신고", role: .destructive) {
+                            Task {
+                                await shareStore.report(
+                                    targetType: "message", targetID: message.id,
+                                    targetUserID: message.senderID, reason: .abuse
+                                )
+                            }
+                        }
+                        Button("보낸 사람 차단", role: .destructive) {
+                            Task { await shareStore.block(userID: message.senderID) }
+                        }
+                    }
+                }
+            Text(message.createdAt.formatted(.dateTime.hour().minute().locale(Locale(identifier: "ko_KR"))))
                 .figmaText(9)
                 .foregroundStyle(Color(hex: 0xA59D90))
         }
@@ -878,7 +1330,7 @@ private struct SharePostDetailView: View {
                 .padding(.top, 12)
 
             if let meetup = shareStore.meetup {
-                Text("날짜: \(meetup.scheduledAt.formatted(date: .abbreviated, time: .shortened))")
+                Text("날짜: \(meetup.scheduledAt.formatted(.dateTime.month().day().weekday(.wide).hour().minute().locale(Locale(identifier: "ko_KR"))))")
                     .figmaText(9, lineHeight: 17)
                     .foregroundStyle(SharePalette.promiseBody)
                     .padding(.top, 9)
@@ -894,7 +1346,11 @@ private struct SharePostDetailView: View {
             }
 
             Button {
-                isMeetupEditorPresented = true
+                if shareStore.meetup == nil {
+                    isMeetupEditorPresented = true
+                } else {
+                    isMeetupDetailPresented = true
+                }
             } label: {
                 Text(shareStore.meetup == nil ? "약속 잡기" : "약속 보기")
                     .figmaText(9)
@@ -958,7 +1414,115 @@ private struct SharePostDetailView: View {
     }
 }
 
-// MARK: - 약속 편집 (기존 유지)
+// MARK: - 약속 상세·편집 (796:26, F27 날짜·시간·장소)
+
+private struct ShareMeetupDetailView: View {
+    @EnvironmentObject private var shareStore: ShareStore
+    @Environment(\.dismiss) private var dismiss
+    let post: SharePost
+    let meetup: ShareMeetup
+    let onEdit: () -> Void
+
+    private var partnerName: String { post.authorID == shareStore.userID ? "이웃" : post.authorNickname }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                Text("약속").figmaText(20, .bold).foregroundStyle(SharePalette.ink)
+                HStack {
+                    Button { dismiss() } label: {
+                        Text("‹").figmaText(28).foregroundStyle(SharePalette.ink)
+                            .frame(width: 38, height: 38).background(SharePalette.brand, in: Circle())
+                    }
+                    .accessibilityLabel("뒤로")
+                    Spacer()
+                }
+            }
+            .frame(height: 44)
+            .padding(.horizontal, 20)
+            .padding(.top, 8)
+
+            Text("✓  \(partnerName)와 약속이 확정됐어요")
+                .figmaText(14, .bold)
+                .foregroundStyle(Color.oneLogSuccess)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 16)
+                .frame(height: 43)
+                .background(Color.oneLogSuccessBackground, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .padding(.horizontal, 20)
+                .padding(.top, 16)
+
+            meetupMap.padding(.horizontal, 20).padding(.top, 14)
+
+            VStack(spacing: 0) {
+                meetupRow(icon: "🗓️", label: "날짜 · 시간", value: meetup.scheduledAt.formatted(.dateTime.month().day().weekday(.wide).hour().minute().locale(Locale(identifier: "ko_KR"))))
+                meetupDivider
+                meetupRow(icon: "📍", label: "장소", value: meetup.placeNote)
+                meetupDivider
+                meetupRow(icon: "🥚", label: "나눌 재료", value: "\(post.ingredientName) \(post.amountText)")
+                meetupDivider
+                meetupRow(icon: "💳", label: "정산", value: post.pricePerShare.map { "\($0.formatted())원" } ?? "직접 정산")
+            }
+            .background(.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+            .oneLogCardShadow()
+            .padding(.horizontal, 20)
+            .padding(.top, 16)
+
+            Button(action: onEdit) {
+                Text("시간 · 장소 변경 요청")
+                    .figmaText(15, .bold).foregroundStyle(SharePalette.ink)
+                    .frame(maxWidth: .infinity).frame(height: 48)
+                    .background(.white, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .overlay { RoundedRectangle(cornerRadius: 12, style: .continuous).stroke(SharePalette.ink, lineWidth: 1.5) }
+            }
+            .buttonStyle(.plain)
+            .padding(.horizontal, 20)
+            .padding(.top, 14)
+
+            Button("약속 취소하기", role: .destructive) {
+                Task { if await shareStore.clearMeetup(postID: post.id) { dismiss() } }
+            }
+            .figmaText(13, .bold)
+            .foregroundStyle(Color(hex: 0xCC4242))
+            .padding(.top, 18)
+            Spacer()
+        }
+        .background(SharePalette.canvas)
+        .accessibilityIdentifier("share.meetupDetail")
+    }
+
+    private var meetupMap: some View {
+        ZStack {
+            Color(hex: 0xE5EBE5)
+            HStack { Spacer(); Rectangle().fill(Color(hex: 0xD4DBD4)).frame(width: 3); Spacer(); Rectangle().fill(Color(hex: 0xD4DBD4)).frame(width: 3); Spacer() }
+            VStack { Spacer(); Rectangle().fill(Color(hex: 0xD4DBD4)).frame(height: 3); Spacer() }
+            VStack(spacing: -2) {
+                Text(meetup.placeNote.split(separator: "·").last.map { String($0).trimmingCharacters(in: .whitespaces) } ?? "만남 장소")
+                    .figmaText(11, .bold).foregroundStyle(.white)
+                    .padding(.horizontal, 12).frame(height: 26)
+                    .background(SharePalette.ink, in: Capsule())
+                Image("IconPin").resizable().scaledToFit().frame(width: 26, height: 32)
+            }
+        }
+        .frame(height: 149)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+    }
+
+    private func meetupRow(icon: String, label: String, value: String) -> some View {
+        HStack(spacing: 10) {
+            Text(icon).font(.system(size: 14)).frame(width: 18)
+            Text(label).figmaText(12, .medium).foregroundStyle(Color.oneLogFaint).frame(width: 78, alignment: .leading)
+            Text(value).figmaText(14, .bold).foregroundStyle(SharePalette.ink).lineLimit(1)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 16)
+        .frame(height: 47)
+    }
+
+    private var meetupDivider: some View {
+        Rectangle().fill(Color.oneLogDivider).frame(height: 1).padding(.horizontal, 16)
+    }
+}
 
 private struct MeetupEditor: View {
     @EnvironmentObject private var shareStore: ShareStore

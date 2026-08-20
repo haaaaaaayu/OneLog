@@ -142,6 +142,32 @@ def main() -> int:
         status, body = request("GET", f"{base}/sharePosts")
         check.expect("비로그인 읽기 차단", status, 403, body)
 
+        for token, uid, name, neighborhood in [
+            (author_token, author_id, "검증봇", NEIGHBORHOOD),
+            (joiner_token, joiner_id, "참여봇", NEIGHBORHOOD),
+            (stranger_token, "", "제3자", "다른검증동네"),
+        ]:
+            if not uid:
+                # 제3자 uid는 이후 권한 판정에 필요하지 않아 토큰의 로컬 ID를 별도 보관하지 않는다.
+                continue
+            status, body = request(
+                "PATCH", f"{base}/users/{uid}", token,
+                fields(neighborhood=neighborhood, nickname=name, updatedAt=datetime.now(timezone.utc)),
+            )
+            check.expect(f"{name} 동네 접근정보 저장", status, 200, body)
+
+        private_state = fields(schemaVersion=1, stateJSON="{}", updatedAt=datetime.now(timezone.utc))
+        status, body = request("PATCH", f"{base}/users/{author_id}/private/appState", author_token, private_state)
+        check.expect("Google 계정 개인 백업 저장", status, 200, body)
+        status, body = request("GET", f"{base}/users/{author_id}/private/appState", stranger_token)
+        check.expect("다른 사용자의 개인 백업 읽기 차단", status, 403, body)
+
+        device = fields(token="rules-check-token-that-is-long-enough", platform="ios", updatedAt=datetime.now(timezone.utc))
+        status, body = request("PATCH", f"{base}/users/{author_id}/devices/check-device", author_token, device)
+        check.expect("본인 푸시 기기 등록", status, 200, body)
+        status, body = request("GET", f"{base}/users/{author_id}/devices/check-device", stranger_token)
+        check.expect("다른 사용자의 푸시 토큰 읽기 차단", status, 403, body)
+
         status, body = request("POST", f"{base}/sharePosts?documentId={post_id}", author_token, post)
         check.expect("작성자 글 작성", status, 200, body)
 
@@ -176,16 +202,41 @@ def main() -> int:
         )
         check.expect("남의 글 내용 수정 차단", status, 403, body)
 
+        request_id = f"{post_id}_{joiner_id}"
+        join_request = fields(
+            id=request_id,
+            postID=post_id,
+            authorID=author_id,
+            requesterID=joiner_id,
+            requesterNickname="참여봇",
+            message="대파를 함께 나누고 싶어요.",
+            status="pending",
+            createdAt=datetime.now(timezone.utc),
+            updatedAt=datetime.now(timezone.utc),
+        )
+        status, body = request("POST", f"{base}/shareRequests?documentId={request_id}", joiner_token, join_request)
+        check.expect("참여 요청 작성", status, 200, body)
+
+        status, body = request("GET", meetup_path, joiner_token)
+        check.expect("요청 대기자는 약속 읽기 차단", status, 403, body)
+
         status, body = request(
             "PATCH",
             f"{base}/sharePosts/{post_id}?updateMask.fieldPaths=participantIDs&updateMask.fieldPaths=status",
-            joiner_token,
+            author_token,
             fields(participantIDs=[joiner_id], status="matched"),
         )
-        check.expect("참여자 참여 신청", status, 200, body)
+        check.expect("작성자의 직접 참여자 추가 차단(callable만 허용)", status, 403, body)
+        status, body = request(
+            "PATCH",
+            f"{base}/shareRequests/{request_id}?updateMask.fieldPaths=status&updateMask.fieldPaths=updatedAt",
+            author_token,
+            fields(status="accepted", updatedAt=datetime.now(timezone.utc)),
+        )
+        check.expect("작성자의 직접 요청 상태 변경 차단(callable만 허용)", status, 403, body)
 
         status, body = request("GET", meetup_path, joiner_token)
-        check.expect("참여자 약속 읽기", status, 200, body)
+        check.expect("수락 전 사용자의 약속 읽기 차단", status, 403, body)
 
         status, body = request(
             "PATCH",
@@ -197,7 +248,7 @@ def main() -> int:
                 updatedAt=datetime.now(timezone.utc),
             ),
         )
-        check.expect("참여자 약속 수정", status, 200, body)
+        check.expect("수락 전 사용자의 약속 수정 차단", status, 403, body)
 
         status, body = request(
             "PATCH",
@@ -214,15 +265,15 @@ def main() -> int:
         message_id = str(uuid.uuid4())
         message = fields(
             id=message_id,
-            senderID=joiner_id,
-            senderNickname="참여봇",
+            senderID=author_id,
+            senderNickname="검증봇",
             text="검증 메시지입니다.",
             createdAt=datetime.now(timezone.utc),
         )
         status, body = request(
-            "POST", f"{base}/sharePosts/{post_id}/messages?documentId={message_id}", joiner_token, message
+            "POST", f"{base}/sharePosts/{post_id}/messages?documentId={message_id}", author_token, message
         )
-        check.expect("참여자 채팅 작성", status, 200, body)
+        check.expect("작성자 채팅 작성", status, 200, body)
 
         status, body = request("GET", f"{base}/sharePosts/{post_id}/messages", author_token)
         check.expect("작성자 채팅 읽기", status, 200, body)
@@ -245,6 +296,9 @@ def main() -> int:
         status, body = request("DELETE", f"{base}/sharePosts/{post_id}", joiner_token)
         check.expect("참여자의 글 삭제 차단", status, 403, body)
 
+        status, body = request("DELETE", f"{base}/sharePosts/{post_id}", author_token)
+        check.expect("작성자의 직접 삭제도 차단(callable만 허용)", status, 403, body)
+
         status, body = request(
             "PATCH",
             f"{base}/sharePosts/{post_id}?updateMask.fieldPaths=status",
@@ -253,11 +307,8 @@ def main() -> int:
         )
         check.expect("작성자 모집 마감", status, 200, body)
     finally:
-        # ponytail: 메시지는 규칙상 지울 수 없어(분쟁 기록 보존) 약속 문서와 부모 글만 지운다.
-        # 메시지 하위 컬렉션은 앱의 어느 화면에서도 보이지 않는다. 쌓이면 서버측 정리 작업이 필요하다.
-        request("DELETE", f"{base}/sharePosts/{post_id}/meetup/details", author_token)
-        request("DELETE", f"{base}/sharePosts/{post_id}", author_token)
-        request("DELETE", f"{base}/sharePosts/check-bad-{post_id}", author_token)
+        # 삭제는 callable과 매일 실행되는 TTL 정리 함수만 수행한다. 테스트 문서는 7일 뒤 자동 정리된다.
+        pass
 
     print()
     if check.failures:

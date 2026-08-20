@@ -1,7 +1,11 @@
 import Combine
 import FirebaseAuth
 import FirebaseCore
+import FirebaseFunctions
+import FirebaseFirestore
 import Foundation
+import GoogleSignIn
+import UIKit
 
 private struct PersistedEnvelope: Codable {
     let version: Int
@@ -16,6 +20,8 @@ final class AppStore: ObservableObject {
     @Published var notice: String?
     /// 계정 연동 실패 사유. 온보딩과 마이페이지에서 재시도 안내로 보여준다.
     @Published var accountError: String?
+    private var isRestoringCloudState = false
+    private var cloudUploadTask: Task<Void, Never>?
 
     init() {
         // UI 테스트가 온보딩부터 다시 확인할 수 있도록 저장 상태를 비운다.
@@ -49,14 +55,16 @@ final class AppStore: ObservableObject {
         calculateShoppingPlan(requirements: aggregateRequirements(for: state.plannedMeals), inventory: state.inventory, packageOverrides: state.packageOverrides)
     }
 
-    /// 확인한 가격이 있는 품목에서 보유 재고 덕분에 덜 산 포장 금액. 홈(383:328)과 마이페이지(384:33) 게이지가 함께 쓴다.
-    /// ponytail: `밖에서 사먹는 것 대비` 절약의 기준값이 기획에 없어 확정 가격 기반 절약만 센다.
+    /// 사용자 입력이 아닌 앱 가격 카탈로그. 식단·장보기·절약 계산은 모두 같은 스냅샷을 쓴다.
+    var ingredientPrices: [String: IngredientPrice] { bundledIngredientPrices }
+
+    /// 이번 달에 실제 완료한 식사에서, 보유 재료 덕분에 덜 산 확인 가격 기준 포장 금액.
     var monthlyConfirmedSavings: Int {
-        let drafts = plannedMeals.map {
-            PlannedMealDraft(recipeID: $0.recipeID, date: $0.date, mealSlot: $0.mealSlot, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)
-        }
-        guard !drafts.isEmpty else { return 0 }
-        return estimate(for: drafts, targetBudget: 0).confirmedInventorySavings
+        let prefix = String(isoDateString().prefix(7))
+        return state.completions
+            .filter { $0.completedAt.hasPrefix(prefix) }
+            .compactMap(\.confirmedInventorySavings)
+            .reduce(0, +)
     }
 
     var cookedMealsThisMonth: Int {
@@ -65,13 +73,14 @@ final class AppStore: ObservableObject {
     }
 
     func estimate(for drafts: [PlannedMealDraft], targetBudget: Int) -> BudgetEstimate {
-        budgetEstimate(drafts: drafts, targetBudget: targetBudget, inventory: state.inventory, prices: state.prices, packageOverrides: state.packageOverrides)
+        budgetEstimate(drafts: drafts, targetBudget: targetBudget, inventory: state.inventory, prices: ingredientPrices, packageOverrides: state.packageOverrides)
     }
 
     func save() {
         let envelope = PersistedEnvelope(version: 1, state: state)
         guard let data = try? JSONEncoder().encode(envelope) else { return }
         UserDefaults.standard.set(data, forKey: Self.storageKey)
+        scheduleCloudUpload()
     }
 
     func clearNotice() {
@@ -85,9 +94,7 @@ final class AppStore: ObservableObject {
 
     // MARK: - 계정 (F23)
 
-    /// FirebaseAuth의 웹 OAuth 흐름이 돌아올 때 쓰는 URL 스킴. `OAuthProvider`가 고르는 규칙과 같다.
-    /// `GoogleService-Info.plist`에 `CLIENT_ID`가 있으면 역순 클라이언트 ID, 없으면 인코딩한 앱 ID다.
-    /// ponytail: GoogleSignIn SDK를 새로 붙이지 않는다. 이미 넣은 FirebaseAuth의 웹 흐름으로 같은 결과를 얻는다.
+    /// Google Sign-In SDK가 사용하는 URL 스킴. `GoogleService-Info.plist`의 CLIENT_ID를 역순으로 만든 값이다.
     private var googleCallbackScheme: String? {
         guard let options = FirebaseApp.app()?.options else { return nil }
         if let clientID = options.clientID {
@@ -102,9 +109,12 @@ final class AppStore: ObservableObject {
         return types.flatMap { $0["CFBundleURLSchemes"] as? [String] ?? [] }
     }
 
-    /// 스킴이 등록되어 있지 않으면 FirebaseAuth가 `fatalError`로 앱을 죽인다. 그 전에 여기서 막는다.
+    /// URL scheme 또는 Google client ID가 빠진 경우 Google SDK를 열지 않는다.
     var isGoogleSignInConfigured: Bool {
-        guard let scheme = googleCallbackScheme else { return false }
+        guard let options = FirebaseApp.app()?.options,
+              let clientID = options.clientID,
+              !clientID.isEmpty,
+              let scheme = googleCallbackScheme else { return false }
         return Self.registeredURLSchemes.contains(scheme)
     }
 
@@ -118,23 +128,69 @@ final class AppStore: ObservableObject {
             accountError = "아직 Google 로그인을 연결할 수 없어요. 지금은 이 기기에만 저장하고 시작한 뒤, 나중에 마이페이지에서 계정을 연결할 수 있어요."
             return
         }
-        let provider = OAuthProvider(providerID: "google.com")
-        provider.scopes = ["email", "profile"]
         do {
-            let credential = try await provider.credential(with: nil)
+            guard let clientID = FirebaseApp.app()?.options.clientID else {
+                throw NSError(domain: "OneLog.GoogleSignIn", code: 1, userInfo: [NSLocalizedDescriptionKey: "Google client ID가 없습니다."])
+            }
+            GIDSignIn.sharedInstance.configuration = GIDConfiguration(clientID: clientID)
+            guard let presentingViewController = Self.presentingViewController() else {
+                throw NSError(domain: "OneLog.GoogleSignIn", code: 2, userInfo: [NSLocalizedDescriptionKey: "로그인 화면을 표시할 앱 화면을 찾지 못했습니다."])
+            }
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presentingViewController)
+            guard let idToken = result.user.idToken?.tokenString else {
+                throw NSError(domain: "OneLog.GoogleSignIn", code: 3, userInfo: [NSLocalizedDescriptionKey: "Google ID token을 받지 못했습니다."])
+            }
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: result.user.accessToken.tokenString
+            )
             let user = try await authenticate(with: credential).user
-            linkAccount(UserAccount(
+            await connectGoogleAccount(UserAccount(
                 provider: .google,
                 userID: user.uid,
                 email: user.email,
                 displayName: user.displayName,
                 linkedAt: ISO8601DateFormatter().string(from: Date())
             ))
-        } catch let error as NSError where error.code == AuthErrorCode.webContextCancelled.rawValue {
+        } catch let error as NSError where error.code == -5 || error.code == AuthErrorCode.webContextCancelled.rawValue {
+            // GoogleSignIn의 공개 헤더에서 취소는 kGIDSignInErrorCodeCanceled(-5)다.
             accountError = nil
+        } catch let error as NSError {
+            // Google Sign-In can fail before Firebase receives a credential. Keep the public
+            // message friendly, but expose a small DEBUG-only diagnostic for device QA.
+            print("[GoogleSignIn] domain=\(error.domain) code=\(error.code) message=\(error.localizedDescription)")
+#if DEBUG
+            accountError = "Google 로그인 오류 (\(error.code))\n\(error.localizedDescription)"
+#else
+            accountError = "Google 로그인을 마치지 못했어요. 잠시 후 다시 시도해 주세요."
+#endif
         } catch {
+            print("[GoogleSignIn] error=\(error.localizedDescription)")
             accountError = "Google 로그인을 마치지 못했어요. 잠시 후 다시 시도해 주세요."
         }
+    }
+
+    private static func presentingViewController() -> UIViewController? {
+        let windows = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .filter { $0.activationState == .foregroundActive }
+            .flatMap(\.windows)
+        let root = windows.first(where: { $0.isKeyWindow })?.rootViewController
+            ?? windows.first?.rootViewController
+        return topViewController(from: root)
+    }
+
+    private static func topViewController(from viewController: UIViewController?) -> UIViewController? {
+        if let presented = viewController?.presentedViewController {
+            return topViewController(from: presented)
+        }
+        if let navigation = viewController as? UINavigationController {
+            return topViewController(from: navigation.visibleViewController)
+        }
+        if let tab = viewController as? UITabBarController {
+            return topViewController(from: tab.selectedViewController)
+        }
+        return viewController
     }
 
     /// 이미 익명으로 쓰고 있었다면 그 계정 위에 연결한다. 동네 나눔 글의 작성자·참여자 ID가 그대로 유지된다.
@@ -151,9 +207,88 @@ final class AppStore: ObservableObject {
     }
 
     func linkAccount(_ account: UserAccount) {
-        update { $0.account = account }
+        update { state in
+            state.account = account
+            // Google 이름을 받아 두고도 쓰지 않으면 로그인한 사용자도 계속 `회원님`으로 불린다.
+            // 아직 닉네임을 정하지 않았을 때만 채우고, 직접 적은 이름은 덮어쓰지 않는다.
+            if state.profile.nickname.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+               let displayName = account.displayName?.trimmingCharacters(in: .whitespacesAndNewlines),
+               !displayName.isEmpty {
+                state.profile.nickname = displayName
+            }
+        }
         accountError = nil
         notice = account.provider == .google ? "Google 계정을 연결했어요." : "이 기기에만 저장하도록 시작했어요."
+    }
+
+    /// Google 계정의 최신 백업이 있으면 내려받고, 없으면 현재 기기 상태를 첫 백업으로 올린다.
+    private func connectGoogleAccount(_ account: UserAccount) async {
+        guard FirebaseApp.app() != nil else { linkAccount(account); return }
+        isRestoringCloudState = true
+        defer { isRestoringCloudState = false }
+        do {
+            let ref = Firestore.firestore().collection("users").document(account.userID)
+                .collection("private").document("appState")
+            let snapshot = try await ref.getDocument()
+            if let json = snapshot.data()?["stateJSON"] as? String,
+               let data = json.data(using: .utf8),
+               var restored = try? JSONDecoder().decode(AppState.self, from: data) {
+                restored.account = account
+                state = Self.sanitize(restored)
+                let envelope = PersistedEnvelope(version: 1, state: state)
+                if let local = try? JSONEncoder().encode(envelope) {
+                    UserDefaults.standard.set(local, forKey: Self.storageKey)
+                }
+                notice = "Google 계정의 식단·재고 백업을 불러왔어요."
+            } else {
+                linkAccount(account)
+                isRestoringCloudState = false
+                scheduleCloudUpload()
+            }
+            accountError = nil
+        } catch {
+            // 네트워크가 끊겨도 로그인 자체와 로컬 데이터는 잃지 않는다. 다음 저장 때 업로드를 재시도한다.
+            linkAccount(account)
+            accountError = "Google 계정은 연결했지만 백업 동기화는 잠시 후 다시 시도할게요."
+        }
+    }
+
+    private func scheduleCloudUpload() {
+        guard !isRestoringCloudState,
+              state.account?.provider == .google,
+              let uid = Auth.auth().currentUser?.uid,
+              let data = try? JSONEncoder().encode(state),
+              data.count < 900_000,
+              let json = String(data: data, encoding: .utf8) else { return }
+        cloudUploadTask?.cancel()
+        cloudUploadTask = Task {
+            try? await Task.sleep(for: .milliseconds(500))
+            guard !Task.isCancelled else { return }
+            do {
+                try await Firestore.firestore().collection("users").document(uid)
+                    .collection("private").document("appState").setData([
+                        "schemaVersion": 1,
+                        "stateJSON": json,
+                        "updatedAt": FieldValue.serverTimestamp()
+                    ])
+            } catch {
+                print("[CloudSync] upload failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    /// 저장한 계정과 Firebase 세션이 어긋난 상태를 정리한다.
+    ///
+    /// UserDefaults는 iCloud 백업에서 복원되지만 Keychain의 Firebase 세션은 따라오지 않는 기기가 있다.
+    /// 그대로 두면 마이페이지는 `Google 계정으로 연동됨`이라고 하는데 동네 나눔은 익명 uid로 글을 올려서,
+    /// 내가 쓴 글이 남의 글처럼 보이고 참여 취소도 되지 않는다.
+    func reconcileAccountSession() {
+        guard FirebaseApp.app() != nil,
+              let account = state.account,
+              account.provider == .google,
+              Auth.auth().currentUser == nil else { return }
+        update { $0.account = nil }
+        accountError = "Google 세션이 만료됐어요. 마이페이지에서 계정을 다시 연결해 주세요."
     }
 
     func useDeviceOnlyAccount() {
@@ -163,23 +298,51 @@ final class AppStore: ObservableObject {
     /// 연결만 해제한다. 기기에 저장한 식단·재고 데이터는 그대로 둔다.
     func unlinkAccount() {
         guard state.account != nil else { return }
-        signOutOfFirebase()
-        update { $0.account = nil }
-        accountError = nil
-        notice = "계정 연결을 해제했어요. 이 기기에 저장한 식단과 재고는 그대로예요."
+        Task {
+            await NotificationStore.shared.unregisterCurrentUserToken()
+            signOutOfFirebase()
+            update { $0.account = nil }
+            accountError = nil
+            notice = "계정 연결을 해제했어요. 이 기기에 저장한 식단과 재고는 그대로예요."
+        }
     }
 
-    /// 탈퇴. 이 기기에 저장한 모든 데이터를 지우고 온보딩부터 다시 시작한다.
-    func deleteAllData() {
+    /// 탈퇴. 서버 계정까지 지우고, 이 기기에 저장한 모든 데이터를 지운 뒤 온보딩부터 다시 시작한다.
+    ///
+    /// 서버 삭제가 실패해도(재인증 요구·네트워크 오류) 이 기기 데이터는 반드시 지운다.
+    /// 사용자가 `모두 지우기`를 눌렀는데 기기에 기록이 남는 쪽이 더 나쁘다.
+    func deleteAllData() async {
+        let remoteDeleted = await deleteRemoteAccount()
+        guard remoteDeleted else {
+            notice = "서버 데이터를 지우지 못했어요. 네트워크를 확인한 뒤 다시 시도해 주세요. 기기 데이터는 안전하게 남겨 뒀어요."
+            return
+        }
         signOutOfFirebase()
         UserDefaults.standard.removeObject(forKey: Self.storageKey)
+        NotificationStore.shared.clear()
         state = AppState()
         accountError = nil
-        notice = "계정 연결과 저장한 데이터를 모두 지웠어요."
+        notice = "계정, 동네 글·대화와 이 기기에 저장한 데이터를 모두 지웠어요."
+    }
+
+    /// Admin callable이 글 하위 대화·약속·요청·푸시 토큰을 재귀 삭제한 뒤 Auth 계정을 지운다.
+    private func deleteRemoteAccount() async -> Bool {
+        guard FirebaseApp.app() != nil, Auth.auth().currentUser != nil else { return true }
+        do {
+            _ = try await Functions.functions(region: "us-central1").httpsCallable("deleteAccount").call()
+            return true
+        } catch {
+            print("[Account] delete failed: \(error.localizedDescription)")
+            return false
+        }
     }
 
     /// 계정을 끊으면 서버 세션도 끊는다. 다음에 동네 나눔을 열면 익명으로 새로 로그인한다.
+    ///
+    /// Firebase만 로그아웃하면 GoogleSignIn SDK에 이전 계정이 남아, 다시 `Google 계정으로 시작하기`를
+    /// 눌렀을 때 계정 선택 창 없이 끊었던 계정으로 되돌아간다. 두 세션을 함께 끊어야 계정을 바꿀 수 있다.
     private func signOutOfFirebase() {
+        GIDSignIn.sharedInstance.signOut()
         guard FirebaseApp.app() != nil else { return }
         try? Auth.auth().signOut()
     }
@@ -196,20 +359,26 @@ final class AppStore: ObservableObject {
 
     /// 피그마 `첫가입 / 1. 기본정보`(350:2256)와 `내 정보 수정`(395:23)이 함께 쓰는 저장 경로.
     /// 생년월일은 `YYYY-MM-DD` 형식일 때만 저장하고, 동네는 사용자가 적은 문자열만 남긴다(좌표·위치 권한 없음).
-    func setBasicProfile(nickname: String, birthDate: String, neighborhood: String, skill: CookingSkill?, cookTime: CookTimePreference?, notify: Bool = true) {
+    @discardableResult
+    func setBasicProfile(nickname: String, birthDate: String, neighborhood: String, skill: CookingSkill?, cookTime: CookTimePreference?, notify: Bool = true) -> Bool {
         let trimmedNickname = String(nickname.trimmingCharacters(in: .whitespacesAndNewlines).prefix(20))
         let trimmedNeighborhood = String(neighborhood.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
-        let safeBirthDate = Self.isValidBirthDate(birthDate) ? birthDate : ""
+        let safeBirthDate = Self.normalizedBirthDate(birthDate)
+        if !birthDate.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty, safeBirthDate == nil {
+            notice = "생년월일을 YYYY.MM.DD 형식의 실제 날짜로 입력해 주세요."
+            return false
+        }
         let neighborhoodChanged = state.profile.neighborhood != trimmedNeighborhood
         update { state in
             state.profile.nickname = trimmedNickname
-            state.profile.birthDate = safeBirthDate
+            state.profile.birthDate = safeBirthDate ?? ""
             state.profile.neighborhood = trimmedNeighborhood
             if neighborhoodChanged { state.profile.coordinate = nil }
             state.preferences.cookingSkill = skill
             state.preferences.preferredCookTime = cookTime
         }
         if notify { notice = "기본 정보를 저장했어요." }
+        return true
     }
 
     /// 불호 재료 칩 선택. 재료 사전에 있으면 ID로, 없으면 이름 그대로 남긴다.
@@ -225,9 +394,11 @@ final class AppStore: ObservableObject {
     /// 알레르기·못 먹는 재료. 자동 추천에서 완전히 제외한다.
     func setAllergyIngredientNames(_ names: Set<String>, notify: Bool = true) {
         let split = Self.splitByCatalog(names)
+        let groupedNames = names.filter(isGroupedAvoidanceName)
         update { state in
             state.preferences.allergyIngredientIDs = split.ids
-            state.preferences.customAllergyNames = split.names
+            // `견과류`처럼 재료 사전에 같은 이름이 있어도 분류 전체 규칙을 함께 유지한다.
+            state.preferences.customAllergyNames = split.names.union(groupedNames)
         }
         if notify { notice = "알레르기 재료를 저장했어요. 추천에서 완전히 빼드릴게요." }
     }
@@ -265,13 +436,19 @@ final class AppStore: ObservableObject {
         return (ids, custom)
     }
 
-    private static func isValidBirthDate(_ value: String) -> Bool {
-        guard value.count == 10 else { return false }
+    private static func normalizedBirthDate(_ value: String) -> String? {
+        let digits = value.filter(\.isNumber)
+        guard digits.count == 8 else { return nil }
+        let normalized = "\(digits.prefix(4))-\(digits.dropFirst(4).prefix(2))-\(digits.suffix(2))"
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
         formatter.locale = Locale(identifier: "en_US_POSIX")
         formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: value) != nil
+        formatter.isLenient = false
+        guard let date = formatter.date(from: normalized), date <= Date(),
+              let oldest = Calendar(identifier: .gregorian).date(byAdding: .year, value: -120, to: Date()),
+              date >= oldest else { return nil }
+        return formatter.string(from: date)
     }
 
     /// 동네 나눔(F26)에서만 쓰는 자기입력 값이다. 위치 권한을 요청하지 않고 좌표도 저장하지 않는다.
@@ -291,6 +468,55 @@ final class AppStore: ObservableObject {
         let rounded = coordinate.flatMap { ShareCoordinate.rounded(latitude: $0.latitude, longitude: $0.longitude) }
         guard state.profile.coordinate != rounded else { return }
         update { $0.profile.coordinate = rounded }
+    }
+
+    /// GPS로 한 번 확인한 동네 이름과 약 100m 격자 좌표를 같은 저장 작업으로 반영한다.
+    /// 이름을 먼저 바꾸는 기존 경로가 좌표를 지우던 문제를 막는다.
+    func setVerifiedNeighborhood(_ value: String, coordinate: ShareCoordinate) {
+        let trimmed = String(value.trimmingCharacters(in: .whitespacesAndNewlines).prefix(30))
+        guard !trimmed.isEmpty,
+              let rounded = ShareCoordinate.rounded(latitude: coordinate.latitude, longitude: coordinate.longitude) else { return }
+        update {
+            $0.profile.neighborhood = trimmed
+            $0.profile.coordinate = rounded
+        }
+        notice = "동네 위치를 확인했어요. 좌표는 약 100m 단위로만 저장해요."
+    }
+
+    /// 프로필 사진 저장. 원본을 그대로 두면 UserDefaults가 수 MB로 불어나므로
+    /// 256px 정사각으로 줄이고 JPEG로 압축한 것만 담는다. `nil`이면 기본 이미지로 되돌린다.
+    func setAvatar(_ image: UIImage?) {
+        guard let image else {
+            update { $0.profile.avatarData = nil }
+            notice = "프로필 사진을 기본 이미지로 되돌렸어요."
+            return
+        }
+        guard let data = Self.avatarJPEG(from: image) else {
+            notice = "사진을 저장하지 못했어요. 다른 사진으로 시도해 주세요."
+            return
+        }
+        update { $0.profile.avatarData = data }
+        notice = "프로필 사진을 바꿨어요."
+    }
+
+    /// 짧은 변을 기준으로 정사각으로 자른 뒤 256px로 줄인다.
+    static func avatarJPEG(from image: UIImage, side: CGFloat = 256) -> Data? {
+        let shortest = min(image.size.width, image.size.height)
+        guard shortest > 0 else { return nil }
+        let origin = CGPoint(x: (image.size.width - shortest) / 2, y: (image.size.height - shortest) / 2)
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: side, height: side), format: format)
+        let square = renderer.image { _ in
+            let scale = side / shortest
+            image.draw(in: CGRect(
+                x: -origin.x * scale,
+                y: -origin.y * scale,
+                width: image.size.width * scale,
+                height: image.size.height * scale
+            ))
+        }
+        return square.jpegData(compressionQuality: 0.8)
     }
 
     func toggleFavorite(_ recipeID: String) {
@@ -316,6 +542,7 @@ final class AppStore: ObservableObject {
         }
         update { state in
             state.plannedMeals.append(PlannedMeal(id: UUID().uuidString, recipeID: recipeID, date: date, mealSlot: slot, status: .planned, createdAt: ISO8601DateFormatter().string(from: Date())))
+            Self.resetShoppingExecution(in: &state)
         }
         let title = recipe.title
         notice = ["\(title)를 내 식사에 담았어요.", preferenceWarning(forRecipeID: recipeID)].compactMap { $0 }.joined(separator: " ")
@@ -336,6 +563,14 @@ final class AppStore: ObservableObject {
         let allergy = Set(recipe.ingredients.map(\.ingredientID)).intersection(state.preferences.allergyIngredientIDs)
         if !allergy.isEmpty {
             reasons.append("알레르기 재료 \(allergy.compactMap { ingredient(for: $0)?.name }.sorted().joined(separator: ", ")) 포함")
+        }
+        let customDisliked = customAvoidanceMatches(in: recipe, names: state.preferences.customDislikedNames)
+        if !customDisliked.isEmpty {
+            reasons.append("불호 재료 \(customDisliked.sorted().joined(separator: ", ")) 포함")
+        }
+        let customAllergy = customAvoidanceMatches(in: recipe, names: state.preferences.customAllergyNames)
+        if !customAllergy.isEmpty {
+            reasons.append("알레르기 분류 \(customAllergy.sorted().joined(separator: ", ")) 포함")
         }
         let missingTools = recipe.requiredTools.subtracting(state.preferences.availableTools)
         if !missingTools.isEmpty {
@@ -366,6 +601,7 @@ final class AppStore: ObservableObject {
                     added += 1
                 }
             }
+            if added > 0 { Self.resetShoppingExecution(in: &state) }
         }
         notice = added == 0 ? "이미 같은 계획이 있어 새로 추가된 식사가 없어요." : "\(added)개 식사를 내 식사에 담았어요."
         return added
@@ -383,6 +619,7 @@ final class AppStore: ObservableObject {
         update { state in
             guard let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }) else { return }
             state.plannedMeals[index].recipeID = recipeID
+            Self.resetShoppingExecution(in: &state)
         }
         notice = ["메뉴를 \(recipe.title)(으)로 바꿨어요. 필요한 재료와 예산도 다시 계산돼요.", preferenceWarning(forRecipeID: recipeID)].compactMap { $0 }.joined(separator: " ")
     }
@@ -404,15 +641,21 @@ final class AppStore: ObservableObject {
             guard let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }) else { return }
             state.plannedMeals[index].date = date
             state.plannedMeals[index].mealSlot = slot
+            Self.resetShoppingExecution(in: &state)
         }
         notice = "식사 일정을 옮겼어요. 필요한 재료와 보관 주의를 다시 확인해 주세요."
     }
 
     func removeMeal(_ mealID: String) {
-        guard state.plannedMeals.contains(where: { $0.id == mealID }) else { return }
+        guard let meal = state.plannedMeals.first(where: { $0.id == mealID }) else { return }
+        guard meal.status != .cooked else {
+            notice = "완료한 식사는 재고 차감 기록을 보호하기 위해 삭제할 수 없어요."
+            return
+        }
         update { state in
             state.plannedMeals.removeAll { $0.id == mealID }
             state.completions.removeAll { $0.plannedMealID == mealID }
+            Self.resetShoppingExecution(in: &state)
         }
         notice = "식사 계획을 삭제했어요."
     }
@@ -421,13 +664,30 @@ final class AppStore: ObservableObject {
         guard ingredient(for: ingredientID) != nil else { return }
         let safe = status == .unknown ? nil : max(quantity ?? 0, 0)
         update { state in
-            let item = InventoryItem(ingredientID: ingredientID, quantity: safe, unit: unit, quantityStatus: status, updatedAt: ISO8601DateFormatter().string(from: Date()))
-            if let index = state.inventory.firstIndex(where: { $0.ingredientID == ingredientID && $0.unit == unit }) {
+            let index = state.inventory.firstIndex(where: { $0.ingredientID == ingredientID && $0.unit == unit })
+            let existing = index.map { state.inventory[$0] }
+            let item = InventoryItem(
+                ingredientID: ingredientID, quantity: safe, unit: unit, quantityStatus: status,
+                updatedAt: ISO8601DateFormatter().string(from: Date()),
+                purchasedAt: existing?.purchasedAt, openedAt: existing?.openedAt, bestBefore: existing?.bestBefore
+            )
+            if let index {
                 state.inventory[index] = item
             } else {
                 state.inventory.append(item)
             }
         }
+    }
+
+    func setInventoryDates(_ itemID: String, purchasedAt: String?, openedAt: String?, bestBefore: String?) {
+        update { state in
+            guard let index = state.inventory.firstIndex(where: { $0.id == itemID }) else { return }
+            state.inventory[index].purchasedAt = purchasedAt
+            state.inventory[index].openedAt = openedAt
+            state.inventory[index].bestBefore = bestBefore
+            state.inventory[index].updatedAt = ISO8601DateFormatter().string(from: Date())
+        }
+        notice = "보관 날짜를 저장했어요. 제품 포장 표시가 있으면 그 날짜를 우선해 주세요."
     }
 
     func removeInventory(_ item: InventoryItem) {
@@ -499,7 +759,7 @@ final class AppStore: ObservableObject {
             notice = "추가로 살 품목이 없어요."
             return false
         }
-        let signature = shoppingSignature(confirmedItems, quantityOverrides: state.purchaseQuantityOverrides)
+        let signature = shoppingSignature(confirmedItems, quantityOverrides: state.purchaseQuantityOverrides, sessionID: state.shoppingSessionID)
         guard !state.appliedPurchaseSignatures.contains(signature) else {
             notice = "이 장보기 목록은 이미 재고에 반영했어요."
             return false
@@ -518,7 +778,10 @@ final class AppStore: ObservableObject {
     func setMealSkipped(_ mealID: String, skipped: Bool) {
         guard let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }),
               state.plannedMeals[index].status == .planned || state.plannedMeals[index].status == .skipped else { return }
-        update { $0.plannedMeals[index].status = skipped ? .skipped : .planned }
+        update { state in
+            state.plannedMeals[index].status = skipped ? .skipped : .planned
+            Self.resetShoppingExecution(in: &state)
+        }
         notice = skipped ? "이 끼니를 건너뛰었어요. 재료는 그대로 남아 있어요." : "다시 예정으로 되돌렸어요."
     }
 
@@ -531,15 +794,25 @@ final class AppStore: ObservableObject {
             notice = "이미 완료한 식사예요. 재고를 다시 차감하지 않았어요."
             return false
         }
-        let completion = CookingCompletion(plannedMealID: mealID, recipeID: meal.recipeID, completedAt: ISO8601DateFormatter().string(from: Date()), consumptions: consumptions)
+        let draft = PlannedMealDraft(
+            recipeID: meal.recipeID, date: meal.date, mealSlot: meal.mealSlot,
+            reason: "", reusedIngredientIDs: [], newPurchaseCount: 0
+        )
+        let confirmedSavings = estimate(for: [draft], targetBudget: 0).confirmedInventorySavings
+        let completion = CookingCompletion(
+            plannedMealID: mealID, recipeID: meal.recipeID,
+            completedAt: ISO8601DateFormatter().string(from: Date()),
+            consumptions: consumptions, confirmedInventorySavings: confirmedSavings
+        )
         update { state in
             state.inventory = applyConsumption(inventory: state.inventory, consumptions: consumptions)
             state.completions.append(completion)
             if let index = state.plannedMeals.firstIndex(where: { $0.id == mealID }) {
                 state.plannedMeals[index].status = .cooked
             }
+            Self.resetShoppingExecution(in: &state)
         }
-        notice = "요리 완료를 기록하고 실제 사용량을 냉장고에 반영했어요."
+        notice = "요리 완료를 기록하고 계획된 사용량을 냉장고에 반영했어요."
         return true
     }
 
@@ -557,6 +830,13 @@ final class AppStore: ObservableObject {
         }
     }
 
+    private static func resetShoppingExecution(in state: inout AppState) {
+        state.shoppingSessionID = UUID().uuidString
+        state.purchaseChecks = [:]
+        state.purchaseQuantityOverrides = [:]
+        state.appliedPurchaseSignatures = []
+    }
+
     private static func sanitize(_ input: AppState) -> AppState {
         var state = input
         let recipeIDs = Set(recipes.map(\.id))
@@ -566,6 +846,7 @@ final class AppStore: ObservableObject {
         state.inventory = state.inventory.filter { ingredientIDs.contains($0.ingredientID) && ($0.quantity == nil || ($0.quantity ?? 0) >= 0) }
         state.prices = state.prices.filter { ingredientIDs.contains($0.key) && $0.value.price >= 0 && $0.value.packageAmount > 0 }
         state.purchaseQuantityOverrides = state.purchaseQuantityOverrides.filter { $0.value.isFinite && $0.value >= 0 }
+        if state.shoppingSessionID.isEmpty { state.shoppingSessionID = UUID().uuidString }
         state.shoppingEvents = Array(state.shoppingEvents.suffix(500))
         state.preferences.dislikedIngredientIDs = state.preferences.dislikedIngredientIDs.intersection(ingredientIDs)
         state.preferences.dislikedRecipeIDs = state.preferences.dislikedRecipeIDs.intersection(recipeIDs)

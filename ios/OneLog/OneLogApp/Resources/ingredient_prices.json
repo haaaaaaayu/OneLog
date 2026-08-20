@@ -1,0 +1,27 @@
+{
+  "source": "한끼로그 대표가격 카탈로그",
+  "updatedAt": "2026-08-20",
+  "prices": {
+    "egg": { "price": 5200, "packageAmount": 12, "unit": "개" },
+    "onion": { "price": 3500, "packageAmount": 3, "unit": "개" },
+    "green-onion": { "price": 3000, "packageAmount": 300, "unit": "g" },
+    "chicken-thigh": { "price": 8500, "packageAmount": 500, "unit": "g" },
+    "tofu": { "price": 2500, "packageAmount": 1, "unit": "팩" },
+    "rice": { "price": 1500, "packageAmount": 210, "unit": "g" },
+    "kimchi": { "price": 7500, "packageAmount": 500, "unit": "g" },
+    "tuna": { "price": 2200, "packageAmount": 1, "unit": "팩" },
+    "carrot": { "price": 2500, "packageAmount": 300, "unit": "g" },
+    "garlic": { "price": 5000, "packageAmount": 10, "unit": "큰술" },
+    "cabbage": { "price": 2500, "packageAmount": 500, "unit": "g" },
+    "soy-sauce": { "price": 5000, "packageAmount": 30, "unit": "큰술" },
+    "sesame-oil": { "price": 7500, "packageAmount": 20, "unit": "큰술" },
+    "seaweed": { "price": 2500, "packageAmount": 10, "unit": "장" },
+    "cucumber": { "price": 3500, "packageAmount": 3, "unit": "개" },
+    "gochujang": { "price": 6000, "packageAmount": 25, "unit": "큰술" },
+    "auto-팽이버섯": { "price": 1500, "packageAmount": 150, "unit": "g" },
+    "auto-차돌박이": { "price": 9800, "packageAmount": 400, "unit": "g" },
+    "auto-순두부": { "price": 2000, "packageAmount": 200, "unit": "g" },
+    "auto-모차렐라치즈": { "price": 3500, "packageAmount": 200, "unit": "g" },
+    "auto-식빵": { "price": 3000, "packageAmount": 500, "unit": "g" }
+  }
+}

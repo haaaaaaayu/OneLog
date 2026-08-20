@@ -1,3 +1,4 @@
+import UIKit
 import XCTest
 @testable import OneLog
 
@@ -42,6 +43,19 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertEqual(result.first?.quantityStatus, .unknown)
         XCTAssertEqual(result.first?.precision, .estimated)
         XCTAssertEqual(result.first?.purchaseQuantity, 1)
+    }
+
+    func testShoppingPlanSumsConvertibleInventoryRows() {
+        let result = calculateShoppingPlan(
+            requirements: [IngredientRequirement(key: "onion:g", ingredientID: "onion", ingredientName: "양파", quantity: 250, unit: .gram, recipeIDs: ["test"], unitConflict: false)],
+            inventory: [
+                InventoryItem(ingredientID: "onion", quantity: 1, unit: .count, quantityStatus: .exact, updatedAt: "2026-08-14"),
+                InventoryItem(ingredientID: "onion", quantity: 100, unit: .gram, quantityStatus: .exact, updatedAt: "2026-08-14")
+            ]
+        )
+
+        XCTAssertEqual(result.first?.availableQuantity, 300)
+        XCTAssertEqual(result.first?.additionalNeeded, 0)
     }
 
     func testBudgetDoesNotInventMissingPricesAndUsesConfirmedSavings() {
@@ -125,6 +139,39 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertEqual(cooked.first?.quantity, 8)
     }
 
+    func testCookingConsumptionConvertsAcrossInventoryUnits() {
+        let inventory = [InventoryItem(ingredientID: "onion", quantity: 1, unit: .count, quantityStatus: .exact, updatedAt: "2026-08-14")]
+        let consumption = [CookingConsumption(ingredientID: "onion", unit: .gram, expectedQuantity: 100, actualQuantity: 100, remainingQuantity: nil)]
+
+        let cooked = applyConsumption(inventory: inventory, consumptions: consumption)
+
+        XCTAssertEqual(cooked.count, 1)
+        XCTAssertEqual(cooked.first?.unit, .count)
+        XCTAssertEqual(cooked.first?.quantity ?? -1, 0.5, accuracy: 0.0001)
+    }
+
+    func testCookingMergesDuplicateIngredientRowsBeforeRecording() {
+        let rows = [
+            RecipeIngredient(ingredientID: "sesame-oil", rawName: "참기름", quantity: 2, unit: .gram, preparation: nil),
+            RecipeIngredient(ingredientID: "sesame-oil", rawName: "참기름", quantity: 1, unit: .gram, preparation: nil)
+        ]
+
+        let merged = mergedCookingIngredients(rows)
+
+        XCTAssertEqual(merged.count, 1)
+        XCTAssertEqual(merged.first?.quantity, 3)
+    }
+
+    func testCategoryAllergyFiltersMatchingRecipeIngredients() {
+        let shrimp = RecipeIngredient(ingredientID: "shrimp", rawName: "새우", quantity: 100, unit: .gram, preparation: nil)
+        let recipe = Recipe(id: "shrimp-test", title: "새우 요리", description: "", mealSlots: [.dinner], difficulty: 1, cookTime: 10, servings: 1, symbolName: "🍤", ingredients: [shrimp], steps: [], tags: [], isLightBreakfast: false, requiredTools: [])
+        var preferences = AppPreferences()
+        preferences.customAllergyNames = ["갑각류"]
+
+        XCTAssertFalse(isRecommendable(recipe, preferences: preferences))
+        XCTAssertEqual(customAvoidanceMatches(in: recipe, names: preferences.customAllergyNames), ["갑각류"])
+    }
+
     func testLeftoverRecommendationIncludesActualAdditionalPurchase() {
         let result = leftoverRecommendations(inventory: [InventoryItem(ingredientID: "green-onion", quantity: 20, unit: .gram, quantityStatus: .exact, updatedAt: "2026-08-14")], preferences: AppPreferences())
         let match = result.first(where: { $0.recipe.id == "cabbage-egg-stir-fry" })
@@ -169,7 +216,7 @@ final class OneLogDomainTests: XCTestCase {
             requirement: IngredientRequirement(key: "egg:개", ingredientID: "egg", ingredientName: "계란", quantity: 2, unit: .count, recipeIDs: ["test"], unitConflict: false),
             availableQuantity: 0, quantityStatus: .exact, additionalNeeded: 2, packageSize: PackageSize(amount: 10, unit: .count, label: "10구"), purchaseQuantity: 1, purchaseTotal: 10, expectedRemaining: 8, precision: .exact, note: nil
         )
-        XCTAssertEqual(shoppingSignature([item]), "egg:개=1")
+        XCTAssertEqual(shoppingSignature([item]), "egg:개=1x10.0개")
     }
 
     func testPurchaseOverrideUsesWholePackagesForInventoryAndIdempotencySignature() {
@@ -184,7 +231,25 @@ final class OneLogDomainTests: XCTestCase {
 
         let purchased = applyPurchases(inventory: [], shoppingItems: [item], quantityOverrides: [item.id: 2.9])
         XCTAssertEqual(purchased.first?.quantity, 20)
-        XCTAssertEqual(shoppingSignature([item], quantityOverrides: [item.id: 2.9]), "egg:개=2")
+        XCTAssertEqual(shoppingSignature([item], quantityOverrides: [item.id: 2.9]), "egg:개=2x10.0개")
+        XCTAssertNotEqual(
+            shoppingSignature([item], sessionID: "week-1"),
+            shoppingSignature([item], sessionID: "week-2")
+        )
+
+        let largerPackage = ShoppingPlanItem(
+            requirement: item.requirement,
+            availableQuantity: item.availableQuantity,
+            quantityStatus: item.quantityStatus,
+            additionalNeeded: item.additionalNeeded,
+            packageSize: PackageSize(amount: 20, unit: .count, label: "20구"),
+            purchaseQuantity: 1,
+            purchaseTotal: 20,
+            expectedRemaining: 18,
+            precision: .exact,
+            note: nil
+        )
+        XCTAssertNotEqual(shoppingSignature([item]), shoppingSignature([largerPackage]))
     }
 
     func testImportedRecipesLoadAndResolveEveryIngredient() {
@@ -344,6 +409,34 @@ final class OneLogDomainTests: XCTestCase {
         XCTAssertNotNil(recipe(for: "tuna-mayo-rice"))
     }
 
+    func testAIChatCandidatesRespectAutoRecommendationRulesEvenForCurrentMeals() {
+        guard let current = recipes.first(where: { !$0.ingredients.isEmpty }) else {
+            return XCTFail("테스트할 레시피가 없습니다")
+        }
+        var preferences = AppPreferences()
+        preferences.dislikedRecipeIDs = ["tuna-mayo-rice"]
+        let drafts = [PlannedMealDraft(
+            recipeID: "tuna-mayo-rice",
+            date: "2026-08-14",
+            mealSlot: .dinner,
+            reason: "직접 선택",
+            reusedIngredientIDs: [],
+            newPurchaseCount: 0
+        )]
+
+        let candidates = aiCandidateRecipes(
+            for: "저녁 메뉴를 바꿔줘",
+            drafts: drafts,
+            preferences: preferences,
+            favorites: [current.id],
+            limit: 80
+        )
+
+        // 현재 식단은 별도 context에 남지만, 제안 후보는 알레르기·불호 필터를 우회하지 않는다.
+        XCTAssertFalse(candidates.contains { $0.id == "tuna-mayo-rice" })
+        XCTAssertTrue(candidates.allSatisfy { isRecommendable($0, preferences: preferences) })
+    }
+
     func testPreferencesDecodeLegacyDataWithoutDislikedRecipes() {
         let legacy = Data(#"{"dislikedIngredientIDs":["egg"],"availableTools":["볼"]}"#.utf8)
 
@@ -397,12 +490,147 @@ final class OneLogDomainTests: XCTestCase {
         }
     }
 
+    func testAppStateRecoversOtherFieldsWhenOneFieldIsMalformed() throws {
+        let data = Data(#"{"favorites":["tuna-mayo-rice"],"targetBudget":"broken"}"#.utf8)
+
+        let state = try JSONDecoder().decode(AppState.self, from: data)
+
+        XCTAssertEqual(state.favorites, ["tuna-mayo-rice"])
+        XCTAssertEqual(state.targetBudget, 0)
+        XCTAssertFalse(state.shoppingSessionID.isEmpty)
+    }
+
     /// 동네를 추가하기 전에 저장된 프로필도 그대로 열려야 한다.
     func testProfileDecodesWithoutNeighborhood() throws {
         let legacy = Data(#"{"profile":{"nickname":"준","age":24}}"#.utf8)
         let state = try JSONDecoder().decode(AppState.self, from: legacy)
         XCTAssertEqual(state.profile.nickname, "준")
         XCTAssertEqual(state.profile.neighborhood, "")
+    }
+
+    /// 난이도·조리시간이 비어 있으면 `하수/중수/고수` 배지와 `15분 이내`·`간단` 필터가 통째로 죽는다.
+    /// 950건을 매핑한 뒤로는 한 건도 비어 있으면 안 된다.
+    func testEveryRecipeHasDifficultyAndCookTime() {
+        let missingDifficulty = recipes.filter { $0.difficulty == nil }
+        let missingCookTime = recipes.filter { $0.cookTime == nil }
+        XCTAssertTrue(missingDifficulty.isEmpty, "난이도가 없는 레시피 \(missingDifficulty.count)건: \(missingDifficulty.prefix(3).map(\.title))")
+        XCTAssertTrue(missingCookTime.isEmpty, "조리시간이 없는 레시피 \(missingCookTime.count)건: \(missingCookTime.prefix(3).map(\.title))")
+        XCTAssertTrue(recipes.allSatisfy { (1...5).contains($0.difficulty ?? 0) })
+        XCTAssertTrue(recipes.allSatisfy { (5...120).contains($0.cookTime ?? 0) })
+    }
+
+    /// AI 후보가 식단에 없는 끼니 전용 메뉴면 적용 단계에서 되돌아온다. 후보 단계에서 걸러야 한다.
+    func testAICandidatesFitThePlanMealSlots() {
+        let drafts = [PlannedMealDraft(recipeID: "kimchi-fried-rice", date: "2026-08-14", mealSlot: .breakfast, reason: "", reusedIngredientIDs: [], newPurchaseCount: 0)]
+        let candidates = aiCandidateRecipes(for: "더 가벼운 메뉴로 바꿔줘", drafts: drafts, preferences: AppPreferences())
+        XCTAssertFalse(candidates.isEmpty)
+        XCTAssertTrue(
+            candidates.allSatisfy { $0.mealSlots.contains(.breakfast) },
+            "아침 식단인데 아침에 못 넣는 후보가 섞였습니다"
+        )
+    }
+
+    /// 온보딩에서 받은 숙련도가 실제 추천 점수에 반영되는지 본다.
+    func testSkillPreferenceFavorsMatchingDifficulty() {
+        var beginner = AppPreferences(); beginner.cookingSkill = .beginner
+        var advanced = AppPreferences(); advanced.cookingSkill = .advanced
+        let easy = try? XCTUnwrap(recipes.first { $0.difficulty == 1 })
+        let hard = try? XCTUnwrap(recipes.first { ($0.difficulty ?? 0) >= 4 })
+        guard let easy, let hard else { return XCTFail("난이도별 레시피가 없습니다") }
+
+        XCTAssertGreaterThan(skillFitBonus(easy, preferences: beginner), skillFitBonus(hard, preferences: beginner))
+        XCTAssertGreaterThan(skillFitBonus(hard, preferences: advanced), skillFitBonus(easy, preferences: advanced))
+        // 숙련도를 고르지 않았으면 어느 쪽도 밀어주지 않는다.
+        XCTAssertEqual(skillFitBonus(hard, preferences: AppPreferences()), 0)
+    }
+
+    /// 선호 조리 시간도 마찬가지로 점수에 반영되어야 한다.
+    func testCookTimePreferenceFavorsMatchingRecipes() {
+        var quick = AppPreferences(); quick.preferredCookTime = .under10
+        guard let short = recipes.first(where: { ($0.cookTime ?? 999) <= 10 }),
+              let long = recipes.first(where: { ($0.cookTime ?? 0) >= 40 }) else {
+            return XCTFail("조리시간별 레시피가 없습니다")
+        }
+        XCTAssertGreaterThan(cookTimeFitBonus(short, preferences: quick), cookTimeFitBonus(long, preferences: quick))
+        XCTAssertEqual(cookTimeFitBonus(short, preferences: AppPreferences()), 0)
+    }
+
+    /// 숙련도·조리시간은 가감점일 뿐이라, 까다로운 조합에서도 식단이 비면 안 된다.
+    func testStrictPreferencesStillProduceFullPlan() {
+        var preferences = AppPreferences()
+        preferences.cookingSkill = .beginner
+        preferences.preferredCookTime = .under10
+        let start = "2026-08-14"
+        let request = PlanRequest(
+            startDate: start,
+            days: 2,
+            slotsByDate: [start: [.breakfast, .dinner], dateByAddingDays(start, 1): [.dinner]],
+            targetBudget: 30000,
+            favorites: [],
+            inventory: [],
+            prices: [:],
+            preferences: preferences
+        )
+        let options = generateMealPlanOptions(request: request)
+        XCTAssertFalse(options.isEmpty)
+        XCTAssertTrue(options.allSatisfy { $0.unfilledSlots == 0 }, "선호 조건 때문에 끼니가 비었습니다")
+    }
+
+    /// `servings`는 어떤 계산에서도 쓰이지 않는다. 2·4인분 레시피가 그대로 들어오면
+    /// 그 한 끼만 장보기·예산·재고 차감이 인분수만큼 부풀어 오른다.
+    func testEveryRecipeIsNormalizedToSingleServing() {
+        let multi = recipes.filter { $0.servings != 1 }
+        XCTAssertTrue(multi.isEmpty, "1인분으로 환산되지 않은 레시피 \(multi.count)건: \(multi.prefix(3).map(\.title))")
+    }
+
+    /// 환산이 실제로 양을 나눴는지 본다. 원본에서 2인분이던 레시피를 하나 집어 확인한다.
+    func testMultiServingRecipeQuantitiesAreDivided() throws {
+        let recipe = try XCTUnwrap(recipes.first { $0.id == "fsk-1341" } ?? recipes.first { $0.title == "골뱅이무침과 삼겹살수육" })
+        let pork = recipe.ingredients.first { $0.rawName.contains("삼겹살") }
+        if let pork {
+            // 원본 900g(2인분)이 1인분 450g으로 들어와야 한다.
+            XCTAssertLessThan(pork.quantity, 900)
+        }
+        XCTAssertEqual(recipe.servings, 1)
+    }
+
+    /// 배지가 한 단계에만 몰리면 정보가 되지 않는다. 세 단계가 모두 실제로 쓰여야 한다.
+    func testDifficultyLabelsAreAllUsed() {
+        let labels = Dictionary(grouping: recipes.compactMap(recipeDifficultyLabel), by: { $0 }).mapValues(\.count)
+        for label in ["난이도 하수", "난이도 중수", "난이도 고수"] {
+            XCTAssertGreaterThan(labels[label] ?? 0, 20, "\(label) 레시피가 너무 적습니다")
+        }
+    }
+
+    /// `15분 이내`·`간단` 필터가 실제로 결과를 내는지 본다(예전엔 6건만 걸렸다).
+    func testQuickFiltersReturnMeaningfulResults() {
+        let under15 = recipes.filter { ($0.cookTime ?? .max) <= 15 }
+        let simple = recipes.filter { ($0.difficulty ?? 5) <= 1 }
+        XCTAssertGreaterThan(under15.count, 50, "15분 이내 레시피가 너무 적습니다")
+        XCTAssertGreaterThan(simple.count, 50, "간단 레시피가 너무 적습니다")
+    }
+
+    /// 프로필 사진 필드가 없던 저장 데이터도 그대로 읽혀야 한다.
+    func testProfileDecodesWithoutAvatar() throws {
+        let legacy = Data(#"{"profile":{"nickname":"준"}}"#.utf8)
+        let state = try JSONDecoder().decode(AppState.self, from: legacy)
+        XCTAssertNil(state.profile.avatarData)
+    }
+
+    /// 원본을 그대로 담으면 UserDefaults가 금방 커진다. 정사각 256px JPEG로 줄여서만 저장한다.
+    @MainActor
+    func testAvatarIsCroppedToSquareAndShrunk() throws {
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 1200, height: 800))
+        let wide = renderer.image { context in
+            UIColor.systemOrange.setFill()
+            context.fill(CGRect(x: 0, y: 0, width: 1200, height: 800))
+        }
+        let data = try XCTUnwrap(AppStore.avatarJPEG(from: wide))
+        let shrunk = try XCTUnwrap(UIImage(data: data))
+        XCTAssertEqual(shrunk.size.width, 256, accuracy: 1)
+        XCTAssertEqual(shrunk.size.height, 256, accuracy: 1)
+        // 1200x800 원본보다 확실히 작아야 저장소가 감당된다.
+        XCTAssertLessThan(data.count, 200_000)
     }
 
     // MARK: - F26 공동구매·소분
@@ -481,4 +709,79 @@ final class OneLogDomainTests: XCTestCase {
         let decoded = try JSONDecoder().decode(ShareMeetup.self, from: JSONEncoder().encode(meetup))
         XCTAssertEqual(decoded, meetup)
     }
+
+    func testShareRequestKeepsPendingSeparateFromAcceptedMembership() throws {
+        let request = ShareRequest(
+            id: "request-1",
+            postID: "post-1",
+            authorID: "author",
+            requesterID: "requester",
+            requesterNickname: "이웃",
+            message: "달걀을 함께 나누고 싶어요.",
+            status: .pending,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+            updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
+        )
+
+        let decoded = try JSONDecoder().decode(ShareRequest.self, from: JSONEncoder().encode(request))
+        XCTAssertEqual(decoded, request)
+        XCTAssertEqual(decoded.status.label, "응답 대기")
+        XCTAssertNotEqual(decoded.status, .accepted)
+    }
+
+    func testInventoryLegacyDecodeAndUserConfirmedDatesRoundTrip() throws {
+        let legacy = Data(#"{"ingredientID":"egg","quantity":3,"unit":"개","quantityStatus":"exact","updatedAt":"2026-08-20"}"#.utf8)
+        let decodedLegacy = try JSONDecoder().decode(InventoryItem.self, from: legacy)
+        XCTAssertNil(decodedLegacy.purchasedAt)
+        XCTAssertNil(decodedLegacy.openedAt)
+        XCTAssertNil(decodedLegacy.bestBefore)
+
+        var dated = decodedLegacy
+        dated.purchasedAt = "2026-08-19"
+        dated.openedAt = "2026-08-20"
+        dated.bestBefore = "2026-08-22"
+        XCTAssertEqual(try JSONDecoder().decode(InventoryItem.self, from: JSONEncoder().encode(dated)), dated)
+    }
+
+    func testLeftoverRecommendationPrioritizesUserRecordedNearDate() {
+        func candidate(id: String, title: String, ingredientID: String) -> Recipe {
+            Recipe(
+                id: id,
+                title: title,
+                description: "",
+                mealSlots: [.dinner],
+                difficulty: 1,
+                cookTime: 10,
+                servings: 1,
+                symbolName: "🍽️",
+                ingredients: [RecipeIngredient(ingredientID: ingredientID, rawName: title, quantity: 1, unit: .count, preparation: nil)],
+                steps: ["조리한다"],
+                tags: [],
+                isLightBreakfast: false,
+                requiredTools: []
+            )
+        }
+
+        let result = leftoverRecommendations(
+            inventory: [
+                InventoryItem(ingredientID: "egg", quantity: 2, unit: .count, quantityStatus: .exact, updatedAt: isoDateString(), bestBefore: dateByAddingDays(isoDateString(), 2)),
+                InventoryItem(ingredientID: "onion", quantity: 2, unit: .count, quantityStatus: .exact, updatedAt: isoDateString(), bestBefore: dateByAddingDays(isoDateString(), 30)),
+            ],
+            preferences: AppPreferences(),
+            recipes: [
+                candidate(id: "regular-onion", title: "양파 요리", ingredientID: "onion"),
+                candidate(id: "urgent-egg", title: "달걀 요리", ingredientID: "egg"),
+            ]
+        )
+
+        XCTAssertEqual(result.first?.recipe.id, "urgent-egg")
+        XCTAssertTrue(result.first?.reason.contains("표시 기한이 가까운") == true)
+    }
+
+    func testCommunityContentPolicyRejectsHarmfulOrOversizedText() {
+        XCTAssertNil(CommunityContentPolicy.validate("마약 거래", maximumLength: 300))
+        XCTAssertNil(CommunityContentPolicy.validate(String(repeating: "가", count: 301), maximumLength: 300))
+        XCTAssertEqual(CommunityContentPolicy.validate(" 달걀을 나누고 싶어요. ", maximumLength: 300), "달걀을 나누고 싶어요.")
+    }
+
 }

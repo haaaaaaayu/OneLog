@@ -1,91 +1,179 @@
 rules_version = '2';
 
-// F26 공동구매·소분, F27 채팅의 서버 측 경계.
-// 배포: firebase deploy --only firestore:rules
-// 앱 쪽 검증(ShareStore.swift)과 같은 조건을 서버에서 한 번 더 막는다. 앱만 믿지 않는다.
-
+// 공개 글도 사용자가 선택한 같은 동네 안에서만 읽고,
+// 요청·채팅·약속·기기 토큰은 당사자에게만 노출한다.
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function own(uid) { return signedIn() && request.auth.uid == uid; }
+    function userProfile() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    function post(postID) {
+      return get(/databases/$(database)/documents/sharePosts/$(postID)).data;
+    }
+    function isMember(postID) {
+      return signedIn() && (post(postID).authorID == request.auth.uid || request.auth.uid in post(postID).participantIDs);
+    }
+    function recent(value) {
+      return value is timestamp && value <= request.time && value > request.time - duration.value(5, 'm');
+    }
 
-    match /sharePosts/{postID} {
-      function sharePost() {
-        return get(/databases/$(database)/documents/sharePosts/$(postID)).data;
-      }
-
-      function isShareMember() {
-        return request.auth != null
-          && (sharePost().authorID == request.auth.uid || request.auth.uid in sharePost().participantIDs);
-      }
-
-      allow read: if request.auth != null;
-
-      allow create: if request.auth != null
-        && request.resource.data.authorID == request.auth.uid
-        && request.resource.data.participantIDs.size() == 0
-        && request.resource.data.status == 'open'
-        && request.resource.data.capacity is int
-        && request.resource.data.capacity >= 2
-        && request.resource.data.capacity <= 8
+    match /users/{uid} {
+      allow read: if own(uid);
+      allow create, update: if own(uid)
+        && request.resource.data.keys().hasOnly(['neighborhood', 'nickname', 'updatedAt'])
         && request.resource.data.neighborhood is string
         && request.resource.data.neighborhood.size() > 0
         && request.resource.data.neighborhood.size() <= 30
-        && request.resource.data.authorNickname.size() > 0
-        && request.resource.data.authorNickname.size() <= 20
-        && request.resource.data.meetupNote.size() <= 200
-        && request.resource.data.amount is number
-        && request.resource.data.amount > 0
-        // 도보 시간 표시용 대략 좌표(선택). 값이 있으면 위·경도 범위 안이어야 한다.
-        && (
-          !('coordinate' in request.resource.data) || request.resource.data.coordinate == null || (
-            request.resource.data.coordinate.latitude is number
-            && request.resource.data.coordinate.longitude is number
-            && request.resource.data.coordinate.latitude >= -90
-            && request.resource.data.coordinate.latitude <= 90
-            && request.resource.data.coordinate.longitude >= -180
-            && request.resource.data.coordinate.longitude <= 180
-          )
-        );
+        && request.resource.data.nickname is string
+        && request.resource.data.nickname.size() <= 20
+        && request.resource.data.updatedAt is timestamp;
+      allow delete: if own(uid);
 
-      // 작성자는 자기 글 전체를 고칠 수 있다.
-      // 그 외 로그인 사용자는 참여 목록과 상태만, 정원 안에서, 자기 자신만 넣고 뺄 수 있다.
-      allow update: if request.auth != null && (
-        resource.data.authorID == request.auth.uid
-        || (
-          request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantIDs', 'status'])
-          && request.resource.data.participantIDs.size() <= resource.data.capacity - 1
-          && request.resource.data.participantIDs.hasOnly(resource.data.participantIDs.concat([request.auth.uid]))
-          && resource.data.participantIDs.hasOnly(request.resource.data.participantIDs.concat([request.auth.uid]))
-        )
-      );
-
-      allow delete: if request.auth != null && resource.data.authorID == request.auth.uid;
-
-      // 약속 날짜·장소는 글 목록과 분리한다. 작성자·참여자만 읽고 수정·삭제할 수 있다.
-      match /meetup/details {
-        allow read: if isShareMember();
-        allow create, update: if isShareMember()
-          && request.resource.data.keys().hasOnly(['scheduledAt', 'placeNote', 'updatedBy', 'updatedAt'])
-          && request.resource.data.scheduledAt is timestamp
-          && request.resource.data.scheduledAt > request.time
-          && request.resource.data.placeNote is string
-          && request.resource.data.placeNote.size() > 0
-          && request.resource.data.placeNote.size() <= 200
-          && request.resource.data.updatedBy == request.auth.uid
+      match /devices/{deviceID} {
+        allow read, delete: if own(uid);
+        allow create, update: if own(uid)
+          && request.resource.data.keys().hasOnly(['token', 'platform', 'updatedAt'])
+          && request.resource.data.token is string
+          && request.resource.data.token.size() > 20
+          && request.resource.data.token.size() <= 500
+          && request.resource.data.platform == 'ios'
           && request.resource.data.updatedAt is timestamp;
-        allow delete: if isShareMember();
       }
 
-      // 채팅은 그 글의 작성자와 참여자만 읽고 쓴다.
+      match /blocks/{blockedUID} {
+        allow read: if own(uid);
+        allow create: if own(uid)
+          && blockedUID != uid
+          && request.resource.data.keys().hasOnly(['blockedUserID', 'createdAt'])
+          && request.resource.data.blockedUserID == blockedUID
+          && request.resource.data.createdAt is timestamp;
+        allow delete: if own(uid);
+        allow update: if false;
+      }
+
+      match /private/appState {
+        allow read: if own(uid);
+        allow create, update: if own(uid)
+          && request.resource.data.keys().hasOnly(['schemaVersion', 'stateJSON', 'updatedAt'])
+          && request.resource.data.schemaVersion == 1
+          && request.resource.data.stateJSON is string
+          && request.resource.data.stateJSON.size() < 900000
+          && request.resource.data.updatedAt is timestamp;
+        allow delete: if own(uid);
+      }
+    }
+
+    match /sharePosts/{postID} {
+      allow read: if signedIn() && userProfile().neighborhood == resource.data.neighborhood;
+
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'id', 'kind', 'ingredientID', 'ingredientName', 'amount', 'unit', 'neighborhood',
+          'coordinate', 'meetupNote', 'pricePerShare', 'authorID', 'authorNickname',
+          'participantIDs', 'capacity', 'status', 'createdAt', 'expiresAt'
+        ])
+        && request.resource.data.id == postID
+        && request.resource.data.authorID == request.auth.uid
+        && request.resource.data.neighborhood == userProfile().neighborhood
+        && request.resource.data.participantIDs.size() == 0
+        && request.resource.data.status == 'open'
+        && request.resource.data.kind in ['groupBuy', 'split']
+        && request.resource.data.capacity is int
+        && request.resource.data.capacity >= 2 && request.resource.data.capacity <= 8
+        && request.resource.data.neighborhood.size() > 0 && request.resource.data.neighborhood.size() <= 30
+        && request.resource.data.authorNickname is string
+        && request.resource.data.authorNickname.size() > 0 && request.resource.data.authorNickname.size() <= 20
+        && request.resource.data.meetupNote is string && request.resource.data.meetupNote.size() <= 200
+        && request.resource.data.amount is number && request.resource.data.amount > 0
+        && recent(request.resource.data.createdAt)
+        && request.resource.data.expiresAt > request.time
+        && request.resource.data.expiresAt <= request.time + duration.value(8, 'd')
+        && (!('coordinate' in request.resource.data) || request.resource.data.coordinate == null || (
+          request.resource.data.coordinate.latitude is number
+          && request.resource.data.coordinate.longitude is number
+          && request.resource.data.coordinate.latitude >= -90 && request.resource.data.coordinate.latitude <= 90
+          && request.resource.data.coordinate.longitude >= -180 && request.resource.data.coordinate.longitude <= 180
+        ));
+
+      // 작성자는 모집 상태만 바꾼다. 참여자 추가는 respondShareRequest callable이 원자 처리한다.
+      // 참여자는 자기 자신을 빼는 것만 허용한다.
+      allow update: if signedIn() && (
+        (resource.data.authorID == request.auth.uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])
+          && request.resource.data.status in ['open', 'matched', 'closed'])
+        || (request.auth.uid in resource.data.participantIDs
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participantIDs', 'status'])
+          && !(request.auth.uid in request.resource.data.participantIDs)
+          && request.resource.data.participantIDs.size() == resource.data.participantIDs.size() - 1
+          && resource.data.participantIDs.hasOnly(request.resource.data.participantIDs.concat([request.auth.uid]))
+          && request.resource.data.status == 'open')
+      );
+      // 하위 컬렉션까지 재귀 삭제하는 deleteSharePost callable만 Admin SDK로 삭제한다.
+      allow delete: if false;
+
+      match /meetup/details {
+        allow read: if isMember(postID);
+        allow create, update: if isMember(postID)
+          && request.resource.data.keys().hasOnly(['scheduledAt', 'placeNote', 'updatedBy', 'updatedAt'])
+          && request.resource.data.scheduledAt is timestamp && request.resource.data.scheduledAt > request.time
+          && request.resource.data.placeNote is string
+          && request.resource.data.placeNote.size() > 0 && request.resource.data.placeNote.size() <= 200
+          && request.resource.data.updatedBy == request.auth.uid
+          && recent(request.resource.data.updatedAt);
+        allow delete: if isMember(postID);
+      }
+
       match /messages/{messageID} {
-        allow read: if isShareMember();
-        allow create: if isShareMember()
+        allow read: if isMember(postID);
+        allow create: if isMember(postID)
+          && request.resource.data.keys().hasOnly(['id', 'senderID', 'senderNickname', 'text', 'createdAt'])
+          && request.resource.data.id == messageID
           && request.resource.data.senderID == request.auth.uid
+          && request.resource.data.senderNickname is string
+          && request.resource.data.senderNickname.size() > 0 && request.resource.data.senderNickname.size() <= 20
           && request.resource.data.text is string
-          && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() <= 500;
-        // 보낸 메시지는 고치거나 지우지 않는다. 분쟁 시 기록이 남아야 한다.
+          && request.resource.data.text.size() > 0 && request.resource.data.text.size() <= 500
+          && recent(request.resource.data.createdAt);
         allow update, delete: if false;
       }
     }
+
+    match /shareRequests/{requestID} {
+      allow read: if signedIn()
+        && (resource.data.authorID == request.auth.uid || resource.data.requesterID == request.auth.uid);
+      allow create: if signedIn()
+        && request.resource.data.keys().hasOnly([
+          'id', 'postID', 'authorID', 'requesterID', 'requesterNickname', 'message',
+          'status', 'createdAt', 'updatedAt'
+        ])
+        && request.resource.data.id == requestID
+        && request.resource.data.requesterID == request.auth.uid
+        && request.resource.data.authorID == post(request.resource.data.postID).authorID
+        && request.resource.data.authorID != request.auth.uid
+        && post(request.resource.data.postID).status == 'open'
+        && post(request.resource.data.postID).expiresAt > request.time
+        && !(request.auth.uid in post(request.resource.data.postID).participantIDs)
+        && request.resource.data.status == 'pending'
+        && request.resource.data.requesterNickname is string
+        && request.resource.data.requesterNickname.size() > 0 && request.resource.data.requesterNickname.size() <= 20
+        && request.resource.data.message is string
+        && request.resource.data.message.size() > 0 && request.resource.data.message.size() <= 300
+        && recent(request.resource.data.createdAt) && recent(request.resource.data.updatedAt);
+      allow update: if signedIn()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && resource.data.status == 'pending'
+        && recent(request.resource.data.updatedAt)
+        && (
+          request.auth.uid == resource.data.requesterID && request.resource.data.status == 'cancelled'
+        );
+      allow delete: if false;
+    }
+
+    // Admin SDK callable만 생성·조회한다. 사용자는 민감한 운영 큐를 직접 읽지 못한다.
+    match /reports/{reportID} { allow read, write: if false; }
+    match /supportTickets/{ticketID} { allow read, write: if false; }
+    match /rateLimits/{uid} { allow read, write: if false; }
   }
 }

@@ -181,6 +181,10 @@ struct InventoryItem: Codable, Hashable, Identifiable {
     let unit: Unit
     var quantityStatus: QuantityStatus
     var updatedAt: String
+    /// 사용자가 제품 포장이나 구매 기록을 보고 직접 확인한 날짜만 저장한다.
+    var purchasedAt: String? = nil
+    var openedAt: String? = nil
+    var bestBefore: String? = nil
 
     var id: String { "\(ingredientID):\(unit.rawValue)" }
 }
@@ -198,6 +202,8 @@ struct CookingCompletion: Codable, Hashable, Identifiable {
     let recipeID: String
     let completedAt: String
     let consumptions: [CookingConsumption]
+    /// 완료 시점의 보유 재료로 실제 구매를 피한, 사용자 확인 가격 기준 포장 금액.
+    var confirmedInventorySavings: Int? = nil
 
     var id: String { plannedMealID }
 }
@@ -256,6 +262,9 @@ struct UserProfile: Codable, Hashable {
     var birthDate: String = ""
     /// F25 위치. **2026-08-18 사용자 확정**으로 GPS를 쓴다. 약 100m 격자로 반올림한 값만 담는다.
     var coordinate: ShareCoordinate?
+    /// 프로필 사진. 256px로 줄인 JPEG만 담는다(원본을 그대로 두면 저장소가 금방 커진다).
+    /// 기기 안에만 저장하고 서버로 보내지 않는다.
+    var avatarData: Data?
 
     private enum CodingKeys: String, CodingKey {
         case nickname
@@ -263,15 +272,17 @@ struct UserProfile: Codable, Hashable {
         case neighborhood
         case birthDate
         case coordinate
+        case avatarData
     }
 
     // 커스텀 이니셜라이저가 생기면 멤버와이즈 이니셜라이저가 사라지므로 직접 둔다.
-    init(nickname: String = "", age: Int? = nil, neighborhood: String = "", birthDate: String = "", coordinate: ShareCoordinate? = nil) {
+    init(nickname: String = "", age: Int? = nil, neighborhood: String = "", birthDate: String = "", coordinate: ShareCoordinate? = nil, avatarData: Data? = nil) {
         self.nickname = nickname
         self.age = age
         self.neighborhood = neighborhood
         self.birthDate = birthDate
         self.coordinate = coordinate
+        self.avatarData = avatarData
     }
 
     // 기본값만으로는 예전 저장 데이터가 디코딩되지 않으므로 키 단위로 복구한다.
@@ -282,6 +293,7 @@ struct UserProfile: Codable, Hashable {
         neighborhood = try container.decodeIfPresent(String.self, forKey: .neighborhood) ?? ""
         birthDate = try container.decodeIfPresent(String.self, forKey: .birthDate) ?? ""
         coordinate = try container.decodeIfPresent(ShareCoordinate.self, forKey: .coordinate)
+        avatarData = try container.decodeIfPresent(Data.self, forKey: .avatarData)
     }
 }
 
@@ -339,6 +351,8 @@ struct AppState: Codable {
     var purchaseChecks: [String: Bool] = [:]
     var purchaseQuantityOverrides: [String: Double] = [:]
     var appliedPurchaseSignatures: [String] = []
+    /// 같은 장보기 목록의 중복 반영만 막고, 다음 식단의 동일 구매는 허용하기 위한 실행 단위 ID.
+    var shoppingSessionID = UUID().uuidString
     var preferences = AppPreferences()
     var shoppingEvents: [ShoppingEvent] = []
     /// 확정한 식단의 목표 예산. 식단관리 화면이 남은 예산을 보여줄 때 쓴다. 0이면 아직 정하지 않은 상태다.
@@ -357,6 +371,7 @@ struct AppState: Codable {
         case purchaseChecks
         case purchaseQuantityOverrides
         case appliedPurchaseSignatures
+        case shoppingSessionID
         case preferences
         case shoppingEvents
         case targetBudget
@@ -366,21 +381,23 @@ struct AppState: Codable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        hasCompletedOnboarding = try container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding) ?? false
-        account = try container.decodeIfPresent(UserAccount.self, forKey: .account)
-        profile = try container.decodeIfPresent(UserProfile.self, forKey: .profile) ?? UserProfile()
-        favorites = try container.decodeIfPresent([String].self, forKey: .favorites) ?? []
-        plannedMeals = try container.decodeIfPresent([PlannedMeal].self, forKey: .plannedMeals) ?? []
-        inventory = try container.decodeIfPresent([InventoryItem].self, forKey: .inventory) ?? []
-        packageOverrides = try container.decodeIfPresent([String: PackageSize].self, forKey: .packageOverrides) ?? [:]
-        completions = try container.decodeIfPresent([CookingCompletion].self, forKey: .completions) ?? []
-        prices = try container.decodeIfPresent([String: IngredientPrice].self, forKey: .prices) ?? [:]
-        purchaseChecks = try container.decodeIfPresent([String: Bool].self, forKey: .purchaseChecks) ?? [:]
-        purchaseQuantityOverrides = try container.decodeIfPresent([String: Double].self, forKey: .purchaseQuantityOverrides) ?? [:]
-        appliedPurchaseSignatures = try container.decodeIfPresent([String].self, forKey: .appliedPurchaseSignatures) ?? []
-        preferences = try container.decodeIfPresent(AppPreferences.self, forKey: .preferences) ?? AppPreferences()
-        shoppingEvents = try container.decodeIfPresent([ShoppingEvent].self, forKey: .shoppingEvents) ?? []
-        targetBudget = try container.decodeIfPresent(Int.self, forKey: .targetBudget) ?? 0
+        // 한 필드가 손상되거나 예전 enum 값을 포함해도 나머지 사용자 데이터는 복구한다.
+        hasCompletedOnboarding = (try? container.decodeIfPresent(Bool.self, forKey: .hasCompletedOnboarding)) ?? false
+        account = (try? container.decodeIfPresent(UserAccount.self, forKey: .account)) ?? nil
+        profile = (try? container.decodeIfPresent(UserProfile.self, forKey: .profile)) ?? UserProfile()
+        favorites = (try? container.decodeIfPresent([String].self, forKey: .favorites)) ?? []
+        plannedMeals = (try? container.decodeIfPresent([PlannedMeal].self, forKey: .plannedMeals)) ?? []
+        inventory = (try? container.decodeIfPresent([InventoryItem].self, forKey: .inventory)) ?? []
+        packageOverrides = (try? container.decodeIfPresent([String: PackageSize].self, forKey: .packageOverrides)) ?? [:]
+        completions = (try? container.decodeIfPresent([CookingCompletion].self, forKey: .completions)) ?? []
+        prices = (try? container.decodeIfPresent([String: IngredientPrice].self, forKey: .prices)) ?? [:]
+        purchaseChecks = (try? container.decodeIfPresent([String: Bool].self, forKey: .purchaseChecks)) ?? [:]
+        purchaseQuantityOverrides = (try? container.decodeIfPresent([String: Double].self, forKey: .purchaseQuantityOverrides)) ?? [:]
+        appliedPurchaseSignatures = (try? container.decodeIfPresent([String].self, forKey: .appliedPurchaseSignatures)) ?? []
+        shoppingSessionID = (try? container.decodeIfPresent(String.self, forKey: .shoppingSessionID)) ?? UUID().uuidString
+        preferences = (try? container.decodeIfPresent(AppPreferences.self, forKey: .preferences)) ?? AppPreferences()
+        shoppingEvents = (try? container.decodeIfPresent([ShoppingEvent].self, forKey: .shoppingEvents)) ?? []
+        targetBudget = (try? container.decodeIfPresent(Int.self, forKey: .targetBudget)) ?? 0
     }
 
     func encode(to encoder: Encoder) throws {
@@ -397,6 +414,7 @@ struct AppState: Codable {
         try container.encode(purchaseChecks, forKey: .purchaseChecks)
         try container.encode(purchaseQuantityOverrides, forKey: .purchaseQuantityOverrides)
         try container.encode(appliedPurchaseSignatures, forKey: .appliedPurchaseSignatures)
+        try container.encode(shoppingSessionID, forKey: .shoppingSessionID)
         try container.encode(preferences, forKey: .preferences)
         try container.encode(shoppingEvents, forKey: .shoppingEvents)
         try container.encode(targetBudget, forKey: .targetBudget)

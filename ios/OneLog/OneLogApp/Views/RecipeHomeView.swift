@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// 레시피 탭. 피그마 `레시피 탭 1`(391:58) → `레시피 탭 2`(350:1119) → `레시피 탭 3`(391:598).
+/// 레시피 탭. 피그마 `최종본` 캔버스의 `레시피 탭 4`(707:881, 목록) → `레시피 탭 2`(713:1689, 상세) → `레시피 탭 3`(713:1562, 찜).
 struct RecipeHomeView: View {
     @EnvironmentObject private var store: AppStore
     @State private var search = ""
@@ -37,9 +37,16 @@ struct RecipeHomeView: View {
 
     private var results: [Recipe] {
         let query = search.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        return recipes.filter { recipe in
-            matchesQuick(recipe) && matchesType(recipe) && (query.isEmpty || searchable(recipe).contains(query))
+        let filtered = recipes.filter { recipe in
+            if !query.isEmpty { return searchable(recipe).contains(query) }
+            return matchesQuick(recipe) && matchesType(recipe)
         }
+        // 707:908 — 기본 `추천` 상태는 디자인처럼 4개만 노출한다.
+        // 검색이나 명시적 필터를 선택하면 전체 적합 결과를 그대로 반환한다.
+        if query.isEmpty, quickFilter == .recommended, typeFilter == nil {
+            return Array(filtered.prefix(4))
+        }
+        return filtered
     }
 
     var body: some View {
@@ -56,45 +63,60 @@ struct RecipeHomeView: View {
         }
     }
 
-    // MARK: - 레시피 탭 1 (391:58)
+    // MARK: - 레시피 탭 4 (707:881)
 
     private var explore: some View {
-        ScrollView(showsIndicators: false) {
-            VStack(spacing: 0) {
+        GeometryReader { proxy in
+            ZStack(alignment: .topLeading) {
+                Color(hex: 0xFFFEFB)
+
+                // 707:885 — x20, y48, 353×52.
                 header
-                    .padding(.horizontal, 20)
-                    .padding(.top, 14)
+                    .frame(width: 353, height: 52)
+                    .offset(x: 20, y: 48)
 
-                // 391:232 — 제목은 한 줄(h29)이고 채소 그림(109x55)은 오른쪽으로 살짝 잘려나간다.
-                HStack(spacing: 7) {
-                    Text("오늘은 어떤 요리를 할까요?")
-                        .figmaText(24, .bold)
-                        .foregroundStyle(Color.oneLogInk)
-                        .fixedSize(horizontal: true, vertical: false)
-                    // 391:230 — 폭 109에 맞춰 늘린 뒤 위에서 55만 보여준다(h 198.18%).
-                    Image("HeroVeggies")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 109)
-                        .frame(width: 109, height: 55, alignment: .top)
-                        .clipped()
+                // 707:1043 — x20, y102, 354×131.
+                tasteHeroCard
+                    .frame(width: 354, height: 131)
+                    .offset(x: 20, y: 102)
+
+                if normalizedSearch.isEmpty {
+                    // 707:1011 — x25.13, y252.87, 372×112.
+                    categories
+                        .frame(width: 372, height: 112, alignment: .topLeading)
+                        .offset(x: 25.13, y: 252.87)
                 }
-                .frame(height: 55)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 7.25)
-                .padding(.top, 2)
 
-                searchBar
-                    .padding(.top, 24)
+                if results.isEmpty, !normalizedSearch.isEmpty {
+                    emptySearchState
+                        .frame(width: 353)
+                        .offset(x: 20, y: 363.87)
+                } else {
+                    recipeResults
+                        .frame(width: 393, height: max(0, proxy.size.height - 363.87), alignment: .topLeading)
+                        .offset(x: 0, y: 363.87)
+                }
+            }
+            .frame(width: 393, height: proxy.size.height, alignment: .topLeading)
+            .background(Color(hex: 0xFFFEFB))
+        }
+        // Figma 프레임이 실제 상태바를 포함한 393×852 좌표를 쓰므로 상단까지 같은 캔버스로 사용한다.
+        .ignoresSafeArea(edges: .top)
+    }
 
-                categories
-                    .padding(.top, 13)
-
+    /// 707:903. 상단 탐색·필터는 고정하고 결과 영역만 스크롤한다.
+    private var recipeResults: some View {
+        ScrollView(showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 0) {
                 resultsHeading
-                    .padding(.horizontal, 20)
-                    .padding(.top, 11)
+                    .frame(width: 353, height: 42)
+                    .padding(.top, 1.13)
 
-                LazyVGrid(columns: [GridItem(.flexible(), spacing: 14), GridItem(.flexible(), spacing: 14)], spacing: 12) {
+                LazyVGrid(
+                    columns: [GridItem(.fixed(169.5), spacing: 14), GridItem(.fixed(169.5), spacing: 14)],
+                    alignment: .leading,
+                    spacing: 12
+                ) {
                     ForEach(results.prefix(40)) { recipe in
                         RecipeGridCard(recipe: recipe, isFavorite: store.state.favorites.contains(recipe.id)) {
                             store.toggleFavorite(recipe.id)
@@ -103,20 +125,14 @@ struct RecipeHomeView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 20)
                 .padding(.top, 12)
-
-                if results.isEmpty {
-                    Text("조건에 맞는 레시피가 없어요. 필터를 바꿔 보세요.")
-                        .figmaText(12)
-                        .foregroundStyle(Color.oneLogMuted)
-                        .padding(.top, 40)
-                }
 
                 Color.clear.frame(height: 24)
             }
+            // 707:904/909 — 결과 영역 전체 글로벌 x21.5.
+            .padding(.leading, 21.5)
         }
-        .background(Color(hex: 0xFFF9E8))
+        .background(Color.white)
     }
 
     private var header: some View {
@@ -136,12 +152,13 @@ struct RecipeHomeView: View {
             Button {
                 path.append(.favorites)
             } label: {
+                // 769:45 — 노란 원 위에 채운 하트. 흰 외곽선 하트를 쓰면 노란 배경에 묻힌다.
                 Image("IconHeartFilled")
                     .resizable()
                     .scaledToFit()
                     .frame(width: 18, height: 18)
                     .frame(width: 32, height: 32)
-                    .background(Color.oneLogBrand, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .background(Color.oneLogBrandDeep, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                     .shadow(color: .black.opacity(0.08), radius: 2.5, y: 2)
             }
             .accessibilityLabel("찜한 레시피")
@@ -150,8 +167,33 @@ struct RecipeHomeView: View {
         .frame(height: 52)
     }
 
-    private var searchBar: some View {
-        HStack(spacing: 12.5) {
+    /// 피그마 `Taste Analysis / Card`(707:1043). 헤드라인 + 검색창 + 마스코트를 한 카드에 담는다.
+    private var tasteHeroCard: some View {
+        ZStack(alignment: .topLeading) {
+            Color.oneLogBrandDeep
+
+            // 자식 좌표는 시안 절대값: 제목(21,29) · 부제(21,54) · 검색창(14,80.22,319×39) · 마스코트(224,25.22,109×55).
+            Image("HeroVeggies")
+                .resizable()
+                .scaledToFill()
+                .frame(width: 109, height: 109)
+                .frame(width: 109, height: 55, alignment: .top)
+                .clipped()
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .offset(x: -21, y: 25.22)
+
+            Text("찜으로 알아가는 나의 입맛")
+                .figmaText(17, .bold)
+                .foregroundStyle(Color.oneLogInk)
+                .fixedSize()
+                .offset(x: 21, y: 29)
+
+            Text("찜할수록 취향 키워드가 구체화돼요")
+                .figmaText(10)
+                .foregroundStyle(Color(hex: 0x403B2E))
+                .fixedSize()
+                .offset(x: 21, y: 54)
+
             HStack(spacing: 10) {
                 Image("IconSearch")
                     .resizable()
@@ -164,29 +206,17 @@ struct RecipeHomeView: View {
                     .foregroundStyle(Color.oneLogInk)
                     .accessibilityIdentifier("recipe.search")
             }
-            .padding(.horizontal, 14)
-            .frame(height: 44)
+            .padding(.horizontal, 13)
+            .frame(width: 319, height: 39)
             .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .stroke(Color(hex: 0xDBD4C2), lineWidth: 1)
             }
-
-            Image("IconMicrophone")
-                .resizable()
-                .renderingMode(.template)
-                .scaledToFit()
-                .frame(width: 20, height: 20)
-                .foregroundStyle(.white)
-                .frame(width: 44, height: 44)
-                .background(Color.oneLogInk, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
-                .shadow(color: Color(red: 31 / 255, green: 26 / 255, blue: 13 / 255).opacity(0.12), radius: 4, y: 3)
-                .accessibilityHidden(true)
+            .offset(x: 14, y: 80.22)
         }
-        .padding(.horizontal, 13)
-        .frame(height: 76)
-        .frame(maxWidth: .infinity)
-        .background(Color.oneLogBrand)
+        .frame(height: 131)
+        .clipShape(RoundedRectangle(cornerRadius: 23, style: .continuous))
     }
 
     /// 391:233. 라벨은 좌측 20pt에 맞추고, 칩 줄은 시안(w372)처럼 오른쪽 화면 끝까지 흘려보낸다.
@@ -214,12 +244,11 @@ struct RecipeHomeView: View {
             Text(title)
                 .figmaText(10, .medium)
                 .foregroundStyle(Color.oneLogMuted)
-                .padding(.leading, 20)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 6) {
                     chips()
                 }
-                .padding(.horizontal, 20)
+                .padding(.trailing, 20)
             }
         }
         .frame(height: 48, alignment: .top)
@@ -246,19 +275,71 @@ struct RecipeHomeView: View {
     private var resultsHeading: some View {
         HStack(spacing: 0) {
             VStack(alignment: .leading, spacing: 1) {
-                Text("취향을 더 알아볼게요")
+                Text(normalizedSearch.isEmpty ? "취향을 더 알아볼게요" : "'\(normalizedSearch)' 검색 결과 \(results.count)개")
                     .figmaText(17, .bold)
                     .foregroundStyle(Color.oneLogInk)
-                Text("먹고 싶은 레시피에 하트를 눌러주세요")
-                    .figmaText(10)
-                    .foregroundStyle(Color.oneLogMuted)
+                if normalizedSearch.isEmpty {
+                    Text("먹고 싶은 레시피에 하트를 눌러주세요")
+                        .figmaText(10)
+                        .foregroundStyle(Color.oneLogMuted)
+                }
             }
             Spacer(minLength: 8)
-            Text("추천 \(results.count)개")
-                .figmaText(11)
-                .foregroundStyle(Color.oneLogMuted)
+            if normalizedSearch.isEmpty {
+                Text("추천 \(results.count)개")
+                    .figmaText(11)
+                    .foregroundStyle(Color.oneLogMuted)
+            }
         }
         .frame(height: 42)
+    }
+
+    /// 최종본 805:17. 결과가 없을 때도 검색 컨텍스트는 유지하고, 재검색용 추천어만 제공한다.
+    private var emptySearchState: some View {
+        VStack(spacing: 0) {
+            Image("EmptySearchMascot")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 112, height: 92)
+
+            Text("'\(normalizedSearch)' 검색 결과가 없어요")
+                .figmaText(22, .bold, lineHeight: 28)
+                .foregroundStyle(Color.oneLogInk)
+                .padding(.top, 22)
+
+            Text("다른 재료나 메뉴로 검색해보거나,\n아래 추천을 확인해보세요.")
+                .figmaText(13, .medium, lineHeight: 22)
+                .foregroundStyle(Color.oneLogFaint)
+                .multilineTextAlignment(.center)
+                .padding(.top, 12)
+
+            HStack(spacing: 8) {
+                ForEach(["두부", "계란", "김치", "15분 이내", "한식"], id: \.self) { suggestion in
+                    Button {
+                        if suggestion == "15분 이내" {
+                            search = ""
+                            quickFilter = .under15
+                        } else if suggestion == "한식" {
+                            search = ""
+                            typeFilter = .korean
+                        } else {
+                            search = suggestion
+                        }
+                    } label: {
+                        Text(suggestion)
+                            .figmaText(12, .bold)
+                            .foregroundStyle(Color.oneLogBody)
+                            .padding(.horizontal, 13)
+                            .frame(height: 32)
+                            .background(Color.oneLogPaleGreen, in: Capsule())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.top, 27)
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityIdentifier("recipe.emptySearch")
     }
 
     // MARK: - 필터
@@ -267,6 +348,10 @@ struct RecipeHomeView: View {
         ([recipe.title, recipe.description] + recipe.tags + recipe.ingredients.compactMap { ingredient(for: $0.ingredientID)?.name })
             .joined(separator: " ")
             .lowercased()
+    }
+
+    private var normalizedSearch: String {
+        search.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func matchesQuick(_ recipe: Recipe) -> Bool {
@@ -339,7 +424,11 @@ struct RecipePhoto: View {
     var body: some View {
         ZStack {
             Color.oneLogPhoto
-            if let urlString = recipe.imageURL, let url = URL(string: urlString) {
+            if let assetName = bundledRecipeImageAssets[recipe.id] {
+                Image(assetName)
+                    .resizable()
+                    .scaledToFill()
+            } else if let urlString = recipe.imageURL, let url = URL(string: urlString) {
                 AsyncImage(url: url) { image in
                     image.resizable().scaledToFill()
                 } placeholder: {
@@ -354,6 +443,17 @@ struct RecipePhoto: View {
     }
 }
 
+/// 앱에서 직접 큐레이션한 레시피는 공공 데이터 사진 URL이 없으므로
+/// 카드와 상세가 같은 번들 사진을 사용한다.
+private let bundledRecipeImageAssets: [String: String] = [
+    "chicken-donburi": "RecipeChickenDonburi",
+    "tofu-kimchi": "RecipeTofuKimchi",
+    "tuna-mayo-rice": "RecipeTunaMayoRice",
+    "cabbage-egg-stir-fry": "RecipeCabbageEgg",
+    "cucumber-tuna-bowl": "RecipeCucumberTuna",
+    "kimchi-fried-rice": "RecipeKimchiFriedRice",
+]
+
 /// 피그마 `Recipe Card`(391:128). 169.5x220.
 private struct RecipeGridCard: View {
     let recipe: Recipe
@@ -365,6 +465,8 @@ private struct RecipeGridCard: View {
         Button(action: onOpen) {
             ZStack(alignment: .topLeading) {
                 RecipePhoto(recipe: recipe)
+                    .frame(width: 169.5, height: 220)
+                    .clipped()
 
                 LinearGradient(
                     stops: [
@@ -375,6 +477,7 @@ private struct RecipeGridCard: View {
                     startPoint: .top,
                     endPoint: .bottom
                 )
+                .frame(width: 169.5, height: 220)
 
                 Button(action: onToggleFavorite) {
                     Image(isFavorite ? "IconHeartFilled" : "IconHeart")
@@ -389,16 +492,14 @@ private struct RecipeGridCard: View {
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(isFavorite ? "\(recipe.title) 찜 해제" : "\(recipe.title) 찜하기")
-                .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding(.trailing, 10)
-                .padding(.top, 10)
+                .offset(x: 127.5, y: 10)
 
                 VStack(alignment: .leading, spacing: 6) {
                     Text("\(recipe.mealSlots.first?.rawValue ?? "한 끼") · \(recipeCuisine(recipe))")
                         .figmaText(10, .bold)
                         .foregroundStyle(.white.opacity(0.9))
                     Text(recipe.title)
-                        .figmaText(14, .bold)
+                        .figmaText(14, .bold, lineHeight: 22) // 707:918
                         .foregroundStyle(.white)
                         .lineLimit(1)
                     HStack(spacing: 6) {
@@ -414,9 +515,11 @@ private struct RecipeGridCard: View {
                 .padding(.horizontal, 12)
                 .padding(.top, 11)
                 .padding(.bottom, 10)
-                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+                // 707:916 — 카드 아래가 아니라 y120에서 시작하는 102 높이 블록이다.
+                .frame(width: 169.5, height: 102, alignment: .topLeading)
+                .offset(y: 120)
             }
-            .frame(height: 220)
+            .frame(width: 169.5, height: 220)
             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             .shadow(color: Color(red: 41 / 255, green: 31 / 255, blue: 5 / 255).opacity(0.08), radius: 6, y: 4)
         }
@@ -495,7 +598,7 @@ private struct FavoritesView: View {
             }
             .padding(.horizontal, 20)
         }
-        .background(Color(hex: 0xFFF9E8))
+        .background(Color(hex: 0xFFFEFB))
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
     }
@@ -605,18 +708,18 @@ private struct FavoritesView: View {
         Button {
             path.append(.detail(item.id))
         } label: {
-            HStack(spacing: 12) {
+            HStack(alignment: .top, spacing: 12) {
                 RecipePhoto(recipe: item)
                     .frame(width: 78, height: 79)
                     .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
-                // 391:615 제목 y27(h23), 391:621 난이도 y52 → 사이 간격 2. 배지 끝 164.8 → 메타 174 → 9.
-                VStack(alignment: .leading, spacing: 2) {
+                // 713:1582 제목 y27 · 713:1584 난이도 배지 y52 · 713:1583 메타 y56(배지 오른쪽 2).
+                VStack(alignment: .leading, spacing: 6) {
                     Text(item.title)
                         .figmaText(16, .bold)
                         .foregroundStyle(Color.oneLogInk)
                         .lineLimit(1)
-                    HStack(spacing: 9) {
+                    HStack(spacing: 2) {
                         if let label = recipeDifficultyLabel(item) {
                             Text(label)
                                 .figmaText(10)
@@ -631,16 +734,19 @@ private struct FavoritesView: View {
                             .lineLimit(1)
                     }
                 }
+                .padding(.top, 17)
 
                 Spacer(minLength: 4)
 
-                Text("♥")
-                    .figmaText(11, .bold)
-                    .foregroundStyle(Color(hex: 0xE37A1F))
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 5)
-                    .background(Color(hex: 0xFFF5D4), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
-                    .frame(maxHeight: .infinity, alignment: .top)
+                // 707:900 — 카드 안쪽 여백 밖(309, 7)에 놓인 32 노란 하트.
+                Image("IconHeartFilled")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 18, height: 18)
+                    .frame(width: 32, height: 32)
+                    .background(Color.oneLogBrandDeep, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .shadow(color: .black.opacity(0.08), radius: 2.5, y: 2)
+                    .offset(x: 2, y: -3)
             }
             .padding(10)
             .frame(height: 99)
@@ -657,7 +763,37 @@ struct RecipeDetailView: View {
     @EnvironmentObject private var store: AppStore
     @Environment(\.dismiss) private var dismiss
     let recipeID: String
+    let actionTitle: String
+    let onAddToPlan: (() -> Void)?
+    let actionFill: Color
+    let actionForeground: Color
+    let actionHeight: CGFloat
+    let dismissesAfterAction: Bool
+    let secondaryActionTitle: String?
+    let onSecondaryAction: (() -> Void)?
     @State private var isMealPickerPresented = false
+
+    init(
+        recipeID: String,
+        actionTitle: String = "식사에 담기",
+        onAddToPlan: (() -> Void)? = nil,
+        actionFill: Color = .oneLogBrand,
+        actionForeground: Color = .oneLogInk,
+        actionHeight: CGFloat = 50,
+        dismissesAfterAction: Bool = true,
+        secondaryActionTitle: String? = nil,
+        onSecondaryAction: (() -> Void)? = nil
+    ) {
+        self.recipeID = recipeID
+        self.actionTitle = actionTitle
+        self.onAddToPlan = onAddToPlan
+        self.actionFill = actionFill
+        self.actionForeground = actionForeground
+        self.actionHeight = actionHeight
+        self.dismissesAfterAction = dismissesAfterAction
+        self.secondaryActionTitle = secondaryActionTitle
+        self.onSecondaryAction = onSecondaryAction
+    }
 
     private var recipeValue: Recipe? { recipe(for: recipeID) }
 
@@ -676,38 +812,63 @@ struct RecipeDetailView: View {
                     Rectangle()
                         .fill(Color(hex: 0xE3D9BF))
                         .frame(height: 1)
-                        .padding(.top, 22)
+                        .padding(.top, 26) // 713:1717 y544
                     Text("조리 순서")
                         .figmaText(16, .bold)
                         .foregroundStyle(Color.oneLogInk)
                         .padding(.top, 9)
                     stepSection(item)
-                        .padding(.top, 5)
+                        .padding(.top, 9) // 713:1719 y582
                     Color.clear.frame(height: 24)
                 }
                 .padding(.horizontal, 20)
             }
         }
-        .background(Color(hex: 0xFFF9E8))
+        .background(Color(hex: 0xFEFCF6)) // 713:1689
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .navigationBar)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             if recipeValue != nil {
-                Button {
-                    isMealPickerPresented = true
-                } label: {
-                    Text("식사에 담기")
-                        .figmaText(15, .bold)
-                        .foregroundStyle(Color.oneLogInk)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 50)
-                        .background(Color.oneLogBrand, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                VStack(spacing: 0) {
+                    Button {
+                        if let onAddToPlan {
+                            onAddToPlan()
+                            if dismissesAfterAction { dismiss() }
+                        } else {
+                            isMealPickerPresented = true
+                        }
+                    } label: {
+                        Text(actionTitle)
+                            .figmaText(15, .bold)
+                            .foregroundStyle(actionForeground)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: actionHeight)
+                            .background(actionFill, in: RoundedRectangle(cornerRadius: 15, style: .continuous))
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityIdentifier("recipe.detail.addMeal")
+
+                    if let secondaryActionTitle, let onSecondaryAction {
+                        Button(action: onSecondaryAction) {
+                            Text(secondaryActionTitle)
+                                .figmaText(15, .bold)
+                                .foregroundStyle(Color(hex: 0x574F40))
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 48)
+                                .background(.white, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .overlay {
+                                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                        .strokeBorder(Color(hex: 0xDED4B5), lineWidth: 1)
+                                }
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("recipe.detail.secondaryAction")
+                        .padding(.top, 12)
+                    }
                 }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("recipe.detail.addMeal")
                 .padding(.horizontal, 20)
                 .padding(.vertical, 8)
-                .background(Color(hex: 0xFFF9E8).opacity(0.96))
+                .background(Color(hex: 0xFEFCF6).opacity(0.96))
             }
         }
         .sheet(isPresented: $isMealPickerPresented) {
@@ -790,7 +951,7 @@ struct RecipeDetailView: View {
                         .background(recipeDifficultyColors(item).background, in: Capsule())
                 }
                 Text(item.title)
-                    .figmaText(29, .bold)
+                    .figmaText(29, .bold, lineHeight: 36) // 713:1775
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .minimumScaleFactor(0.7)
@@ -798,10 +959,11 @@ struct RecipeDetailView: View {
                     .figmaText(11)
                     .foregroundStyle(.white.opacity(0.9))
             }
-            .frame(width: 252, alignment: .leading) // 391:831
-            .padding(.leading, 19)
-            .padding(.bottom, 31)
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            // 713:1772 — 카드 아래가 아니라 (19, 170)에서 시작하는 252 너비 블록, 위아래 11 여백.
+            .padding(.vertical, 11)
+            .frame(width: 252, alignment: .topLeading)
+            .offset(x: 19, y: 170)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
         .frame(height: 293)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
@@ -821,26 +983,30 @@ struct RecipeDetailView: View {
             }
 
             // 350:1140~ — 행 간격은 텍스트 top 435/470/505(피치 35)에서 역산한 17.6.
-            LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 17.6) {
-                ForEach(item.ingredients) { line in
-                    HStack(spacing: 0) {
+            // 713:1699~1704 — 한 칸 안에서 불릿 0 · 이름 13 · 수량 112, 행 피치 35(높이 15 + 간격 20).
+            LazyVGrid(columns: [GridItem(.flexible(), spacing: 6), GridItem(.flexible(), spacing: 6)], spacing: 20) {
+                ForEach(Array(item.ingredients.enumerated()), id: \.offset) { _, line in
+                    HStack(alignment: .top, spacing: 0) {
                         Circle()
                             .fill(Color.oneLogBrandDeep)
                             .frame(width: 6, height: 6)
+                            .padding(.top, 7)
                         Text(ingredient(for: line.ingredientID)?.name ?? line.rawName)
                             .figmaText(12, .medium)
                             .foregroundStyle(Color.oneLogInk)
-                            .padding(.leading, 7)
                             .lineLimit(1)
-                        Spacer(minLength: 6)
+                            .padding(.leading, 7)
+                            .frame(width: 99, alignment: .leading)
                         Text(formatQuantity(line.quantity, unit: line.unit))
                             .figmaText(11)
                             .foregroundStyle(Color.oneLogMuted)
                             .lineLimit(1)
+                        Spacer(minLength: 0)
                     }
+                    .frame(height: 15)
                 }
             }
-            .padding(.top, 15)
+            .padding(.top, 19)
         }
     }
 
@@ -852,12 +1018,10 @@ struct RecipeDetailView: View {
                         .figmaText(11, .bold)
                         .foregroundStyle(Color.oneLogInk)
                         .frame(width: 26, height: 26)
-                        .background(index == 0 ? Color.oneLogBrandDeep : .white, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
+                        .background(.white, in: RoundedRectangle(cornerRadius: 13, style: .continuous))
                         .overlay {
-                            if index > 0 {
-                                RoundedRectangle(cornerRadius: 13, style: .continuous)
-                                    .stroke(Color(hex: 0xE3D9BF), lineWidth: 1)
-                            }
+                            RoundedRectangle(cornerRadius: 13, style: .continuous)
+                                .strokeBorder(Color(hex: 0xE3D9BF), lineWidth: 1)
                         }
                     Text(step)
                         .figmaText(10, lineHeight: 15)
